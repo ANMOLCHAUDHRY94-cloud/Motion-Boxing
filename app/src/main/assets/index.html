@@ -30,6 +30,9 @@ white-space:nowrap;box-shadow:0 0 24px #f80a;pointer-events:none}
 #boxer3d canvas{display:block;width:100%!important;height:100%!important}
 #opponent.three-ready>svg{visibility:hidden}
 #opponent.three-ready #boxer3d{display:block}
+/* 3D full-body framing, without changing tracking or game controls. */
+body.one-hand #opponent.three-ready{width:min(84vw,460px)!important;height:77%!important;bottom:5%!important}
+body.two-hand #opponent.three-ready{width:min(39vw,480px)!important;height:96%!important;bottom:0!important}
 </style></head><body><section id="menu"><h1>🥊 MOTION BOXING 5.0</h1><p>Fight a full-body opponent with real punches and head movement.</p><button id="one">ONE-HAND BOXING<br><small>Portrait · Hold phone in left hand · Right punches</small></button><button id="two">TWO-HAND BOXING<br><small>Landscape · Phone on stand · Both hands</small></button><p>Keep your face and punching arm(s) in camera view. Good lighting and a stable phone improve tracking. Camera access and internet are required on first launch.</p></section><section id="game"><div id="hud"><div class="hp">YOU<div class="track"><div class="fill" id="playerHp"></div></div></div><div id="clock">01:30</div><div class="hp" style="text-align:right">OPPONENT<div class="track"><div class="fill" id="enemyHp"></div></div></div></div><div id="debug">TRACKER: STARTING</div><div id="arena"><div id="floor"></div><div id="opponent"><div id="boxer3d" aria-label="3D boxer"></div><svg viewBox="0 0 220 360" preserveAspectRatio="xMidYMax meet" aria-label="Shaded full body boxer"><defs><linearGradient id="skin3"><stop stop-color="#693721"/><stop offset=".27" stop-color="#e0a277"/><stop offset=".65" stop-color="#ba704c"/><stop offset="1" stop-color="#54291f"/></linearGradient><linearGradient id="red3"><stop stop-color="#6f0d18"/><stop offset=".3" stop-color="#ff5b60"/><stop offset=".65" stop-color="#d51c2d"/><stop offset="1" stop-color="#590d17"/></linearGradient><linearGradient id="pants3"><stop stop-color="#77151e"/><stop offset=".42" stop-color="#f3434e"/><stop offset="1" stop-color="#82121b"/></linearGradient><linearGradient id="shoes3"><stop stop-color="#101525"/><stop offset=".55" stop-color="#46516c"/><stop offset="1" stop-color="#0a0c15"/></linearGradient><radialGradient id="chest3"><stop stop-color="#e9b38b"/><stop offset=".7" stop-color="#a95e40"/><stop offset="1" stop-color="#6b3629"/></radialGradient></defs>
 <ellipse cx="111" cy="348" rx="79" ry="9" fill="#02050a" opacity=".45"/>
 <g class="boxer-body"><path d="M77 221L106 224 99 321 71 321 66 296Z" fill="url(#skin3)" stroke="#6a3525" stroke-width="2"/><path d="M114 224L146 219 154 318 126 322 117 273Z" fill="url(#skin3)" stroke="#6a3525" stroke-width="2"/><path d="M71 312L100 312 102 347 43 347Q42 331 71 312ZM124 313L154 312 178 347 121 347Z" fill="url(#shoes3)" stroke="#14121b" stroke-width="3"/><path d="M64 199Q109 207 154 198L151 248 115 250 110 229 105 249 61 247Z" fill="url(#pants3)" stroke="#6e1621" stroke-width="2"/><path d="M64 207Q111 214 153 206" fill="none" stroke="#f5e9df" stroke-width="10"/><path d="M108 214V245M86 221L79 242M132 219L140 242" stroke="#6f1522" stroke-width="3" opacity=".5"/>
@@ -106,28 +109,56 @@ if(mount&&root){
  scene.add(new THREE.HemisphereLight(0xffffff,0x555577,2.1));
  const key=new THREE.DirectionalLight(0xffe6d4,3.2);key.position.set(-3,7,5);scene.add(key);
  const rim=new THREE.DirectionalLight(0x9fcfff,2);rim.position.set(3,5,-4);scene.add(rim);
- const clock=new THREE.Clock();let boxer=null,mixer=null,clips=[],actions={},current='';
+ const clock=new THREE.Clock();let boxer=null,mixer=null,clips=[],actions={},current='',modelRig=null;
  const loader=new GLTFLoader();
  loader.load(new URL('boxer.glb', document.baseURI).href,g=>{
-   boxer=g.scene;scene.add(boxer);
+   boxer=g.scene;
+   modelRig=new THREE.Group();scene.add(modelRig);modelRig.add(boxer);
    boxer.traverse(o=>{if(o.isMesh){o.frustumCulled=false;}});
-   const bounds=new THREE.Box3().setFromObject(boxer),modelSize=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3());
-   const scale=3.9/Math.max(.01,modelSize.y);boxer.scale.setScalar(scale);
-   boxer.position.set(-center.x*scale,-bounds.min.y*scale,-center.z*scale);
-   camera.position.set(0,2.1,9);camera.lookAt(0,2.0,0);
+   // This GLB was exported Z-up with its face toward +Y.
+   // Three.js uses Y-up, with the camera looking from +Z.
+   // Apply X=-90 degrees to stand upright, then Y=180 degrees to face the player.
+   boxer.rotation.order='YXZ';
+   boxer.rotation.set(-Math.PI/2,Math.PI,0);
+   const rawBounds=new THREE.Box3().setFromObject(boxer);
+   const rawSize=rawBounds.getSize(new THREE.Vector3());
+   const scale=3.9/Math.max(.01,rawSize.y);
+   boxer.scale.setScalar(scale);
+   const scaledBounds=new THREE.Box3().setFromObject(boxer);
+   const scaledCenter=scaledBounds.getCenter(new THREE.Vector3());
+   boxer.position.set(-scaledCenter.x,-scaledBounds.min.y,-scaledCenter.z);
    mixer=new THREE.AnimationMixer(boxer);clips=g.animations;
    for(const c of clips)actions[c.name.toLowerCase()]=mixer.clipAction(c);
    const idle=Object.keys(actions).find(n=>/idle|guard|stance/.test(n));if(idle){actions[idle].play();current=idle;}
+   // Do not let the game's reset() accidentally reveal the old SVG model.
+   root.classList.add('three-ready');
    const canvases=mount.querySelectorAll('canvas');for(const c of canvases){if(c!==renderer.domElement)c.style.visibility='hidden';}
-   root.classList.add('three-ready');requestAnimationFrame(()=>{size();renderer.render(scene,camera)});console.log('3D GLB loaded successfully');
- },undefined,e=>{console.warn('boxer.glb failed to load',e);document.getElementById('debug').textContent='3D MODEL LOAD ERROR';host.remove();document.getElementById('help').textContent='3D MODEL LOAD FAILED: '+(e.message||e)});
- function size(){const w=Math.max(1,mount.clientWidth),h=Math.max(1,mount.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}
+   size();
+   console.log('3D boxer: Z-up converted, front facing camera, auto-fit complete');
+ },undefined,e=>{console.warn('boxer.glb failed to load',e);document.getElementById('debug').textContent='3D MODEL LOAD ERROR';host.remove()});
+ function size(){
+   const w=Math.max(1,mount.clientWidth),h=Math.max(1,mount.clientHeight);
+   renderer.setSize(w,h,false);camera.aspect=w/h;
+   if(boxer&&modelRig){
+     const bounds=new THREE.Box3().setFromObject(modelRig);
+     const dimensions=bounds.getSize(new THREE.Vector3());
+     const verticalAngle=THREE.MathUtils.degToRad(camera.fov);
+     const distanceV=dimensions.y*1.14/(2*Math.tan(verticalAngle/2));
+     const distanceH=dimensions.x*1.20/(2*Math.tan(verticalAngle/2)*Math.max(.15,camera.aspect));
+     const distance=Math.max(distanceV,distanceH,4);
+     const targetY=(bounds.min.y+bounds.max.y)/2;
+     camera.position.set(0,targetY+0.10,distance);
+     camera.lookAt(0,targetY,0);
+   }
+   camera.updateProjectionMatrix();
+ }
  new ResizeObserver(size).observe(mount);size();
  function tick(){requestAnimationFrame(tick);if(!boxer)return;
   const dt=Math.min(clock.getDelta(),.06);if(mixer)mixer.update(dt);
   const desired=root.classList.contains('attack-left')?'left':root.classList.contains('attack-right')?'right':root.classList.contains('dodging')?'dodge':root.classList.contains('ko')?'knockout':'idle';
   if(desired!==current){let found=Object.keys(actions).find(n=>n.includes(desired)|| (desired==='left'&&/jab/.test(n))||(desired==='right'&&/cross|punch/.test(n))||(desired==='dodge'&&/slip|duck|evade/.test(n)));if(found){Object.values(actions).forEach(a=>a.fadeOut(.14));actions[found].reset().fadeIn(.14).play();current=desired;}else{current=desired;}}
-  if(!clips.length){boxer.rotation.z=root.classList.contains('dodging')?.12:0;boxer.rotation.x=root.classList.contains('hit')?-.08:0;}
+  // Movement effects belong on the outer rig: never overwrite the model's base orientation.
+  if(!clips.length){modelRig.rotation.z=root.classList.contains('dodging')?.12:0;modelRig.rotation.x=root.classList.contains('hit')?-.08:0;}
   renderer.render(scene,camera);
  }tick();
 }
