@@ -13,14 +13,32 @@ body.two-hand #camera{right:10px;top:58px;bottom:auto;width:112px;height:84px}
 body.two-hand #message{top:12%;font-size:clamp(18px,3vw,30px)}
 body.one-hand #opponent{left:50%}
 @media(orientation:landscape){body.two-hand #opponent{height:98%}}
-</style></head><body><section id="menu"><h1>🥊 MOTION BOXING 4.4</h1><p>Fight a full-body opponent with real punches and head movement.</p><button id="one">ONE-HAND BOXING<br><small>Portrait · Hold phone in left hand · Right punches</small></button><button id="two">TWO-HAND BOXING<br><small>Landscape · Phone on stand · Both hands</small></button><p>Keep your face and punching arm(s) in camera view. Good lighting and a stable phone improve tracking. Camera access and internet are required on first launch.</p></section><section id="game"><div id="hud"><div class="hp">YOU<div class="track"><div class="fill" id="playerHp"></div></div></div><div id="clock">01:30</div><div class="hp" style="text-align:right">OPPONENT<div class="track"><div class="fill" id="enemyHp"></div></div></div></div><div id="debug">TRACKER: STARTING</div><div id="arena"><div id="floor"></div><div id="opponent"><svg viewBox="0 0 220 360" preserveAspectRatio="xMidYMax meet" aria-label="Shaded full body boxer"><defs><linearGradient id="skin3"><stop stop-color="#693721"/><stop offset=".27" stop-color="#e0a277"/><stop offset=".65" stop-color="#ba704c"/><stop offset="1" stop-color="#54291f"/></linearGradient><linearGradient id="red3"><stop stop-color="#6f0d18"/><stop offset=".3" stop-color="#ff5b60"/><stop offset=".65" stop-color="#d51c2d"/><stop offset="1" stop-color="#590d17"/></linearGradient><linearGradient id="pants3"><stop stop-color="#77151e"/><stop offset=".42" stop-color="#f3434e"/><stop offset="1" stop-color="#82121b"/></linearGradient><linearGradient id="shoes3"><stop stop-color="#101525"/><stop offset=".55" stop-color="#46516c"/><stop offset="1" stop-color="#0a0c15"/></linearGradient><radialGradient id="chest3"><stop stop-color="#e9b38b"/><stop offset=".7" stop-color="#a95e40"/><stop offset="1" stop-color="#6b3629"/></radialGradient></defs>
+</style><style id="combat45">
+#attackCue{display:none;position:absolute;top:5%;left:50%;transform:translateX(-50%);z-index:7;
+padding:12px 20px;border:2px solid #ffb642;border-radius:14px;background:#211608eb;
+color:#fff2b5;font:900 clamp(18px,3.5vw,32px) system-ui,Arial;text-align:center;
+white-space:nowrap;box-shadow:0 0 24px #f80a;pointer-events:none}
+#attackCue.active{display:block;animation:cuePulse .32s ease-in-out infinite alternate}
+@keyframes cuePulse{to{box-shadow:0 0 36px #ff9222;filter:brightness(1.2)}}
+#opponent.attack-left .leftglove{transform:translate(20px,-34px) scale(1.28)}
+#opponent.attack-right .rightglove{transform:translate(-20px,-34px) scale(1.28)}
+#opponent.attack-left .rightglove,#opponent.attack-right .leftglove{transform:none}
+@media(orientation:landscape){#attackCue{top:4%;font-size:clamp(17px,3vw,27px);padding:7px 15px}}
+</style><style id="three46">
+#opponent{overflow:visible!important}
+#boxer3d{position:absolute;inset:0;z-index:2;display:none;pointer-events:none}
+#boxer3d canvas{display:block;width:100%!important;height:100%!important}
+#opponent.three-ready>svg{visibility:hidden}
+#opponent.three-ready #boxer3d{display:block}
+</style></head><body><section id="menu"><h1>🥊 MOTION BOXING 4.4</h1><p>Fight a full-body opponent with real punches and head movement.</p><button id="one">ONE-HAND BOXING<br><small>Portrait · Hold phone in left hand · Right punches</small></button><button id="two">TWO-HAND BOXING<br><small>Landscape · Phone on stand · Both hands</small></button><p>Keep your face and punching arm(s) in camera view. Good lighting and a stable phone improve tracking. Camera access and internet are required on first launch.</p></section><section id="game"><div id="hud"><div class="hp">YOU<div class="track"><div class="fill" id="playerHp"></div></div></div><div id="clock">01:30</div><div class="hp" style="text-align:right">OPPONENT<div class="track"><div class="fill" id="enemyHp"></div></div></div></div><div id="debug">TRACKER: STARTING</div><div id="arena"><div id="floor"></div><div id="opponent"><div id="boxer3d" aria-label="3D boxer"></div><svg viewBox="0 0 220 360" preserveAspectRatio="xMidYMax meet" aria-label="Shaded full body boxer"><defs><linearGradient id="skin3"><stop stop-color="#693721"/><stop offset=".27" stop-color="#e0a277"/><stop offset=".65" stop-color="#ba704c"/><stop offset="1" stop-color="#54291f"/></linearGradient><linearGradient id="red3"><stop stop-color="#6f0d18"/><stop offset=".3" stop-color="#ff5b60"/><stop offset=".65" stop-color="#d51c2d"/><stop offset="1" stop-color="#590d17"/></linearGradient><linearGradient id="pants3"><stop stop-color="#77151e"/><stop offset=".42" stop-color="#f3434e"/><stop offset="1" stop-color="#82121b"/></linearGradient><linearGradient id="shoes3"><stop stop-color="#101525"/><stop offset=".55" stop-color="#46516c"/><stop offset="1" stop-color="#0a0c15"/></linearGradient><radialGradient id="chest3"><stop stop-color="#e9b38b"/><stop offset=".7" stop-color="#a95e40"/><stop offset="1" stop-color="#6b3629"/></radialGradient></defs>
 <ellipse cx="111" cy="348" rx="79" ry="9" fill="#02050a" opacity=".45"/>
 <g class="boxer-body"><path d="M77 221L106 224 99 321 71 321 66 296Z" fill="url(#skin3)" stroke="#6a3525" stroke-width="2"/><path d="M114 224L146 219 154 318 126 322 117 273Z" fill="url(#skin3)" stroke="#6a3525" stroke-width="2"/><path d="M71 312L100 312 102 347 43 347Q42 331 71 312ZM124 313L154 312 178 347 121 347Z" fill="url(#shoes3)" stroke="#14121b" stroke-width="3"/><path d="M64 199Q109 207 154 198L151 248 115 250 110 229 105 249 61 247Z" fill="url(#pants3)" stroke="#6e1621" stroke-width="2"/><path d="M64 207Q111 214 153 206" fill="none" stroke="#f5e9df" stroke-width="10"/><path d="M108 214V245M86 221L79 242M132 219L140 242" stroke="#6f1522" stroke-width="3" opacity=".5"/>
 <path d="M85 83Q109 70 135 83Q151 93 154 123L143 187Q135 208 110 209Q84 207 75 188L63 122Q66 93 85 83Z" fill="url(#chest3)" stroke="#683a2a" stroke-width="2"/><path d="M82 115Q93 128 107 124M114 124Q130 128 141 112M110 131V193M89 176Q110 186 130 175" fill="none" stroke="#673b2c" stroke-width="3" opacity=".42"/><path d="M94 71H127L128 98Q109 108 92 97Z" fill="url(#skin3)"/>
 <g class="boxer-head"><path d="M77 36Q78 7 111 8Q146 10 146 43L141 72Q129 94 110 94Q88 91 78 69Z" fill="url(#skin3)" stroke="#693526" stroke-width="2"/><path d="M76 43Q69 15 91 12Q115 -1 137 13Q150 20 147 44L136 32 121 25 101 30 86 29Z" fill="#1b1619"/><path d="M90 49L101 48M120 48L132 49" stroke="#2c1717" stroke-width="4" stroke-linecap="round"/><path d="M111 53L106 65 115 66M101 77Q111 83 122 76" stroke="#753c2d" stroke-width="2" fill="none"/><path d="M98 84Q112 95 126 83" stroke="#3a2423" stroke-width="3" opacity=".6"/></g>
 <path d="M77 99Q55 93 48 120L39 163 59 173 79 135Z" fill="url(#skin3)" stroke="#6e3829" stroke-width="2"/><path d="M140 98Q164 91 173 123L183 160 164 174 143 134Z" fill="url(#skin3)" stroke="#6e3829" stroke-width="2"/>
-<g class="leftglove"><path d="M47 132Q17 118 14 144Q9 164 30 178Q53 186 67 162L62 140Z" fill="url(#red3)" stroke="#640b16" stroke-width="3"/><path d="M26 141Q28 132 44 137" stroke="#ffb0a8" stroke-width="4" fill="none" opacity=".6"/><path d="M44 173L57 175" stroke="#f1f0ed" stroke-width="8"/></g><g class="rightglove"><path d="M173 133Q199 120 208 144Q217 166 192 178Q168 183 156 160L161 141Z" fill="url(#red3)" stroke="#640b16" stroke-width="3"/><path d="M178 138Q190 131 199 146" stroke="#ffb0a8" stroke-width="4" fill="none" opacity=".6"/><path d="M169 174L182 174" stroke="#f1f0ed" stroke-width="8"/></g></g></svg></div><div id="message"></div></div><video id="camera" autoplay muted playsinline></video><div id="status"><span id="help">Starting camera…</span><button id="dodgeL">DODGE ◀</button><button id="dodgeR">DODGE ▶</button><button id="duck">DUCK</button><button id="exit">MENU</button></div></section><div id="overlay"><h2 id="result"></h2><p id="resultDetail"></p><button id="again">PLAY AGAIN</button><button id="back">MAIN MENU</button></div><script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5/pose.js"></script><script>
-'use strict';const $=x=>document.getElementById(x);let mode='',pose=null,stream=null,run=false,frameBusy=false,lastFrame=0,raf=0,enemyTimer=0,gameTimer=0,attackTimer=0,clearMsg=0,player=100,enemy=100,seconds=90,score=0,combo=0,warning=null,lastDodge=0,headBase=null,lastHead=null,headReady=false,lastPunch={left:0,right:0},arms={left:{ready:true,prev:null},right:{ready:true,prev:null}},lastCounter=0,enemySide=0,trackedFrames=0,frameTick=0;const video=$('camera');const clamp=(n,a,b)=>Math.min(b,Math.max(a,n));function msg(s,t=700){$('message').textContent=s;clearTimeout(clearMsg);clearMsg=setTimeout(()=>{$('message').textContent=''},t)}function hp(){$('playerHp').style.width=player+'%';$('enemyHp').style.width=enemy+'%'}function setOrientation(o){try{if(window.Android&&typeof window.Android.setOrientation==='function'){window.Android.setOrientation(o);return true;}if(screen.orientation&&screen.orientation.lock&&o!=='unspecified'){screen.orientation.lock(o==='portrait'?'portrait':'landscape').catch(()=>{});return true}}catch(e){console.error(e)}return false}function reset(){player=100;enemy=100;seconds=90;score=0;combo=0;warning=null;headBase=null;lastHead=null;headReady=false;lastPunch={left:0,right:0};arms={left:{ready:true,prev:null,peak:0},right:{ready:true,prev:null,peak:0}};trackedFrames=0;frameTick=0;hp();$('clock').textContent='01:30';$('opponent').className='';$('opponent').style.left='50%';$('overlay').style.display='none'}async function start(m){stop();mode=m;document.body.classList.toggle('two-hand',m==='two');document.body.classList.toggle('one-hand',m==='one');reset();setOrientation(m==='one'?'portrait':'landscape');$('menu').style.display='none';$('game').style.display='block';run=true;$('debug').textContent='MODE: '+(m==='one'?'PORTRAIT':'LANDSCAPE')+' | WAITING FOR CAMERA';$('help').textContent='Allow camera access';try{stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:'user',width:{ideal:640},height:{ideal:480}}});video.srcObject=stream;await video.play();if(!window.Pose)throw Error('Pose tracker could not load. Connect to internet.');pose=new Pose({locateFile:f=>'https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5/'+f});pose.setOptions({modelComplexity:0,smoothLandmarks:true,minDetectionConfidence:.5,minTrackingConfidence:.45});pose.onResults(onPose);$('help').textContent='Move your head to dodge · Punch toward camera';raf=requestAnimationFrame(loop);enemyTimer=setTimeout(enemyAttack,2200);gameTimer=setInterval(()=>{if(!run)return;seconds--;let mm=String(Math.floor(seconds/60)).padStart(2,'0'),ss=String(seconds%60).padStart(2,'0');$('clock').textContent=mm+':'+ss;if(seconds<=0)finish()},1000);msg('FIGHT!',1100)}catch(e){$('help').textContent='Camera error: '+e.message;msg('CAMERA UNAVAILABLE',1800)}}function stop(){run=false;clearTimeout(enemyTimer);clearTimeout(attackTimer);clearInterval(gameTimer);cancelAnimationFrame(raf);if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}video.srcObject=null;if(pose){try{pose.close()}catch(e){}pose=null}}function exit(){stop();document.body.classList.remove('two-hand','one-hand');setOrientation('unspecified');$('overlay').style.display='none';$('game').style.display='none';$('menu').style.display='flex'}async function loop(t){if(!run)return;raf=requestAnimationFrame(loop);if(frameBusy||!pose||video.readyState<2||t-lastFrame<65)return;frameBusy=true;lastFrame=t;try{await pose.send({image:video})}catch(e){$('help').textContent='Tracking error: '+e.message}finally{frameBusy=false}}function visible(p){return p&&p.visibility!==undefined?p.visibility>.48:!!p}function angle(a,b,c){let x=a.x-b.x,y=a.y-b.y,u=c.x-b.x,v=c.y-b.y;return Math.acos(clamp((x*u+y*v)/(Math.hypot(x,y)*Math.hypot(u,v)||1),-1,1))*180/Math.PI}function onPose(r){if(!run)return;let p=r.poseLandmarks;if(!p){$('help').textContent='Move back: show face and arms';$('debug').textContent='NO BODY FOUND | Move back / improve light';return}let nose=p[0],ls=p[11],rs=p[12];if(visible(nose)&&visible(ls)&&visible(rs)){let shoulderWidth=Math.max(.09,Math.hypot(ls.x-rs.x,ls.y-rs.y));let mid=(ls.x+rs.x)/2;let headX=(nose.x-mid)/shoulderWidth;let headY=(nose.y-(ls.y+rs.y)/2)/shoulderWidth;if(!headReady){headBase={x:headX,y:headY};headReady=true}else{let now=performance.now();let dx=headX-headBase.x,dy=headY-headBase.y; // Mirrored front-camera image: negate horizontal motion for intuitive left/right.
+<g class="leftglove"><path d="M47 132Q17 118 14 144Q9 164 30 178Q53 186 67 162L62 140Z" fill="url(#red3)" stroke="#640b16" stroke-width="3"/><path d="M26 141Q28 132 44 137" stroke="#ffb0a8" stroke-width="4" fill="none" opacity=".6"/><path d="M44 173L57 175" stroke="#f1f0ed" stroke-width="8"/></g><g class="rightglove"><path d="M173 133Q199 120 208 144Q217 166 192 178Q168 183 156 160L161 141Z" fill="url(#red3)" stroke="#640b16" stroke-width="3"/><path d="M178 138Q190 131 199 146" stroke="#ffb0a8" stroke-width="4" fill="none" opacity=".6"/><path d="M169 174L182 174" stroke="#f1f0ed" stroke-width="8"/></g></g></svg></div><div id="message"></div><div id="attackCue" aria-live="polite"></div></div><video id="camera" autoplay muted playsinline></video><div id="status"><span id="help">Starting camera…</span><button id="dodgeL">DODGE ◀</button><button id="dodgeR">DODGE ▶</button><button id="duck">DUCK</button><button id="exit">MENU</button></div></section><div id="overlay"><h2 id="result"></h2><p id="resultDetail"></p><button id="again">PLAY AGAIN</button><button id="back">MAIN MENU</button></div><script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5/pose.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js"></script><script>
+'use strict';const $=x=>document.getElementById(x);let mode='',pose=null,stream=null,run=false,frameBusy=false,lastFrame=0,raf=0,enemyTimer=0,gameTimer=0,attackTimer=0,clearMsg=0,player=100,enemy=100,seconds=90,score=0,combo=0,warning=null,lastDodge=0,headBase=null,lastHead=null,headReady=false,lastPunch={left:0,right:0},arms={left:{ready:true,prev:null},right:{ready:true,prev:null}},lastCounter=0,enemySide=0,trackedFrames=0,frameTick=0;const video=$('camera');const clamp=(n,a,b)=>Math.min(b,Math.max(a,n));function msg(s,t=700){$('message').textContent=s;clearTimeout(clearMsg);clearMsg=setTimeout(()=>{$('message').textContent=''},t)}function hp(){$('playerHp').style.width=player+'%';$('enemyHp').style.width=enemy+'%'}function setOrientation(o){try{if(window.Android&&typeof window.Android.setOrientation==='function'){window.Android.setOrientation(o);return true;}if(screen.orientation&&screen.orientation.lock&&o!=='unspecified'){screen.orientation.lock(o==='portrait'?'portrait':'landscape').catch(()=>{});return true}}catch(e){console.error(e)}return false}function reset(){$('attackCue').classList.remove('active');player=100;enemy=100;seconds=90;score=0;combo=0;warning=null;headBase=null;lastHead=null;headReady=false;lastPunch={left:0,right:0};arms={left:{ready:true,prev:null,peak:0},right:{ready:true,prev:null,peak:0}};trackedFrames=0;frameTick=0;hp();$('clock').textContent='01:30';$('opponent').className='';$('opponent').style.left='50%';$('overlay').style.display='none'}async function start(m){stop();mode=m;document.body.classList.toggle('two-hand',m==='two');document.body.classList.toggle('one-hand',m==='one');reset();setOrientation(m==='one'?'portrait':'landscape');$('menu').style.display='none';$('game').style.display='block';run=true;$('debug').textContent='MODE: '+(m==='one'?'PORTRAIT':'LANDSCAPE')+' | WAITING FOR CAMERA';$('help').textContent='Allow camera access';try{stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:'user',width:{ideal:640},height:{ideal:480}}});video.srcObject=stream;await video.play();if(!window.Pose)throw Error('Pose tracker could not load. Connect to internet.');pose=new Pose({locateFile:f=>'https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5/'+f});pose.setOptions({modelComplexity:0,smoothLandmarks:true,minDetectionConfidence:.5,minTrackingConfidence:.45});pose.onResults(onPose);$('help').textContent='Move your head to dodge · Punch toward camera';raf=requestAnimationFrame(loop);enemyTimer=setTimeout(enemyAttack,2200);gameTimer=setInterval(()=>{if(!run)return;seconds--;let mm=String(Math.floor(seconds/60)).padStart(2,'0'),ss=String(seconds%60).padStart(2,'0');$('clock').textContent=mm+':'+ss;if(seconds<=0)finish()},1000);msg('FIGHT!',1100)}catch(e){$('help').textContent='Camera error: '+e.message;msg('CAMERA UNAVAILABLE',1800)}}function stop(){$('attackCue').classList.remove('active');$('opponent').classList.remove('attack-left','attack-right');run=false;clearTimeout(enemyTimer);clearTimeout(attackTimer);clearInterval(gameTimer);cancelAnimationFrame(raf);if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}video.srcObject=null;if(pose){try{pose.close()}catch(e){}pose=null}}function exit(){stop();document.body.classList.remove('two-hand','one-hand');setOrientation('unspecified');$('overlay').style.display='none';$('game').style.display='none';$('menu').style.display='flex'}async function loop(t){if(!run)return;raf=requestAnimationFrame(loop);if(frameBusy||!pose||video.readyState<2||t-lastFrame<65)return;frameBusy=true;lastFrame=t;try{await pose.send({image:video})}catch(e){$('help').textContent='Tracking error: '+e.message}finally{frameBusy=false}}function visible(p){return p&&p.visibility!==undefined?p.visibility>.48:!!p}function angle(a,b,c){let x=a.x-b.x,y=a.y-b.y,u=c.x-b.x,v=c.y-b.y;return Math.acos(clamp((x*u+y*v)/(Math.hypot(x,y)*Math.hypot(u,v)||1),-1,1))*180/Math.PI}function onPose(r){if(!run)return;let p=r.poseLandmarks;if(!p){$('help').textContent='Move back: show face and arms';$('debug').textContent='NO BODY FOUND | Move back / improve light';return}let nose=p[0],ls=p[11],rs=p[12];if(visible(nose)&&visible(ls)&&visible(rs)){let shoulderWidth=Math.max(.09,Math.hypot(ls.x-rs.x,ls.y-rs.y));let mid=(ls.x+rs.x)/2;let headX=(nose.x-mid)/shoulderWidth;let headY=(nose.y-(ls.y+rs.y)/2)/shoulderWidth;if(!headReady){headBase={x:headX,y:headY};headReady=true}else{let now=performance.now();let dx=headX-headBase.x,dy=headY-headBase.y; // Mirrored front-camera image: negate horizontal motion for intuitive left/right.
 if(now-lastDodge>440){if(dx<-.23){dodge('left');lastDodge=now}else if(dx>.23){dodge('right');lastDodge=now}else if(dy>.30){dodge('duck');lastDodge=now}}if(Math.abs(dx)<.16&&Math.abs(dy)<.17){headBase.x=headBase.x*.996+headX*.004;headBase.y=headBase.y*.996+headY*.004}lastHead={x:dx,y:dy};} }
 let debugParts=[];
 for(let side of (mode==='one'?['right']:['left','right'])){
@@ -45,5 +63,127 @@ for(let side of (mode==='one'?['right']:['left','right'])){
 }
 if(performance.now()-frameTick>200){frameTick=performance.now();$('debug').textContent='CAMERA TRACKING | '+debugParts.join(' | ');}
 $('help').textContent=mode==='one'?'RIGHT PUNCH · HEAD DODGE':'BOTH HANDS · HEAD DODGE';}function punch(side){if(!run)return;let now=performance.now();if(warning&&now<warning.impact){ // attacking during windup is allowed
-}let dodges=Math.random()<.27;let el=$('opponent');if(dodges){let dir=Math.random()<.5?-1:1;enemySide=clamp(enemySide+dir*11,-22,22);el.style.left=(50+enemySide)+'%';el.classList.add('dodging');msg('OPPONENT DODGED!',550);setTimeout(()=>el.classList.remove('dodging'),300);combo=0;return}let damage=mode==='one'?9:7;if(now-lastCounter<1700)damage+=4;enemy=clamp(enemy-damage,0,100);score+=damage;combo++;hp();el.classList.add('hit');setTimeout(()=>el.classList.remove('hit'),160);msg((side==='left'?'LEFT':'RIGHT')+' HIT!'+(combo>1?' COMBO x'+combo:''),440);if(enemy<=0)finish()}function dodge(direction){if(!run||!warning)return;let now=performance.now();if(now>warning.impact||now<warning.impact-1100)return;if(direction===warning.direction||(direction==='duck'&&warning.kind==='hook')){warning.dodged=true;lastCounter=now;score+=5;msg('PERFECT DODGE! +5',600)}else{msg('WRONG DIRECTION!',450)}}function enemyAttack(){if(!run)return;let direction=Math.random()<.5?'left':'right';let kind=Math.random()<.25?'hook':'straight';let delay=950;warning={direction,kind,impact:performance.now()+delay,dodged:false};msg((direction==='left'?'LEFT':'RIGHT')+' '+(kind==='hook'?'HOOK':'PUNCH')+'! DODGE '+direction.toUpperCase(),delay-100);attackTimer=setTimeout(()=>{if(!run)return;let w=warning;warning=null;$('opponent').classList.add('attack');setTimeout(()=>$('opponent').classList.remove('attack'),260);if(w&&!w.dodged){let damage=kind==='hook'?13:10;player=clamp(player-damage,0,100);hp();combo=0;msg('YOU WERE HIT! -'+damage,650);if(player<=0){finish();return}}else msg('MISSED!',420);enemyTimer=setTimeout(enemyAttack,1400+Math.random()*950)},delay)}function finish(){if(!run)return;let won=enemy<=0||(seconds<=0&&player>=enemy);let title=enemy<=0?'KNOCKOUT!':player<=0?'YOU WERE KNOCKED OUT':won?'YOU WIN!':'YOU LOSE';if(enemy<=0)$('opponent').classList.add('ko');stop();$('result').textContent=title;$('resultDetail').textContent='Your Health: '+player+'% · Opponent Health: '+enemy+'% · Score: '+score;$('overlay').style.display='flex'}$('one').onclick=()=>start('one');$('two').onclick=()=>start('two');$('exit').onclick=exit;$('back').onclick=exit;$('again').onclick=()=>start(mode);$('dodgeL').onclick=()=>dodge('left');$('dodgeR').onclick=()=>dodge('right');$('duck').onclick=()=>dodge('duck');document.addEventListener('visibilitychange',()=>{if(document.hidden&&run){msg('PAUSED - RETURN TO GAME',2000)}});
+}let dodges=Math.random()<.27;let el=$('opponent');if(dodges){let dir=Math.random()<.5?-1:1;enemySide=clamp(enemySide+dir*11,-22,22);el.style.left=(50+enemySide)+'%';el.classList.add('dodging');msg('OPPONENT DODGED!',550);setTimeout(()=>el.classList.remove('dodging'),300);combo=0;return}let damage=mode==='one'?9:7;if(now-lastCounter<1700)damage+=4;enemy=clamp(enemy-damage,0,100);score+=damage;combo++;hp();el.classList.add('hit');setTimeout(()=>el.classList.remove('hit'),160);msg((side==='left'?'LEFT':'RIGHT')+' HIT!'+(combo>1?' COMBO x'+combo:''),440);if(enemy<=0)finish()}function dodge(direction){if(!run||!warning)return;let now=performance.now();if(now>warning.impact||now<warning.impact-1100)return;if(direction===warning.direction||(direction==='duck'&&warning.kind==='hook')){warning.dodged=true;lastCounter=now;score+=5;msg('PERFECT DODGE! +5',600)}else{msg('WRONG DIRECTION!',450)}}function enemyAttack(){
+ if(!run)return;
+ const direction=Math.random()<.5?'left':'right';
+ const kind=Math.random()<.25?'hook':'straight';
+ const delay=1650; // More time to read the cue and move your head.
+ const cue=$('attackCue');
+ warning={direction,kind,impact:performance.now()+delay,dodged:false};
+ cue.textContent='DODGE '+direction.toUpperCase()+'  ◀ ▶';
+ cue.classList.add('active');
+ // Show only the punching arm during the wind-up.
+ const boxer=$('opponent');
+ boxer.classList.remove('attack','attack-left','attack-right');
+ boxer.classList.add(direction==='left'?'attack-left':'attack-right');
+ attackTimer=setTimeout(()=>{
+  if(!run)return;
+  const w=warning;
+  warning=null;
+  cue.classList.remove('active');
+  boxer.classList.remove('attack-left','attack-right');
+  if(w&&!w.dodged){
+   const damage=kind==='hook'?13:10;
+   player=clamp(player-damage,0,100);hp();combo=0;
+   msg('YOU WERE HIT! -'+damage,700);
+   if(player<=0){finish();return}
+  }else msg('MISSED!',650);
+  enemyTimer=setTimeout(enemyAttack,1600+Math.random()*900);
+ },delay);
+}
+function finish(){if(!run)return;let won=enemy<=0||(seconds<=0&&player>=enemy);let title=enemy<=0?'KNOCKOUT!':player<=0?'YOU WERE KNOCKED OUT':won?'YOU WIN!':'YOU LOSE';if(enemy<=0)$('opponent').classList.add('ko');stop();$('result').textContent=title;$('resultDetail').textContent='Your Health: '+player+'% · Opponent Health: '+enemy+'% · Score: '+score;$('overlay').style.display='flex'}$('one').onclick=()=>start('one');$('two').onclick=()=>start('two');$('exit').onclick=exit;$('back').onclick=exit;$('again').onclick=()=>start(mode);$('dodgeL').onclick=()=>dodge('left');$('dodgeR').onclick=()=>dodge('right');$('duck').onclick=()=>dodge('duck');document.addEventListener('visibilitychange',()=>{if(document.hidden&&run){msg('PAUSED - RETURN TO GAME',2000)}});
+
+// 3D opponent: visual layer only. Pose tracking, scoring and orientation remain unchanged.
+(function(){
+ const mount=document.getElementById('boxer3d'),root=document.getElementById('opponent');
+ if(!window.THREE||!mount)return;
+ try{
+ const T=THREE,scene=new T.Scene(),cam=new T.PerspectiveCamera(34,1,.1,100);
+ cam.position.set(0,2.0,9.6);cam.lookAt(0,1.9,0);
+ const renderer=new T.WebGLRenderer({alpha:true,antialias:true,powerPreference:'low-power'});
+ renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.7));
+ renderer.setClearColor(0x000000,0);
+ renderer.outputColorSpace=T.SRGBColorSpace;
+ mount.appendChild(renderer.domElement);
+ scene.add(new T.HemisphereLight(0xddeeff,0x3d2530,2.0));
+ const key=new T.DirectionalLight(0xffe0c0,3.5);key.position.set(-3,7,6);scene.add(key);
+ const rim=new T.DirectionalLight(0x9bc8ff,2.4);rim.position.set(3,5,-4);scene.add(rim);
+ const mat=(c,rough=.65,metal=0)=>new T.MeshStandardMaterial({color:c,roughness:rough,metalness:metal});
+ const skin=mat(0xb97851,.85),skinLight=mat(0xc88862,.82),shadow=mat(0x78412f,.9);
+ const hair=mat(0x201714,.98),beard=mat(0x30201c,.99),red=mat(0xb9001e,.25,.08);
+ const redLight=mat(0xe31d32,.26,.05),white=mat(0xe7e7e2,.55),shorts=mat(0x991321,.65);
+ const shoes=mat(0x1b2029,.55),sole=mat(0xf1f1ed,.8),eyes=mat(0x181413,.4);
+ const boxer=new T.Group();scene.add(boxer);
+ const sphere=(parent,r,material,x,y,z,sx=1,sy=1,sz=1)=>{
+  const o=new T.Mesh(new T.SphereGeometry(r,20,14),material);
+  o.position.set(x,y,z);o.scale.set(sx,sy,sz);parent.add(o);return o
+ };
+ const cyl=(parent,rt,rb,h,material,x,y,z,rotation=0)=>{
+  const o=new T.Mesh(new T.CylinderGeometry(rt,rb,h,16),material);
+  o.position.set(x,y,z);o.rotation.z=rotation;parent.add(o);return o
+ };
+ // Proportions are built from shaded 3D geometry, not a background image.
+ sphere(boxer,.72,skin,0,2.45,0,1.03,1.15,.62);
+ sphere(boxer,.55,skinLight,0,2.9,.23,1.28,.48,.65);
+ sphere(boxer,.36,shadow,0,1.85,0,1.05,.6,.65);
+ cyl(boxer,.59,.49,.5,shorts,0,1.55,0);
+ cyl(boxer,.58,.58,.12,white,0,1.81,0);
+ for(const side of [-1,1]){
+  cyl(boxer,.25,.22,.72,skin,side*.29,1.0,0,side*.1);
+  sphere(boxer,.23,skin,side*.29,.66,.02,1,.9,1);
+  cyl(boxer,.17,.14,.65,skin,side*.30,.37,.07);
+  sphere(boxer,.21,shoes,side*.30,.11,.25,1.05,.55,1.7);
+  sphere(boxer,.27,skinLight,side*.58,2.87,.12,1.05,1.2,.88);
+ }
+ // Face: brow, nose, ears, eyes, stubble and sculpted hair.
+ cyl(boxer,.17,.16,.22,skin,0,3.28,.05);
+ sphere(boxer,.45,skinLight,0,3.66,.12,1,.96,.87);
+ sphere(boxer,.42,hair,0,4.02,.04,1.05,.46,1.02);
+ for(const side of [-1,1]){
+  sphere(boxer,.09,skin,side*.45,3.63,.10);
+  sphere(boxer,.055,eyes,side*.17,3.69,.49,1.15,.5,.45);
+  sphere(boxer,.16,hair,side*.21,4.12,.14,.9,.45,.8);
+  sphere(boxer,.12,beard,side*.24,3.40,.33,.9,.55,.5);
+  sphere(boxer,.13,skin,side*.17,3.58,.48,.5,.7,.45);
+ }
+ sphere(boxer,.12,skinLight,0,3.53,.54,.55,.85,1.1);
+ sphere(boxer,.22,beard,0,3.35,.30,1.2,.5,.65);
+ // Independent pivot joints make punches and dodges physically legible.
+ const arms={};
+ for(const side of [-1,1]){
+  const pivot=new T.Group();pivot.position.set(side*.72,2.88,.04);boxer.add(pivot);
+  sphere(pivot,.22,skinLight,0,0,0);
+  cyl(pivot,.22,.18,.57,skin,side*.11,-.26,.11,side*.23);
+  sphere(pivot,.18,skin,side*.18,-.51,.24);
+  cyl(pivot,.16,.15,.5,skin,side*.12,-.63,.39,-side*.14);
+  cyl(pivot,.19,.19,.19,white,side*.10,-.79,.53);
+  sphere(pivot,.34,red,side*.10,-.86,.72,1.03,1.06,1.1);
+  sphere(pivot,.21,redLight,side*.26,-.83,.94,.82,.7,.72);
+  arms[side===-1?'left':'right']=pivot;
+ }
+ function resize(){
+  const w=Math.max(1,mount.clientWidth),h=Math.max(1,mount.clientHeight);
+  renderer.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();
+ }
+ const observer=new ResizeObserver(resize);observer.observe(mount);resize();
+ root.classList.add('three-ready');
+ function animate(time){
+  if(!mount.isConnected)return;
+  requestAnimationFrame(animate);
+  if(mount.clientWidth<1||mount.clientHeight<1)return;
+  const t=time*.001,bob=Math.sin(t*5)*.045;
+  boxer.position.y=bob;
+  boxer.rotation.z=root.classList.contains('dodging')?Math.sin(t*15)*.18:Math.sin(t*2)*.018;
+  boxer.rotation.x=root.classList.contains('hit')?-.12:0;
+  for(const [side,pivot] of Object.entries(arms)){
+   const active=root.classList.contains('attack-'+side);
+   pivot.rotation.x=active?-1.25:-.14+Math.sin(t*5+(side==='left'?0:2))*.055;
+   pivot.rotation.z=side==='left'?(active?.12:-.08):(active?-.12:.08);
+  }
+  if(root.classList.contains('ko'))boxer.rotation.z=1.2;
+  renderer.render(scene,cam);
+ }
+ requestAnimationFrame(animate);
+ }catch(e){console.warn('3D unavailable, using SVG boxer',e)}
+})();
 </script></body></html>
