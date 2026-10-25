@@ -1,40 +1,71 @@
-<!doctype html>
-<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Motion Boxing — Boxer Load</title>
-<style>body{margin:0;background:#101723;color:white;font:16px system-ui;text-align:center}h2{margin:14px 0}#stage{height:75vh;width:100%}#status{color:#ffd476;padding:10px;overflow-wrap:anywhere}button{background:#df303c;color:white;border:0;border-radius:9px;padding:12px 20px}</style>
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}</script>
-</head><body><h2>🥊 Motion Boxing — Boxer</h2><div id="status">Loading boxer…</div><div id="stage"></div><button onclick="location.reload()">Reload</button>
-<script type="module">
-const status=document.getElementById('status');
-window.addEventListener('error',e=>status.textContent='JavaScript error: '+e.message);
-window.addEventListener('unhandledrejection',e=>status.textContent='Error: '+String(e.reason));
-try {
-const THREE=await import('three');
-const {GLTFLoader}=await import('three/addons/loaders/GLTFLoader.js');
-const stage=document.getElementById('stage');
-const scene=new THREE.Scene();scene.background=new THREE.Color(0x101723);
-const camera=new THREE.PerspectiveCamera(40,stage.clientWidth/Math.max(stage.clientHeight,1),0.01,100);
-const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(stage.clientWidth,stage.clientHeight);stage.appendChild(renderer.domElement);
-scene.add(new THREE.HemisphereLight(0xffffff,0x667788,2.5));const light=new THREE.DirectionalLight(0xffffff,2);light.position.set(3,5,7);scene.add(light);
-status.textContent='Loading boxer.glb…';
-const gltf=await new GLTFLoader().loadAsync('./boxer.glb');
-const boxer=gltf.scene;scene.add(boxer);
-// Original character's geometry uses Z as vertical, as in the game.
-boxer.rotation.x=-Math.PI/2;boxer.rotation.y=Math.PI;
-boxer.updateMatrixWorld(true);
-let bounds=new THREE.Box3().setFromObject(boxer);
-if(bounds.isEmpty())throw new Error('Model geometry is empty');
-const center=bounds.getCenter(new THREE.Vector3());const size=bounds.getSize(new THREE.Vector3());
-const maxDim=Math.max(size.x,size.y,size.z);
-boxer.scale.multiplyScalar(3.5/maxDim);
-boxer.position.sub(center.multiplyScalar(3.5/maxDim));
-boxer.updateMatrixWorld(true);
-bounds=new THREE.Box3().setFromObject(boxer);
-const fittedCenter=bounds.getCenter(new THREE.Vector3());
-camera.position.copy(fittedCenter).add(new THREE.Vector3(0,0,Math.max(5.5,bounds.getSize(new THREE.Vector3()).length()*1.4)));
-camera.lookAt(fittedCenter);
-status.textContent='✓ Boxer loaded!';
-function animate(){requestAnimationFrame(animate);renderer.render(scene,camera)}animate();
-window.addEventListener('resize',()=>{camera.aspect=stage.clientWidth/Math.max(stage.clientHeight,1);camera.updateProjectionMatrix();renderer.setSize(stage.clientWidth,stage.clientHeight)});
-} catch(e){status.textContent='Loading failed: '+(e?.message||String(e));}
+<!doctype html><html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Motion Boxing — Animated Rig Demo</title><style>*{box-sizing:border-box}body{margin:0;background:#0b1020;color:white;font:15px system-ui}header{padding:12px;text-align:center;font-weight:800}#stage{height:70vh;min-height:360px;position:relative}#status{position:absolute;top:8px;left:12px;color:#a5f3fc;font-size:12px}#controls{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:12px}button{background:#e53747;color:white;border:0;border-radius:9px;padding:12px;font-weight:700}small{display:block;text-align:center;color:#adb7d3;padding:5px 15px}</style></head><body><header>🥊 MOTION BOXING — ANIMATED BOXER V2</header><div id="stage"><div id="status">Loading 3D engine…</div></div><div id="controls"><button data-move="jab">LEFT JAB</button><button data-move="cross">RIGHT CROSS</button><button data-move="hookL">LEFT HOOK</button><button data-move="hookR">RIGHT HOOK</button><button data-move="dodgeL">DODGE LEFT</button><button data-move="dodgeR">DODGE RIGHT</button><button data-move="guard">GUARD</button><button data-move="idle">IDLE</button></div><small>यह नया procedural articulated boxer है; पुरानी boxer.glb की animation नहीं।</small><script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js';
+const status=document.getElementById('status'),host=document.getElementById('stage');
+try{
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x111a31);
+const camera=new THREE.PerspectiveCamera(36,host.clientWidth/host.clientHeight,.1,100);camera.position.set(0,2.1,8.7);camera.lookAt(0,1.85,0);
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(host.clientWidth,host.clientHeight);renderer.shadowMap.enabled=true;host.appendChild(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xdbeafe,0x263248,2.3));const key=new THREE.DirectionalLight(0xffffff,3);key.position.set(-3,8,6);scene.add(key);
+const mat=(color,roughness=.8)=>new THREE.MeshStandardMaterial({color,roughness});const skin=mat(0xc98a63),shirt=mat(0x2172a9),shorts=mat(0x171c2a),red=mat(0xe72c42,.4),black=mat(0x10141e),white=mat(0xf3f5f7),hair=mat(0x15151b);
+const boxer=new THREE.Group();scene.add(boxer);
+function part(parent,geometry,material,x=0,y=0,z=0){let mesh=new THREE.Mesh(geometry,material);mesh.position.set(x,y,z);parent.add(mesh);return mesh}
+const sphere=(parent,material,x,y,z,sx,sy,sz)=>{let m=part(parent,new THREE.SphereGeometry(1,20,14),material,x,y,z);m.scale.set(sx,sy,sz);return m};
+const capsule=(parent,material,x,y,z,r,length)=>part(parent,new THREE.CapsuleGeometry(r,length,8,16),material,x,y,z);
+// Torso pivots around the waist, head and each arm have separate joint parents.
+const torso=new THREE.Group();torso.position.y=1.25;boxer.add(torso);
+sphere(torso,shirt,0,.65,0,.61,.82,.35);sphere(torso,skin,0,1.55,0,.28,.3,.27);sphere(torso,hair,0,1.75,-.02,.29,.16,.28);
+// Open eyes: visible white eyeballs, dark irises and black pupils.
+for(const side of [-1,1]){
+  sphere(torso,white,side*.115,1.60,.251,.082,.066,.047);
+  sphere(torso,mat(0x533b29),side*.115,1.60,.296,.038,.043,.013);
+  sphere(torso,black,side*.115,1.60,.307,.023,.029,.010);
+  sphere(torso,white,side*.105,1.617,.318,.009,.009,.004);
+  sphere(torso,hair,side*.115,1.70,.248,.096,.025,.038);
+}
+const nose=sphere(torso,skin,0,1.51,.29,.09,.12,.11);sphere(torso,hair,0,1.35,.245,.17,.055,.035);
+sphere(boxer,shorts,0,1.25,0,.48,.4,.33);
+for(const s of [-1,1]){capsule(boxer,skin,s*.24,.65,0,.20,.73);sphere(boxer,black,s*.24,.17,.13,.25,.17,.39);sphere(boxer,shorts,s*.24,1.05,0,.28,.30,.29)}
+const arms={};for(const s of [-1,1]){
+const shoulder=new THREE.Group();shoulder.position.set(s*.53,1.14,0);torso.add(shoulder);
+sphere(shoulder,shirt,0,-.12,0,.26,.34,.27);
+const upper=capsule(shoulder,skin,0,-.37,0,.18,.42);
+const elbow=new THREE.Group();elbow.position.set(0,-.66,0);shoulder.add(elbow);
+capsule(elbow,skin,0,-.30,0,.15,.38);
+const glove=new THREE.Group();glove.position.set(0,-.62,0);elbow.add(glove);
+sphere(glove,red,0,-.02,.02,.25,.27,.29);sphere(glove,red,s*-.14,-.08,.19,.12,.15,.16);sphere(glove,white,0,.23,0,.16,.065,.17);
+arms[s===-1?'left':'right']={shoulder,elbow,glove,s};
+}
+// A pose is expressed through shoulder/elbow rotations, i.e. an actual articulated joint hierarchy.
+// Both hands are jointed: shoulder and elbow rotations are interpolated each frame.
+const idlePose={left:[-.35,-.10,-1.20,0],right:[-.35,.10,-1.20,0]};
+const guardPose={left:[-.88,-.26,-2.10,0],right:[-.88,.26,-2.10,0]};
+const state={move:'idle',start:0,duration:0,holding:false};
+function play(move){state.move=move;state.start=performance.now();state.holding=(move==='guard');state.duration=(move==='guard'||move==='idle')?0:move.startsWith('dodge')?750:700;}
+document.querySelectorAll('button').forEach(b=>b.onclick=()=>play(b.dataset.move));
+function smooth(t){return t*t*(3-2*t)}
+function apply(a,base,ext,w){a.shoulder.rotation.x=base[0]+(ext[0]-base[0])*w;a.shoulder.rotation.z=base[1]*a.s+(ext[1]-base[1])*a.s*w;a.elbow.rotation.x=base[2]+(ext[2]-base[2])*w;a.elbow.rotation.z=(base[3]+(ext[3]-base[3])*w)*a.s;}
+function loop(now){
+ requestAnimationFrame(loop);
+ const t=now*.001;
+ let w=0;
+ if(state.duration){const u=(now-state.start)/state.duration;if(u>=1){state.duration=0;state.move='idle';}else w=Math.sin(Math.PI*smooth(Math.max(0,u)));}
+ const base=state.move==='guard'?guardPose:idlePose;
+ const l=base.left,r=base.right;let le=l,re=r;
+ if(state.move==='jab')le=[-1.68,-.10,-.10,0];
+ if(state.move==='cross')re=[-1.68,.10,-.10,0];
+ if(state.move==='hookL')le=[-1.30,-.85,-1.50,0];
+ if(state.move==='hookR')re=[-1.30,.85,-1.50,0];
+ // Guard remains raised until another button is pressed.
+ apply(arms.left,l,le,w);apply(arms.right,r,re,w);
+ const dodge=(state.move==='dodgeL'?.34*w:state.move==='dodgeR'?-.34*w:0);
+ torso.rotation.z=dodge+Math.sin(t*2)*.018;
+ torso.rotation.y=(state.move==='cross'?.24*w:state.move==='hookL'?-.24*w:state.move==='hookR'?.24*w:0)+Math.sin(t)*.025;
+ torso.position.y=1.25+Math.sin(t*3)*.028;
+ boxer.rotation.y=Math.sin(t*.6)*.025;
+ status.textContent='✓ Boxer ready — '+(state.move==='guard'?'GUARD ACTIVE':state.move==='idle'?'IDLE':state.move.toUpperCase());
+ renderer.render(scene,camera);
+}
+window.addEventListener('resize',()=>{camera.aspect=host.clientWidth/host.clientHeight;camera.updateProjectionMatrix();renderer.setSize(host.clientWidth,host.clientHeight)});
+status.textContent='✓ Animated 3D boxer ready';requestAnimationFrame(loop);
+}catch(e){status.textContent='Error: '+e.message;console.error(e)}
 </script></body></html>
