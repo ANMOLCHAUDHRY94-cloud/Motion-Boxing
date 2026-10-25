@@ -1,16 +1,40 @@
-<!doctype html><html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Motion Boxing — Animation Test</title><style>body{margin:0;background:#101723;color:white;font:15px system-ui;text-align:center}h2{margin:12px}#stage{height:70vh}button{background:#df303c;color:white;border:0;border-radius:9px;padding:13px;margin:5px;font-weight:bold}#status{color:#f4c76c;padding:8px}</style></head><body><h2>🥊 Animated Boxer — Test</h2><div id="status">Loading model… (Internet required)</div><div id="stage"></div><button id="idle">Guard / Idle</button><button id="jab">Left Jab</button><button id="cross">Right Cross</button><p>यह अलग animation प्रयोग है, गेम अपडेट नहीं।</p><script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}</script><script type="module">
-import * as THREE from 'three';
-import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
-window.addEventListener('error',e=>{document.getElementById('status').textContent='JavaScript error: '+e.message});window.addEventListener('unhandledrejection',e=>{document.getElementById('status').textContent='Load error: '+e.reason});const stage=document.getElementById('stage'), status=document.getElementById('status');const scene=new THREE.Scene();scene.background=new THREE.Color('#101723');const camera=new THREE.PerspectiveCamera(38,stage.clientWidth/stage.clientHeight,.01,100);const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setSize(stage.clientWidth,stage.clientHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));stage.appendChild(renderer.domElement);scene.add(new THREE.HemisphereLight(0xffffff,0x586177,2));const light=new THREE.DirectionalLight(0xffffff,2.5);light.position.set(2,4,6);scene.add(light);
-let boxer, left,right,mode='idle',start=performance.now(),ready=false;
-const arms=[['Deltoid_-1','Bicep_upper_-1','Elbow_-1','Forearm_-1','Forearm_tendon_-1','Glove_gauntlet_-1','Red_boxing_glove_-1','Knuckle_pad_-1','Glove_thumb_-1','Glove_velcro_band_-1','Glove_brand_patch_-1','Glove_seam_-1_0','Glove_seam_-1_1'],['Deltoid_1','Bicep_upper_1','Elbow_1','Forearm_1','Forearm_tendon_1','Glove_gauntlet_1','Red_boxing_glove_1','Knuckle_pad_1','Glove_thumb_1','Glove_velcro_band_1','Glove_brand_patch_1','Glove_seam_1_0','Glove_seam_1_1']];
-new GLTFLoader().load('./boxer.glb',g=>{boxer=g.scene;scene.add(boxer);boxer.updateMatrixWorld(true);
-const box=new THREE.Box3().setFromObject(boxer), sz=box.getSize(new THREE.Vector3()), c=box.getCenter(new THREE.Vector3());const max=Math.max(sz.x,sz.y,sz.z);boxer.scale.setScalar(2.8/max);boxer.position.sub(c.multiplyScalar(2.8/max));boxer.updateMatrixWorld(true);
-// This model was built along Z; rotate the entire character upright as in game v5.5.
-boxer.rotation.x=-Math.PI/2;boxer.rotation.y=Math.PI;boxer.updateMatrixWorld(true);
-const makeArm=(names)=>{let shoulder=boxer.getObjectByName(names[0]);if(!shoulder)throw Error('Missing '+names[0]);let p=new THREE.Vector3();shoulder.getWorldPosition(p);let local=boxer.worldToLocal(p.clone());let pivot=new THREE.Group();pivot.position.copy(local);boxer.add(pivot);boxer.updateMatrixWorld(true);for(let name of names){let mesh=boxer.getObjectByName(name);if(mesh)pivot.attach(mesh);}return pivot;};
-left=makeArm(arms[0]);right=makeArm(arms[1]);camera.position.set(0,0,5.8);camera.lookAt(0,0,0);ready=true;status.textContent='Model loaded ✓ — Guard / Jab / Cross test';},undefined,e=>{status.textContent='Model loading failed: '+e.message+' — ZIP extract करके local server पर चलाएँ';});
-for(const id of ['idle','jab','cross'])document.getElementById(id).onclick=()=>{mode=id;start=performance.now()};
-function loop(t){requestAnimationFrame(loop);if(ready){const sec=t/1000,phase=(t-start)/1000;boxer.position.y=Math.sin(sec*2.5)*.028;boxer.rotation.z=Math.sin(sec*1.4)*.018;left.rotation.set(.10+Math.sin(sec*3)*.025,0,-.06);right.rotation.set(.10-Math.sin(sec*3)*.025,0,.06);let a=Math.sin(Math.min(phase/.32,1)*Math.PI)*.95;if(mode==='jab'){left.rotation.x=-a;left.rotation.z=-a*.15;}if(mode==='cross'){right.rotation.x=-a;right.rotation.z=a*.15;}if(phase>.7)mode='idle';}renderer.render(scene,camera)}requestAnimationFrame(loop);
-window.addEventListener('resize',()=>{camera.aspect=stage.clientWidth/stage.clientHeight;camera.updateProjectionMatrix();renderer.setSize(stage.clientWidth,stage.clientHeight)});
+<!doctype html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Motion Boxing — Boxer Load</title>
+<style>body{margin:0;background:#101723;color:white;font:16px system-ui;text-align:center}h2{margin:14px 0}#stage{height:75vh;width:100%}#status{color:#ffd476;padding:10px;overflow-wrap:anywhere}button{background:#df303c;color:white;border:0;border-radius:9px;padding:12px 20px}</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}</script>
+</head><body><h2>🥊 Motion Boxing — Boxer</h2><div id="status">Loading boxer…</div><div id="stage"></div><button onclick="location.reload()">Reload</button>
+<script type="module">
+const status=document.getElementById('status');
+window.addEventListener('error',e=>status.textContent='JavaScript error: '+e.message);
+window.addEventListener('unhandledrejection',e=>status.textContent='Error: '+String(e.reason));
+try {
+const THREE=await import('three');
+const {GLTFLoader}=await import('three/addons/loaders/GLTFLoader.js');
+const stage=document.getElementById('stage');
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x101723);
+const camera=new THREE.PerspectiveCamera(40,stage.clientWidth/Math.max(stage.clientHeight,1),0.01,100);
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(stage.clientWidth,stage.clientHeight);stage.appendChild(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xffffff,0x667788,2.5));const light=new THREE.DirectionalLight(0xffffff,2);light.position.set(3,5,7);scene.add(light);
+status.textContent='Loading boxer.glb…';
+const gltf=await new GLTFLoader().loadAsync('./boxer.glb');
+const boxer=gltf.scene;scene.add(boxer);
+// Original character's geometry uses Z as vertical, as in the game.
+boxer.rotation.x=-Math.PI/2;boxer.rotation.y=Math.PI;
+boxer.updateMatrixWorld(true);
+let bounds=new THREE.Box3().setFromObject(boxer);
+if(bounds.isEmpty())throw new Error('Model geometry is empty');
+const center=bounds.getCenter(new THREE.Vector3());const size=bounds.getSize(new THREE.Vector3());
+const maxDim=Math.max(size.x,size.y,size.z);
+boxer.scale.multiplyScalar(3.5/maxDim);
+boxer.position.sub(center.multiplyScalar(3.5/maxDim));
+boxer.updateMatrixWorld(true);
+bounds=new THREE.Box3().setFromObject(boxer);
+const fittedCenter=bounds.getCenter(new THREE.Vector3());
+camera.position.copy(fittedCenter).add(new THREE.Vector3(0,0,Math.max(5.5,bounds.getSize(new THREE.Vector3()).length()*1.4)));
+camera.lookAt(fittedCenter);
+status.textContent='✓ Boxer loaded!';
+function animate(){requestAnimationFrame(animate);renderer.render(scene,camera)}animate();
+window.addEventListener('resize',()=>{camera.aspect=stage.clientWidth/Math.max(stage.clientHeight,1);camera.updateProjectionMatrix();renderer.setSize(stage.clientWidth,stage.clientHeight)});
+} catch(e){status.textContent='Loading failed: '+(e?.message||String(e));}
 </script></body></html>
