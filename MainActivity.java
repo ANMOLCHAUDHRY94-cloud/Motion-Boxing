@@ -20,6 +20,7 @@ import java.io.InputStream;
 public class MainActivity extends Activity {
     private WebView webView;
     private PermissionRequest cameraRequest;
+    private String currentOrientation = "unspecified";
     private static final int CAMERA_CODE = 1001;
 
     @Override public void onCreate(Bundle savedInstanceState) {
@@ -35,9 +36,8 @@ public class MainActivity extends Activity {
         webView.addJavascriptInterface(new Object() {
             @JavascriptInterface public void setOrientation(String orientation) {
                 runOnUiThread(() -> {
-                    if ("portrait".equals(orientation)) setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                    else if ("landscape".equals(orientation)) setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                    else setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+                    currentOrientation = orientation;
+                    applyOrientation();
                 });
             }
         }, "Android");
@@ -69,6 +69,19 @@ public class MainActivity extends Activity {
             }
         });
         webView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
+    }
+    private void applyOrientation() {
+        if ("portrait".equals(currentOrientation)) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        } else if ("landscape".equals(currentOrientation)) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+        }
+    }
+    @Override protected void onResume() {
+        super.onResume();
+        applyOrientation();
     }
     @Override public void onRequestPermissionsResult(int code, String[] permissions, int[] results) {
         super.onRequestPermissionsResult(code, permissions, results);
