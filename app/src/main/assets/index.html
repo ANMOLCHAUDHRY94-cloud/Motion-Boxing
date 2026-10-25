@@ -93,7 +93,7 @@ $('help').textContent=mode==='one'?'RIGHT PUNCH · HEAD DODGE':'BOTH HANDS · HE
 }
 function finish(){if(!run)return;let won=enemy<=0||(seconds<=0&&player>=enemy);let title=enemy<=0?'KNOCKOUT!':player<=0?'YOU WERE KNOCKED OUT':won?'YOU WIN!':'YOU LOSE';if(enemy<=0)$('opponent').classList.add('ko');stop();$('result').textContent=title;$('resultDetail').textContent='Your Health: '+player+'% · Opponent Health: '+enemy+'% · Score: '+score;$('overlay').style.display='flex'}$('one').onclick=()=>start('one');$('two').onclick=()=>start('two');$('exit').onclick=exit;$('back').onclick=exit;$('again').onclick=()=>start(mode);$('dodgeL').onclick=()=>dodge('left');$('dodgeR').onclick=()=>dodge('right');$('duck').onclick=()=>dodge('duck');document.addEventListener('visibilitychange',()=>{if(document.hidden&&run){msg('PAUSED - RETURN TO GAME',2000)}});
 
-</script><script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}</script><script type="module">
+</script><script>window.addEventListener("error",function(e){if(/three|GLTF|module|WebGL|boxer/i.test(String(e.message||""))){var d=document.getElementById("debug");if(d)d.textContent="3D ERROR: "+String(e.message).slice(0,70);}});window.addEventListener("unhandledrejection",function(e){var d=document.getElementById("debug");if(d)d.textContent="3D LOAD ERROR: "+String(e.reason).slice(0,70);});</script><script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}</script><script type="module">
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 const mount=document.getElementById('boxer3d'), root=document.getElementById('opponent');
@@ -111,18 +111,18 @@ if(mount&&root){
  loader.load(new URL('boxer.glb', document.baseURI).href,g=>{
    boxer=g.scene;scene.add(boxer);
    boxer.traverse(o=>{if(o.isMesh){o.frustumCulled=false;}});
-   const bounds=new THREE.Box3().setFromObject(boxer),size=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3());
-   const scale=3.9/Math.max(.01,size.y);boxer.scale.setScalar(scale);
+   const bounds=new THREE.Box3().setFromObject(boxer),modelSize=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3());
+   const scale=3.9/Math.max(.01,modelSize.y);boxer.scale.setScalar(scale);
    boxer.position.set(-center.x*scale,-bounds.min.y*scale,-center.z*scale);
    camera.position.set(0,2.1,9);camera.lookAt(0,2.0,0);
    mixer=new THREE.AnimationMixer(boxer);clips=g.animations;
    for(const c of clips)actions[c.name.toLowerCase()]=mixer.clipAction(c);
    const idle=Object.keys(actions).find(n=>/idle|guard|stance/.test(n));if(idle){actions[idle].play();current=idle;}
    const canvases=mount.querySelectorAll('canvas');for(const c of canvases){if(c!==renderer.domElement)c.style.visibility='hidden';}
-   root.classList.add('three-ready');requestAnimationFrame(size);console.log('3D GLB loaded successfully');
+   root.classList.add('three-ready');resize3D();console.log('3D GLB loaded successfully');
  },undefined,e=>{console.warn('boxer.glb failed to load',e);document.getElementById('debug').textContent='3D MODEL LOAD ERROR';host.remove()});
- function size(){const w=Math.max(1,mount.clientWidth),h=Math.max(1,mount.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}
- new ResizeObserver(size).observe(mount);size();
+ function resize3D(){const w=Math.max(1,mount.clientWidth),h=Math.max(1,mount.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}
+ new ResizeObserver(resize3D).observe(mount);resize3D();
  function tick(){requestAnimationFrame(tick);if(!boxer)return;
   const dt=Math.min(clock.getDelta(),.06);if(mixer)mixer.update(dt);
   const desired=root.classList.contains('attack-left')?'left':root.classList.contains('attack-right')?'right':root.classList.contains('dodging')?'dodge':root.classList.contains('ko')?'knockout':'idle';
