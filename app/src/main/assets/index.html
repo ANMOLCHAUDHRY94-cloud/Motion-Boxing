@@ -1,12 +1,322 @@
-<!doctype html><html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Motion Boxing Arena</title><style>
-*{box-sizing:border-box}body{margin:0;background:#080f20;color:white;font-family:system-ui,Arial;overscroll-behavior:none}.wrap{max-width:700px;margin:auto}header{padding:16px 15px 10px;background:#121e38}h1{margin:0 0 10px;font-size:25px;text-align:center}.stats{display:flex;justify-content:space-between;font-weight:700;font-size:14px}.bars{display:grid;gap:6px;margin-top:10px}.bar{height:13px;background:#3d455b;border-radius:20px;overflow:hidden}.fill{height:100%;width:100%;transition:width .18s}.mine{background:#2fdf91}.enemy{background:#fb486b}#arena{position:relative;height:min(58vh,540px);min-height:345px;overflow:hidden;background:radial-gradient(ellipse at 50% 35%,#304e83,#101a33 72%);touch-action:manipulation}#arena:before{content:'';position:absolute;left:-15%;bottom:8%;width:130%;height:3px;background:#f84b65;box-shadow:0 65px 0 #f84b65}#fighter{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);width:220px;height:270px;transition:transform .12s}#head{position:absolute;left:48px;top:10px;width:125px;height:132px;border-radius:47% 47% 44% 44%;background:linear-gradient(140deg,#ffda99,#bb7148);box-shadow:inset -14px -8px 0 #a45d3d;border:5px solid #512e32}#hair{position:absolute;top:5px;left:42px;width:137px;height:45px;border-radius:65% 50% 10% 10%;background:#28202b}#eyes{position:absolute;top:72px;left:68px;font-size:38px;color:#2c1921;letter-spacing:12px;line-height:1}#mouth{position:absolute;top:120px;left:95px;font-size:25px;color:#59272b}#body{position:absolute;left:42px;top:139px;width:143px;height:127px;background:linear-gradient(115deg,#fa4b65,#b20f37);border-radius:35% 35% 12% 12%;border:5px solid #701532}#leftglove,#rightglove{position:absolute;top:154px;width:75px;height:89px;background:linear-gradient(125deg,#ff3c54,#a90024);border:4px solid #6c0b25;border-radius:46% 45% 35% 35%;font-size:35px;text-align:center;padding-top:18px;transition:transform .1s}#leftglove{left:0}#rightglove{right:0}.hit #head{filter:brightness(1.65)}#impact{position:absolute;top:21%;left:52%;font-size:46px;font-weight:1000;color:#ffde59;opacity:0;transform:rotate(-15deg);pointer-events:none}.show{animation:pop .28s ease-out}@keyframes pop{0%{opacity:1;transform:scale(.5) rotate(-15deg)}70%{opacity:1;transform:scale(1.5) rotate(-15deg)}100%{opacity:0;transform:scale(1.8) rotate(-15deg)}}#video{position:absolute;right:12px;bottom:18px;width:115px;height:150px;object-fit:cover;transform:scaleX(-1);border:2px solid white;border-radius:13px;background:#05070d}#cross{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);font-size:25px;color:#ffffff70;pointer-events:none}.controls{padding:15px;display:flex;gap:10px;flex-wrap:wrap}.controls button{flex:1;min-width:125px;border:0;border-radius:15px;background:#f63865;color:white;font-size:17px;font-weight:800;padding:15px 10px}.controls button.alt{background:#263c65}#status{padding:0 16px 16px;color:#e8d79b;font-size:14px;min-height:55px;line-height:1.5}#overlay{position:absolute;inset:0;background:#070d1cae;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;z-index:2}#overlay h2{font-size:34px;margin:0 0 10px}#overlay p{max-width:320px;line-height:1.5}#overlay button{background:#ff3b68;border:0;border-radius:12px;padding:13px 25px;color:white;font-weight:800;font-size:19px}#combo{position:absolute;top:18px;right:16px;font-weight:800;color:#ffdd76}small{display:block;padding:0 16px 18px;color:#b8c6e2;line-height:1.5}
-</style></head><body><div class="wrap"><header><h1>🥊 MOTION BOXING ARENA</h1><div class="stats"><span id="hpLabel">आप: 100 HP</span><span id="score">स्कोर: 0</span><span id="clock">60s</span></div><div class="bars"><div class="bar"><div class="fill mine" id="hpbar"></div></div><div class="bar"><div class="fill enemy" id="enemybar"></div></div></div></header><main id="arena"><div id="combo"></div><div id="fighter"><div id="body"></div><div id="head"></div><div id="hair"></div><div id="eyes">⌄⌄</div><div id="mouth">⌢</div><div id="leftglove">🥊</div><div id="rightglove">🥊</div></div><div id="impact">POW!</div><div id="cross">+</div><video id="video" autoplay muted playsinline></video><div id="overlay"><h2>READY TO FIGHT?</h2><p>कैमरा चालू करके हाथों से पंच मारें या टच डेमो खेलें।</p><button id="start">START GAME</button></div></main><div class="controls"><button id="camera">📷 कैमरा मोड</button><button class="alt" id="touch">👆 टच डेमो</button><button class="alt" id="restart">↻ रीस्टार्ट</button></div><div id="status" role="status">कैमरा मोड के लिए HTTPS वेबसाइट पर खोलें और कैमरे की अनुमति दें।</div><small>फोन को 1–2 मीटर दूर स्थिर रखें, दोनों हाथ कैमरे में दिखाएँ। सामने की ओर तेज पंच मारें। गेम केवल मनोरंजन के लिए है; आसपास पर्याप्त जगह रखें।</small></div><script>
-const $=id=>document.getElementById(id);let hp=100,enemy=100,score=0,combo=0,time=60,active=false,mode='touch',interval=null,stream=null,hands=null,busy=false,lastPunch=0,prior={},lastCounter=0;
-function status(s){$('status').textContent=s}function draw(){$('hpbar').style.width=hp+'%';$('enemybar').style.width=enemy+'%';$('hpLabel').textContent='आप: '+hp+' HP';$('score').textContent='स्कोर: '+score;$('clock').textContent=time+'s';$('combo').textContent=combo>1?'🔥 '+combo+' COMBO':''}
-function stop(){active=false;clearInterval(interval)}function finish(msg){stop();$('overlay').style.display='flex';$('overlay').querySelector('h2').textContent=msg;$('overlay').querySelector('p').textContent='स्कोर: '+score+' — फिर से खेलें!';$('start').textContent='PLAY AGAIN'}
-function startGame(){stop();hp=100;enemy=100;score=0;combo=0;time=60;prior={};lastPunch=0;lastCounter=0;active=true;draw();$('overlay').style.display='none';interval=setInterval(()=>{time--;if(time<=0)finish(enemy<60?'🏆 YOU WIN!':'⏰ TIME UP');else if(active){if(time%4===0){hp=Math.max(0,hp-5);combo=0;if(hp===0){draw();finish('💀 KNOCKOUT');return}}draw()}},1000)}
-function punch(side){if(!active)return;let now=performance.now();if(now-lastPunch<230)return;lastPunch=now;enemy=Math.max(0,enemy-6);score+=10+Math.min(combo,9)*2;combo++;$('impact').classList.remove('show');void $('impact').offsetWidth;$('impact').textContent=side==='Left'?'JAB!':'POW!';$('impact').classList.add('show');$('fighter').classList.add('hit');$('fighter').style.transform='translate(-50%,-50%) rotate('+(side==='Left'?'-7':'7')+'deg)';setTimeout(()=>{$('fighter').classList.remove('hit');$('fighter').style.transform='translate(-50%,-50%)'},130);if(navigator.vibrate)navigator.vibrate(30);draw();if(enemy===0)finish('🏆 KNOCKOUT!')}
-$('arena').addEventListener('pointerdown',e=>{if(mode==='touch'&&active&&e.target.id!=='start')punch(e.clientX<innerWidth/2?'Left':'Right')});$('start').onclick=()=>startGame();$('restart').onclick=startGame;$('touch').onclick=()=>{mode='touch';startGame();status('टच डेमो चालू है। विरोधी पर टैप करके पंच मारें।')};
-function loadScript(url){return new Promise((resolve,reject)=>{if(window.Hands){resolve();return}let s=document.createElement('script');s.src=url;s.onload=resolve;s.onerror=()=>reject(new Error('Hand tracking library डाउनलोड नहीं हुई'));document.head.appendChild(s)})}
-async function cameraMode(){if(!window.isSecureContext){status('कैमरा के लिए HTTPS जरूरी है। ZIP की HTML फाइल सीधे खोलने से कैमरा नहीं चलेगा।');return}if(!navigator.mediaDevices?.getUserMedia){status('इस ब्राउज़र में कैमरा उपलब्ध नहीं है। Chrome में HTTPS लिंक खोलें।');return}status('कैमरा शुरू हो रहा है…');try{if(!stream)stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:'user',width:{ideal:640},height:{ideal:480}}});$('video').srcObject=stream;await $('video').play();status('हाथ पहचानने की लाइब्रेरी लोड हो रही है…');await loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4/hands.js');if(!hands){hands=new Hands({locateFile:file=>'https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4/'+file});hands.setOptions({maxNumHands:2,modelComplexity:0,minDetectionConfidence:.55,minTrackingConfidence:.5});hands.onResults(results=>{if(mode!=='camera'||!active)return;const now=performance.now();const seen={};for(const lm of results.multiHandLandmarks||[]){const wrist=lm[0],index=lm[8],middle=lm[12],pinky=lm[20];const side=wrist.x>.5?'Left':'Right';seen[side]=true;const old=prior[side];const reach=Math.hypot(index.x-wrist.x,index.y-wrist.y);if(old){const dt=Math.max(1,now-old.t);const speed=Math.hypot(index.x-old.x,index.y-old.y)*1000/dt;const extension=reach-old.reach; if((speed>.75||extension>.065)&&reach>.15&&now-lastPunch>280)punch(side)}prior[side]={x:index.x,y:index.y,reach,t:now}}if(!Object.keys(seen).length&&now-lastCounter>3500){status('कैमरा चालू है, लेकिन हाथ नहीं दिख रहे। रोशनी बढ़ाएँ और पीछे हटें।');lastCounter=now}else if(Object.keys(seen).length&&now-lastCounter>3500){status('🥊 हाथ दिख रहे हैं! कैमरे की ओर पंच मारें।');lastCounter=now}})}mode='camera';startGame();status('कैमरा चालू है। हाथ कैमरे के सामने लाएँ।');async function track(){if(mode!=='camera'||!stream)return;if(!busy&&$('video').readyState>=2){busy=true;try{await hands.send({image:$('video')})}catch(e){status('ट्रैकिंग त्रुटि: '+e.message);mode='touch'}finally{busy=false}}requestAnimationFrame(track)}requestAnimationFrame(track)}catch(e){status('कैमरा शुरू नहीं हुआ: '+e.message+'. Chrome, HTTPS, कैमरा अनुमति और इंटरनेट जाँचें।')}}$('camera').onclick=cameraMode;draw();
-</script></body></html>
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Motion Boxing 3.0</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#10182d;color:white;font-family:Arial;text-align:center}
+header{padding:12px;background:#1b2947}
+h1{font-size:24px;margin:8px}
+.stats{display:flex;justify-content:space-around;padding:8px;font-weight:bold}
+.bar{height:14px;background:#444;margin:7px 15px;border-radius:10px;overflow:hidden}
+.fill{height:100%;width:100%;transition:width .2s}
+#playerHP{background:#26db85}
+#enemyHP{background:#ff4268}
+#arena{position:relative;height:55vh;min-height:330px;overflow:hidden;background:radial-gradient(#344e80,#10182d)}
+#fighter{position:absolute;top:48%;left:50%;transform:translate(-50%,-50%);width:200px;height:260px;transition:transform .15s}
+.head{position:absolute;top:10px;left:48px;width:110px;height:125px;background:#db986b;border-radius:45%;border:5px solid #643a32}
+.hair{position:absolute;top:4px;left:42px;width:122px;height:42px;background:#25202b;border-radius:60% 60% 20% 20%}
+.eyes{position:absolute;top:70px;left:73px;font-size:28px;color:#221821}
+.body{position:absolute;top:135px;left:35px;width:135px;height:120px;background:#d52149;border-radius:35% 35% 10% 10%}
+.glove{position:absolute;top:150px;width:72px;height:85px;background:#f53155;border:4px solid #8c1234;border-radius:45%;font-size:36px;padding-top:17px}
+#leftGlove{left:0}
+#rightGlove{right:0}
+#video{position:absolute;right:8px;bottom:8px;width:110px;height:145px;object-fit:cover;transform:scaleX(-1);border:2px solid white;border-radius:10px}
+#impact{position:absolute;top:20%;left:40%;font-size:35px;color:yellow;font-weight:bold;display:none}
+#enemyAction{position:absolute;top:15px;left:10px;color:#ff7890;font-weight:bold;display:none}
+#overlay{position:absolute;inset:0;background:#080d1bd9;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:3}
+button{background:#fa3764;color:white;border:0;padding:14px;border-radius:12px;font-size:16px;font-weight:bold;margin:5px}
+#status{padding:12px;color:#ffdf8b;font-size:13px}
+small{display:block;padding:10px;color:#bdc9e0}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🥊 MOTION BOXING 3.0</h1>
+<div class="stats">
+<span id="playerText">YOU: 100</span>
+<span id="score">SCORE: 0</span>
+<span id="timer">60s</span>
+</div>
+<div class="bar"><div class="fill" id="playerHP"></div></div>
+<div class="bar"><div class="fill" id="enemyHP"></div></div>
+</header>
+
+<div id="arena">
+<div id="enemyAction">👊 ENEMY ATTACK!</div>
+<div id="impact">💥 PUNCH!</div>
+<div id="fighter">
+<div class="body"></div>
+<div class="head"></div>
+<div class="hair"></div>
+<div class="eyes">⌄ ⌄</div>
+<div class="glove" id="leftGlove">🥊</div>
+<div class="glove" id="rightGlove">🥊</div>
+</div>
+<video id="video" autoplay muted playsinline></video>
+<div id="overlay">
+<h1 id="result">READY TO FIGHT?</h1>
+<p>बाएँ हाथ में फोन, दाएँ हाथ से पंच!</p>
+<button onclick="startGame()">START GAME</button>
+</div>
+</div>
+
+<button onclick="cameraMode()">📷 CAMERA MODE</button>
+<button onclick="touchMode()">👆 TOUCH DEMO</button>
+<button onclick="startGame()">↻ RESTART</button>
+<div id="status">कैमरा चालू करके दायाँ हाथ दिखाएँ।</div>
+<small>दायाँ कंधा, कोहनी और कलाई कैमरे में रखें। इंटरनेट आवश्यक है।</small>
+
+<script>
+const el=id=>document.getElementById(id);
+let hp=100,enemy=100,score=0,time=60;
+let active=false,mode="touch",timerID,attackID;
+let pose=null,stream=null,busy=false,tracking=false;
+let history=[],armed=false,guardStart=0,lastPunch=0;
+let lastEnemy=0,attackAt=0;
+
+function status(t){el("status").textContent=t}
+
+function draw(){
+ el("playerHP").style.width=hp+"%";
+ el("enemyHP").style.width=enemy+"%";
+ el("playerText").textContent="YOU: "+hp;
+ el("score").textContent="SCORE: "+score;
+ el("timer").textContent=time+"s";
+}
+
+function stop(){
+ active=false;
+ clearInterval(timerID);
+ clearTimeout(attackID);
+}
+
+function finish(message){
+ stop();
+ el("result").textContent=message;
+ el("overlay").style.display="flex";
+}
+
+function startGame(){
+ stop();
+ hp=100;enemy=100;score=0;time=60;
+ history=[];armed=false;guardStart=0;
+ lastPunch=0;attackAt=0;
+ active=true;
+ el("overlay").style.display="none";
+ draw();
+ timerID=setInterval(()=>{
+  if(!active)return;
+  time--;
+  draw();
+  if(time<=0){
+   finish(enemy<hp?"🏆 YOU WIN!":"⏰ TIME UP");
+  }
+ },1000);
+ scheduleEnemy();
+}
+
+function scheduleEnemy(){
+ clearTimeout(attackID);
+ if(active){
+  attackID=setTimeout(enemyAttack,1600+Math.random()*1700);
+ }
+}
+
+function enemyAttack(){
+ if(!active)return;
+ const now=performance.now();
+ lastEnemy=now;
+ el("enemyAction").style.display="block";
+ el("leftGlove").style.transform="translate(35px,-40px)";
+ el("arena").style.boxShadow="inset 0 0 70px red";
+ setTimeout(()=>{
+  el("enemyAction").style.display="none";
+  el("leftGlove").style.transform="";
+  el("arena").style.boxShadow="";
+ },350);
+
+ if(now-attackAt>800 && Math.random()<.82){
+  hp=Math.max(0,hp-8);
+  if(navigator.vibrate)navigator.vibrate(60);
+ }
+ draw();
+ if(hp===0){
+  finish("💀 YOU LOSE!");
+  return;
+ }
+ scheduleEnemy();
+}
+
+function punch(){
+ if(!active)return;
+ const now=performance.now();
+ if(now-lastPunch<650)return;
+ lastPunch=now;
+ enemy=Math.max(0,enemy-10);
+ score+=10;
+ el("impact").style.display="block";
+ el("fighter").style.transform="translate(-50%,-50%) rotate(10deg)";
+ setTimeout(()=>{
+  el("impact").style.display="none";
+  el("fighter").style.transform="translate(-50%,-50%)";
+ },180);
+ if(navigator.vibrate)navigator.vibrate(25);
+ draw();
+ if(enemy===0)finish("🏆 KNOCKOUT!");
+}
+
+el("arena").addEventListener("pointerdown",e=>{
+ if(mode==="touch" && active && e.target.closest("#overlay")===null){
+  punch();
+ }
+});
+
+function touchMode(){
+ mode="touch";
+ startGame();
+ status("टच डेमो चालू है। बॉक्सर पर टैप करें।");
+}
+
+function angle(a,b,c){
+ let ux=a.x-b.x,uy=a.y-b.y;
+ let vx=c.x-b.x,vy=c.y-b.y;
+ let dot=ux*vx+uy*vy;
+ let length=Math.hypot(ux,uy)*Math.hypot(vx,vy);
+ return Math.acos(Math.max(-1,Math.min(1,dot/(length+0.00001))))*180/Math.PI;
+}
+
+function detect(results){
+ if(mode!=="camera"||!active)return;
+ const lm=results.poseLandmarks;
+ const now=performance.now();
+
+ if(!lm||[11,12,14,16].some(i=>(lm[i].visibility??1)<.55)){
+  history=[];armed=false;guardStart=0;
+  status("दायाँ कंधा, कोहनी और कलाई कैमरे में दिखाएँ।");
+  return;
+ }
+
+ const shoulder=lm[12],elbow=lm[14],wrist=lm[16];
+ const scale=Math.max(.08,Math.hypot(
+  shoulder.x-lm[11].x,shoulder.y-lm[11].y
+ ));
+ const x=(wrist.x-shoulder.x)/scale;
+ const y=(wrist.y-shoulder.y)/scale;
+ const extension=angle(shoulder,elbow,wrist);
+ const distance=Math.hypot(x,y);
+
+ history.push({t:now,x,y,extension,distance});
+ history=history.filter(p=>now-p.t<480);
+
+ if(extension<118&&distance<3.1){
+  if(!guardStart)guardStart=now;
+  if(now-guardStart>120)armed=true;
+ }else if(extension>145){
+  guardStart=0;
+ }
+
+ const old=history.find(p=>now-p.t>=110&&now-p.t<=360);
+ if(!old)return;
+
+ const dt=(now-old.t)/1000;
+ const speed=Math.hypot(x-old.x,y-old.y)/dt;
+ const extGain=extension-old.extension;
+ const distGain=distance-old.distance;
+
+ if(armed&&now-lastPunch>650&&extension>145&&
+    extGain>20&&distGain>.4&&speed>2.5){
+  armed=false;
+  guardStart=0;
+  history=[];
+  punch();
+ }
+
+ if(now-lastEnemy<500&&Math.abs(x-old.x)>1.1){
+  attackAt=now;
+ }
+}
+
+function loadPose(){
+ return new Promise((resolve,reject)=>{
+  if(window.Pose){resolve();return}
+  const script=document.createElement("script");
+  script.src="https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5/pose.js";
+  script.onload=resolve;
+  script.onerror=()=>reject(new Error("Tracking library load failed"));
+  document.head.appendChild(script);
+ });
+}
+
+async function cameraMode(){
+ try{
+  if(!window.isSecureContext){
+   status("कैमरे के लिए सुरक्षित HTTPS origin जरूरी है।");
+   return;
+  }
+  if(!navigator.mediaDevices?.getUserMedia){
+   status("इस Android WebView में कैमरा उपलब्ध नहीं है।");
+   return;
+  }
+  status("कैमरा चालू हो रहा है...");
+  if(!stream){
+   stream=await navigator.mediaDevices.getUserMedia({
+    audio:false,
+    video:{facingMode:"user",width:640,height:480}
+   });
+  }
+  el("video").srcObject=stream;
+  await el("video").play();
+
+  status("Hand tracking लोड हो रही है...");
+  await loadPose();
+
+  if(!pose){
+   pose=new Pose({
+    locateFile:f=>"https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5/"+f
+   });
+   pose.setOptions({
+    modelComplexity:0,
+    smoothLandmarks:true,
+    minDetectionConfidence:.65,
+    minTrackingConfidence:.65
+   });
+   pose.onResults(detect);
+  }
+
+  mode="camera";
+  startGame();
+  status("👊 दायाँ हाथ पीछे लेकर तेज़ पंच करें।");
+
+  if(!tracking){
+   tracking=true;
+   requestAnimationFrame(track);
+  }
+ }catch(e){
+  status("Camera error: "+e.message);
+ }
+}
+
+async function track(){
+ if(mode==="camera"&&stream&&pose&&!busy&&
+    el("video").readyState>=2){
+  busy=true;
+  try{
+   await pose.send({image:el("video")});
+  }catch(e){
+   status("Tracking error: "+e.message);
+   mode="touch";
+  }finally{
+   busy=false;
+  }
+ }
+ requestAnimationFrame(track);
+}
+
+draw();
+</script>
+</body>
+</html>
