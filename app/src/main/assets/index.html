@@ -40,7 +40,19 @@ body.two-hand #opponent.three-ready{width:min(39vw,480px)!important;height:96%!i
 #arena:after{content:"";position:absolute;left:0;right:0;top:43%;height:26%;pointer-events:none;background:linear-gradient(to bottom,transparent 12%,#d82c48 12%,#d82c48 15%,transparent 15%,transparent 43%,#f0f1f6 43%,#f0f1f6 46%,transparent 46%,transparent 76%,#246de0 76%,#246de0 79%,transparent 79%);filter:drop-shadow(0 2px 3px #000b);opacity:.9}
 #floor{background:linear-gradient(170deg,#30496c,#1a2c49 55%,#101827);border-top:4px solid #839cc2}
 #opponent{z-index:2}
-</style></head><body><section id="menu"><h1>🥊 REAL PUNCH</h1><p>REAL CAMERA BOXING · V5.1</p><button id="one">ONE-HAND BOXING<br><small>Portrait · Hold phone in left hand · Right punches</small></button><button id="two">TWO-HAND BOXING<br><small>Landscape · Phone on stand · Both hands</small></button><p>Keep your face and punching arm(s) in camera view. Good lighting and a stable phone improve tracking. Camera access and internet are required on first launch.</p></section><section id="game"><div id="hud"><div class="hp">YOU<div class="track"><div class="fill" id="playerHp"></div></div></div><div id="clock">01:30</div><div class="hp" style="text-align:right">OPPONENT<div class="track"><div class="fill" id="enemyHp"></div></div></div></div><div id="debug">TRACKER: STARTING</div><div id="arena"><div id="floor"></div><div id="opponent"><div id="boxer3d" aria-label="3D boxer"></div><svg viewBox="0 0 220 360" preserveAspectRatio="xMidYMax meet" aria-label="Shaded full body boxer"><defs><linearGradient id="skin3"><stop stop-color="#693721"/><stop offset=".27" stop-color="#e0a277"/><stop offset=".65" stop-color="#ba704c"/><stop offset="1" stop-color="#54291f"/></linearGradient><linearGradient id="red3"><stop stop-color="#6f0d18"/><stop offset=".3" stop-color="#ff5b60"/><stop offset=".65" stop-color="#d51c2d"/><stop offset="1" stop-color="#590d17"/></linearGradient><linearGradient id="pants3"><stop stop-color="#77151e"/><stop offset=".42" stop-color="#f3434e"/><stop offset="1" stop-color="#82121b"/></linearGradient><linearGradient id="shoes3"><stop stop-color="#101525"/><stop offset=".55" stop-color="#46516c"/><stop offset="1" stop-color="#0a0c15"/></linearGradient><radialGradient id="chest3"><stop stop-color="#e9b38b"/><stop offset=".7" stop-color="#a95e40"/><stop offset="1" stop-color="#6b3629"/></radialGradient></defs>
+</style><style id="tutorial-styles">
+#tutorialBtn{background:#9a4525!important}
+#tutorialPanel{display:none;position:fixed;inset:0;z-index:30;background:radial-gradient(ellipse at 50% 22%,#233c60,#080e1e 72%);color:white;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:20px;gap:14px}
+#tutorialPanel.active{display:flex}
+#tutorialPanel h2{font-size:clamp(24px,6vw,38px);margin:0}
+#tutorialPanel p{max-width:420px;color:#c8d8f3;line-height:1.45;font-size:16px;margin:3px}
+#tutorialStep{font-size:13px;color:#9fc2f7;letter-spacing:2px;font-weight:800}
+#tutorialDemo{height:170px;width:170px;display:grid;place-items:center;border-radius:50%;border:2px solid #6788bc;background:radial-gradient(circle,#36577f,#111d31);font-size:90px}
+#tutorialPanel .tutorialControls{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+#tutorialPanel button{min-width:105px}
+#tutorialSkip{background:#394960}
+#tutorialPractice{background:#158a61}
+</style></head><body><section id="menu"><h1>🥊 REAL PUNCH</h1><p>REAL CAMERA BOXING · V5.1</p><button id="one">ONE-HAND BOXING<br><small>Portrait · Hold phone in left hand · Right punches</small></button><button id="tutorialBtn" type="button">🥊 BOXING TUTORIAL</button><button id="two">TWO-HAND BOXING<br><small>Landscape · Phone on stand · Both hands</small></button><p>Keep your face and punching arm(s) in camera view. Good lighting and a stable phone improve tracking. Camera access and internet are required on first launch.</p></section><section id="game"><div id="hud"><div class="hp">YOU<div class="track"><div class="fill" id="playerHp"></div></div></div><div id="clock">01:30</div><div class="hp" style="text-align:right">OPPONENT<div class="track"><div class="fill" id="enemyHp"></div></div></div></div><div id="debug">TRACKER: STARTING</div><div id="arena"><div id="floor"></div><div id="opponent"><div id="boxer3d" aria-label="3D boxer"></div><svg viewBox="0 0 220 360" preserveAspectRatio="xMidYMax meet" aria-label="Shaded full body boxer"><defs><linearGradient id="skin3"><stop stop-color="#693721"/><stop offset=".27" stop-color="#e0a277"/><stop offset=".65" stop-color="#ba704c"/><stop offset="1" stop-color="#54291f"/></linearGradient><linearGradient id="red3"><stop stop-color="#6f0d18"/><stop offset=".3" stop-color="#ff5b60"/><stop offset=".65" stop-color="#d51c2d"/><stop offset="1" stop-color="#590d17"/></linearGradient><linearGradient id="pants3"><stop stop-color="#77151e"/><stop offset=".42" stop-color="#f3434e"/><stop offset="1" stop-color="#82121b"/></linearGradient><linearGradient id="shoes3"><stop stop-color="#101525"/><stop offset=".55" stop-color="#46516c"/><stop offset="1" stop-color="#0a0c15"/></linearGradient><radialGradient id="chest3"><stop stop-color="#e9b38b"/><stop offset=".7" stop-color="#a95e40"/><stop offset="1" stop-color="#6b3629"/></radialGradient></defs>
 <ellipse cx="111" cy="348" rx="79" ry="9" fill="#02050a" opacity=".45"/>
 <g class="boxer-body"><path d="M77 221L106 224 99 321 71 321 66 296Z" fill="url(#skin3)" stroke="#6a3525" stroke-width="2"/><path d="M114 224L146 219 154 318 126 322 117 273Z" fill="url(#skin3)" stroke="#6a3525" stroke-width="2"/><path d="M71 312L100 312 102 347 43 347Q42 331 71 312ZM124 313L154 312 178 347 121 347Z" fill="url(#shoes3)" stroke="#14121b" stroke-width="3"/><path d="M64 199Q109 207 154 198L151 248 115 250 110 229 105 249 61 247Z" fill="url(#pants3)" stroke="#6e1621" stroke-width="2"/><path d="M64 207Q111 214 153 206" fill="none" stroke="#f5e9df" stroke-width="10"/><path d="M108 214V245M86 221L79 242M132 219L140 242" stroke="#6f1522" stroke-width="3" opacity=".5"/>
 <path d="M85 83Q109 70 135 83Q151 93 154 123L143 187Q135 208 110 209Q84 207 75 188L63 122Q66 93 85 83Z" fill="url(#chest3)" stroke="#683a2a" stroke-width="2"/><path d="M82 115Q93 128 107 124M114 124Q130 128 141 112M110 131V193M89 176Q110 186 130 175" fill="none" stroke="#673b2c" stroke-width="3" opacity=".42"/><path d="M94 71H127L128 98Q109 108 92 97Z" fill="url(#skin3)"/>
@@ -240,4 +252,30 @@ function resize(){const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientH
 status.textContent='✓ Animated 3D boxer ready';requestAnimationFrame(loop);
 }catch(e){status.textContent='Error: '+e.message;console.error(e)}
 
+</script><section id="tutorialPanel" role="dialog" aria-modal="true" aria-label="Boxing tutorial">
+<div id="tutorialStep">TRAINING</div><h2 id="tutorialTitle">READY?</h2><div id="tutorialDemo" aria-hidden="true">🥊</div><p id="tutorialText"></p>
+<div class="tutorialControls"><button id="tutorialBack">BACK</button><button id="tutorialNext">NEXT ▶</button><button id="tutorialPractice" style="display:none">START PRACTICE</button><button id="tutorialSkip">SKIP</button></div>
+</section><script id="tutorial-standalone">
+/* Standalone training guide. Existing game handlers and tracker are untouched. */
+(function(){
+ 'use strict';
+ var steps=[
+  ['CAMERA SETUP','📱','Keep your phone steady. Make sure your face and punching arm are visible in good light.'],
+  ['BOXING GUARD','🥊','Raise your fists near your face. Keep your chin tucked and your elbows close.'],
+  ['JAB','👊','Throw a quick straight punch, then return your hand to guard.'],
+  ['CROSS','🥊','Throw a straight punch with your rear hand, then return to guard.'],
+  ['DODGE','↔️','Move your head left or right to avoid a punch. You can also use DODGE buttons.'],
+  ['DUCK','⬇️','Bend your knees and lower your head. The DUCK button also works.'],
+  ['PRACTICE FIGHT','🏆','Ready! Start the normal game and practise your punches. Keep clear space around you.']
+ ];
+ var i=0;function el(id){return document.getElementById(id)}
+ function draw(){var s=steps[i];el('tutorialStep').textContent='STEP '+(i+1)+' / '+steps.length;el('tutorialTitle').textContent=s[0];el('tutorialDemo').textContent=s[1];el('tutorialText').textContent=s[2];el('tutorialBack').style.display=i?'inline-block':'none';el('tutorialNext').style.display=i<steps.length-1?'inline-block':'none';el('tutorialPractice').style.display=i===steps.length-1?'inline-block':'none'}
+ function close(){el('tutorialPanel').classList.remove('active')}
+ function open(){i=0;draw();el('tutorialPanel').classList.add('active')}
+ el('tutorialBtn').addEventListener('click',open);
+ el('tutorialNext').addEventListener('click',function(){if(i<steps.length-1){i++;draw()}});
+ el('tutorialBack').addEventListener('click',function(){if(i>0){i--;draw()}});
+ el('tutorialSkip').addEventListener('click',close);
+ el('tutorialPractice').addEventListener('click',function(){close();el('one').click()});
+})();
 </script></body></html>
