@@ -180,7 +180,7 @@ $('watchAdContinue').disabled=won; $('watchAdContinue').textContent=won?'CONTINU
  msg('CONTINUE! +50 HEALTH · 45 SECONDS',1800);
 };$('again').onclick=()=>start(mode);$('dodgeL').onclick=()=>dodge('left');$('dodgeR').onclick=()=>dodge('right');$('duck').onclick=()=>dodge('duck');document.addEventListener('visibilitychange',()=>{if(document.hidden&&run){msg('PAUSED - RETURN TO GAME',2000)}});
 
-</script><script type="module">
+</script><script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js"}}</script><script type="module">
 
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js';
 import {FBXLoader} from 'https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/loaders/FBXLoader.js';
