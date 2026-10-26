@@ -117,14 +117,22 @@ for(let side of (mode==='one'?['right']:['left','right'])){
   const dt=st.prev?Math.max(.03,(now-st.prev.t)/1000):.07;
   const velocity=st.prev?Math.hypot(c.x-st.prev.x,c.y-st.prev.y)/sw/dt:0;
   const extension=st.prev?(reach-st.prev.reach):0;
-  const forward=st.prev?Math.abs(c.x-st.prev.x)/sw:0;
-  // Accept a clear extension OR a fast wrist thrust, not only a fully straight elbow.
-  const thrust=(extension>.065&&bend>92)||(velocity>1.15&&reach>.49&&bend>95)||(forward>.14&&bend>120);
-  if(st.ready&&thrust&&reach>.47&&now-lastPunch[side]>330){st.ready=false;lastPunch[side]=now;punch(side)}
-  // Rearm on arm withdrawal; timeout also permits repeated jabs when depth isn't visible.
-  if((st.prev&&reach<st.prev.reach-.055)||bend<102||now-lastPunch[side]>900)st.ready=true;
-  st.prev={x:c.x,y:c.y,reach,t:now};
-  debugParts.push(side.toUpperCase()+': '+(st.ready?'READY':'PUNCH')+' '+Math.round(reach*100)+'%');
+  // V5.9: conservative 2D punch tracking. Require a real extension and a
+  // visible elbow; reject single-frame tracking jumps and lateral hand waving.
+  const good=visible(b)&&a.visibility>.55&&b.visibility>.55&&c.visibility>.55;
+  const wristJump=st.prev?Math.hypot(c.x-st.prev.x,c.y-st.prev.y)/sw:0;
+  const validFrame=good&&dt<.20&&wristJump<.72&&reach<2.1;
+  const extending=extension>.085&&extension<.55&&velocity>.45&&velocity<8&&bend>108&&reach>.62;
+  const thrust=validFrame&&st.prev&&extending;
+  if(st.ready&&thrust&&now-lastPunch[side]>450){
+    st.ready=false;st.waitReturn=now;lastPunch[side]=now;punch(side);
+  }
+  // Do not count a second punch until the arm retracts toward guard.
+  // The timeout is only a safety reset for lost tracking, not an auto-repeat.
+  if(!st.ready&&((st.prev&&reach<st.prev.reach-.09&&bend<120)||
+      (reach<.65&&bend<110)||now-(st.waitReturn||now)>1800))st.ready=true;
+  st.prev=validFrame?{x:c.x,y:c.y,reach,t:now}:null;
+  debugParts.push(side.toUpperCase()+': '+(!good?'LOW CONFIDENCE':st.ready?'READY':'RETURN TO GUARD')+' '+Math.round(reach*100)+'%');
 }
 if(performance.now()-frameTick>200){frameTick=performance.now();$('debug').textContent='CAMERA TRACKING | '+debugParts.join(' | ');}
 $('help').textContent=mode==='one'?'RIGHT PUNCH · HEAD DODGE':'BOTH HANDS · HEAD DODGE';}function punch(side){if(!run)return;if(window.RPTraining&&window.RPTraining.active){window.RPTraining.accept('punch',side);return;}roundPunches++;RPProgress.punch();let now=performance.now();if(warning&&now<warning.impact){ // attacking during windup is allowed
