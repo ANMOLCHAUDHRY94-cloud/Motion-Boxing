@@ -193,26 +193,15 @@ scene.add(new THREE.HemisphereLight(0xdbeafe,0x263248,2.3));const key=new THREE.
 const mat=(color,roughness=.8)=>new THREE.MeshStandardMaterial({color,roughness});const skin=mat(0xc98a63),shirt=mat(0x2172a9),shorts=mat(0x171c2a),red=mat(0xe72c42,.4),black=mat(0x10141e),white=mat(0xf3f5f7),hair=mat(0x15151b);
 const boxer=new THREE.Group();scene.add(boxer);
 // Human FBX test; original procedural boxer remains fallback.
-// Keep MikeAlger_part1.bin, MikeAlger_part2.bin and MikeAlger_Texture.jpeg beside index.html.
+// Keep Dancing Basemesh.fbx and (none) beside index.html.
 let xBotModel=null;
 try {
  const loader=new FBXLoader();
- (async()=>{
- const names=['MikeAlger_part1.bin','MikeAlger_part2.bin'];
- const parts=await Promise.all(names.map(async name=>{
-  const response=await fetch('./'+name);
-  if(!response.ok)throw new Error('Missing '+name+': '+response.status);
-  return response.arrayBuffer();
- }));
- const total=parts.reduce((n,b)=>n+b.byteLength,0);
- const joined=new Uint8Array(total);let offset=0;
- for(const part of parts){joined.set(new Uint8Array(part),offset);offset+=part.byteLength;}
- const model=loader.parse(joined.buffer,'./');
- {
+ loader.load('./Dancing Basemesh.fbx', model=>{
   try {
    const bounds=new THREE.Box3().setFromObject(model);
    const size=bounds.getSize(new THREE.Vector3());
-   if(!Number.isFinite(size.y)||size.y<=0)throw new Error('Invalid X Bot bounds');
+   if(!Number.isFinite(size.y)||size.y<=0)throw new Error('Invalid basemesh bounds');
    const scale=3.35/size.y;
    model.scale.multiplyScalar(scale);
    model.updateMatrixWorld(true);
@@ -221,28 +210,38 @@ try {
    model.position.x-=center.x;
    model.position.z-=center.z;
    model.position.y-=b.min.y;
-   // Restore the human skin texture independently of FBX relative paths.
-   const skinTexture=new THREE.TextureLoader().load('./MikeAlger_Texture.jpeg');
-   skinTexture.colorSpace=THREE.SRGBColorSpace;
+   // No external texture in supplied basemesh. Neutral skin-toned PBR material.
+   const bodyMat=new THREE.MeshStandardMaterial({color:0xb9896d,roughness:0.88,metalness:0,side:THREE.DoubleSide});
    model.traverse(o=>{
-    if(o.isMesh){
-     o.frustumCulled=false;o.castShadow=false;o.receiveShadow=false;
-     const mats=Array.isArray(o.material)?o.material:[o.material];
-     for(const m of mats){if(m){m.map=skinTexture;m.color.set(0xffffff);m.needsUpdate=true;}}
-    }
+    if(o.isMesh){o.frustumCulled=false;o.castShadow=false;o.receiveShadow=false;o.material=bodyMat;}
    });
+   // Add lightweight boxing gloves to hand bones; follow any future skeletal animations.
+   const bones=[];model.traverse(o=>{if(o.isBone)bones.push(o)});
+   function gloveFor(side){
+    const regex=side==='left'?/(left|_l|\.l)/i:/(right|_r|\.r)/i;
+    const hand=bones.find(o=>regex.test(o.name)&&/hand|wrist/i.test(o.name)&&!/thumb|index|middle|ring|pinky/i.test(o.name));
+    if(!hand){console.warn('No hand bone found for',side);return;}
+    const g=new THREE.Group();
+    const redMat=new THREE.MeshStandardMaterial({color:0xc9152e,roughness:0.4});
+    const glove=new THREE.Mesh(new THREE.SphereGeometry(0.105,14,10),redMat);
+    // FBX skeleton uses source units; scale glove relative to model local height.
+    const nativeHeight=size.y;
+    const radius=nativeHeight*0.042;
+    glove.scale.set(radius/0.105,radius/0.105,radius/0.105);
+    g.add(glove);hand.add(g);
+   }
+   gloveFor('left');gloveFor('right');
    scene.add(model);xBotModel=model;
    boxer.visible=false;
-   // Human model may contain an idle animation; play it if available.
+   // Preview any bundled animation; boxing animations are NOT included.
    if(model.animations && model.animations.length){
     const mixer=new THREE.AnimationMixer(model);
     const clip=model.animations.find(a=>a.duration>0);
     if(clip){mixer.clipAction(clip).play();window.__rpXBotMixer=mixer;}
    }
-   console.info('REAL PUNCH: human model loaded',model.animations?.length||0,'animations');
+   console.info('REAL PUNCH: basemesh loaded',model.animations?.length||0,'animations');
   }catch(err){console.error('Human model setup failed; using old boxer',err)}
- }
-})().catch(err=>console.error('Human model parts loading failed; using old boxer',err));
+ },undefined,err=>console.error('Human model FBX loading failed; using old boxer',err));
 }catch(err){console.error('FBXLoader unavailable; using old boxer',err)}
 
 function part(parent,geometry,material,x=0,y=0,z=0){let mesh=new THREE.Mesh(geometry,material);mesh.position.set(x,y,z);parent.add(mesh);return mesh}
