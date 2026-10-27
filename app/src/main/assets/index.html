@@ -215,62 +215,66 @@ try {
    model.traverse(o=>{
     if(o.isMesh){o.frustumCulled=false;o.castShadow=false;o.receiveShadow=false;o.material=bodyMat;}
    });
-   // V6 Boxer Kit: accessories attach to the rig, not to the camera tracker.
-   // These are lightweight procedural meshes (not a replacement for real clothing rigging).
+   // V6.1: all accessory dimensions are in normalized scene meters.
+   // Never parent geometries to FBX bones: imported bone scales are in FBX source units.
+   // Instead, update small world-space accessories from bone positions each frame.
    const bones=[];model.traverse(o=>{if(o.isBone)bones.push(o)});
    const findBone=(side,part)=>bones.find(o=>new RegExp(side+part+'$', 'i').test(o.name));
-   const kitRed=new THREE.MeshStandardMaterial({color:0xd50d29,roughness:.38,metalness:.05});
-   const kitBlack=new THREE.MeshStandardMaterial({color:0x11131b,roughness:.9,side:THREE.DoubleSide});
-   const kitWhite=new THREE.MeshStandardMaterial({color:0xe7e9ee,roughness:.7});
-   const kitTrim=new THREE.MeshStandardMaterial({color:0x9d1426,roughness:.72});
-   // FBX bones use source units, which can differ from Three.js meters.
-   const unit=size.y;
-   function attachAtWorld(bone,mesh,worldPos){
-     model.updateMatrixWorld(true);
-     bone.updateMatrixWorld(true);
-     mesh.position.copy(bone.worldToLocal(worldPos.clone()));
-     bone.add(mesh);
-     return mesh;
-   }
-   function makeGlove(side){
-     const hand=findBone(side,'Hand');if(!hand){console.warn('No hand bone',side);return;}
-     const pos=new THREE.Vector3();hand.getWorldPosition(pos);
-     const group=new THREE.Group();attachAtWorld(hand,group,pos);
-     const palm=new THREE.Mesh(new THREE.SphereGeometry(unit*.053,16,12),kitRed);
-     palm.scale.set(.91,1.10,.91);group.add(palm);
-     const thumb=new THREE.Mesh(new THREE.SphereGeometry(unit*.024,12,10),kitRed);
-     thumb.position.set((side==='Left'?-1:1)*unit*.039,-unit*.018,unit*.018);group.add(thumb);
-     const cuff=new THREE.Mesh(new THREE.CylinderGeometry(unit*.035,unit*.041,unit*.063,14),kitTrim);
-     cuff.position.y=-unit*.062;group.add(cuff);
-     const wristBand=new THREE.Mesh(new THREE.CylinderGeometry(unit*.041,unit*.041,unit*.012,14),kitWhite);
-     wristBand.position.y=-unit*.086;group.add(wristBand);
-   }
-   makeGlove('Left');makeGlove('Right');
-   // Boxing trunks follow pelvis; separate leg panels approximate fabric movement.
-   const hips=bones.find(o=>/Hips$/i.test(o.name));
-   if(hips){
-     const hp=new THREE.Vector3();hips.getWorldPosition(hp);
-     const shortsGroup=new THREE.Group();attachAtWorld(hips,shortsGroup,hp);
-     const trunk=new THREE.Mesh(new THREE.CylinderGeometry(unit*.135,unit*.155,unit*.145,20,1),kitBlack);
-     trunk.position.y=-unit*.045;shortsGroup.add(trunk);
-     const belt=new THREE.Mesh(new THREE.CylinderGeometry(unit*.138,unit*.138,unit*.031,20),kitWhite);
-     belt.position.y=unit*.039;shortsGroup.add(belt);
-     for(const sign of [-1,1]){
-       const leg=new THREE.Mesh(new THREE.CylinderGeometry(unit*.078,unit*.089,unit*.13,14),kitBlack);
-       leg.position.set(sign*unit*.073,-unit*.128,0);shortsGroup.add(leg);
-       const hem=new THREE.Mesh(new THREE.CylinderGeometry(unit*.089,unit*.089,unit*.014,14),kitWhite);
-       hem.position.set(sign*unit*.073,-unit*.195,0);shortsGroup.add(hem);
-     }
+   const kitRed=new THREE.MeshStandardMaterial({color:0xd91635,roughness:.43});
+   const kitBlack=new THREE.MeshStandardMaterial({color:0x11141c,roughness:.88,side:THREE.DoubleSide});
+   const kitWhite=new THREE.MeshStandardMaterial({color:0xe8e8ec,roughness:.75});
+   const accessories=[];
+   function follow(bone, group, offset){
+     scene.add(group);accessories.push({bone,group,offset:offset||new THREE.Vector3()});
    }
    for(const side of ['Left','Right']){
-     const foot=findBone(side,'Foot');if(!foot)continue;
-     const pos=new THREE.Vector3();foot.getWorldPosition(pos);
-     const boot=new THREE.Group();attachAtWorld(foot,boot,pos);
-     const shoe=new THREE.Mesh(new THREE.SphereGeometry(unit*.063,14,10),kitBlack);
-     shoe.scale.set(.75,.65,1.55);shoe.position.z=unit*.024;boot.add(shoe);
-     const sole=new THREE.Mesh(new THREE.BoxGeometry(unit*.09,unit*.016,unit*.19),kitWhite);
-     sole.position.set(0,-unit*.043,unit*.023);boot.add(sole);
+     const hand=findBone(side,'Hand');
+     if(hand){
+       const glove=new THREE.Group();
+       const palm=new THREE.Mesh(new THREE.SphereGeometry(.118,16,12),kitRed);
+       palm.scale.set(.92,1.12,1.05);glove.add(palm);
+       const thumb=new THREE.Mesh(new THREE.SphereGeometry(.049,12,10),kitRed);
+       thumb.position.set(side==='Left'?-.085:.085,-.028,.04);glove.add(thumb);
+       const cuff=new THREE.Mesh(new THREE.CylinderGeometry(.071,.076,.10,14),kitRed);
+       cuff.position.y=-.118;glove.add(cuff);
+       const band=new THREE.Mesh(new THREE.CylinderGeometry(.076,.076,.021,14),kitWhite);
+       band.position.y=-.171;glove.add(band);
+       follow(hand,glove);
+     }
+     const foot=findBone(side,'Foot');
+     if(foot){
+       const boot=new THREE.Group();
+       const shoe=new THREE.Mesh(new THREE.SphereGeometry(.125,16,12),kitBlack);
+       shoe.scale.set(.8,.68,1.65);shoe.position.z=.07;boot.add(shoe);
+       const sole=new THREE.Mesh(new THREE.BoxGeometry(.19,.025,.31),kitWhite);
+       sole.position.set(0,-.092,.07);boot.add(sole);
+       follow(foot,boot);
+     }
    }
+   const hips=bones.find(o=>/Hips$/i.test(o.name));
+   if(hips){
+     const shortsGroup=new THREE.Group();
+     const waist=new THREE.Mesh(new THREE.CylinderGeometry(.255,.29,.28,22),kitBlack);
+     waist.position.y=-.105;shortsGroup.add(waist);
+     const belt=new THREE.Mesh(new THREE.CylinderGeometry(.256,.256,.045,22),kitWhite);
+     belt.position.y=.045;shortsGroup.add(belt);
+     for(const sign of [-1,1]){
+       const leg=new THREE.Mesh(new THREE.CylinderGeometry(.144,.151,.22,16),kitBlack);
+       leg.position.set(sign*.142,-.315,0);shortsGroup.add(leg);
+       const trim=new THREE.Mesh(new THREE.CylinderGeometry(.151,.151,.025,16),kitWhite);
+       trim.position.set(sign*.142,-.425,0);shortsGroup.add(trim);
+     }
+     follow(hips,shortsGroup);
+   }
+   window.__rpKitUpdate=()=>{
+     model.updateMatrixWorld(true);
+     for(const item of accessories){
+       item.bone.getWorldPosition(item.group.position);
+       item.bone.getWorldQuaternion(item.group.quaternion);
+       item.group.position.add(item.offset);
+     }
+   };
+   window.__rpKitUpdate();
    scene.add(model);xBotModel=model;
    boxer.visible=false;
    // Preview any bundled animation; boxing animations are NOT included.
@@ -279,7 +283,7 @@ try {
     const clip=model.animations.find(a=>a.duration>0);
     if(clip){mixer.clipAction(clip).play();window.__rpXBotMixer=mixer;}
    }
-   console.info('REAL PUNCH V6: boxer kit loaded',model.animations?.length||0,'animations');
+   console.info('REAL PUNCH V6.1: scaled boxer kit loaded',model.animations?.length||0,'animations');
   }catch(err){console.error('Human model setup failed; using old boxer',err)}
  },undefined,err=>console.error('Human model FBX loading failed; using old boxer',err));
 }catch(err){console.error('FBXLoader unavailable; using old boxer',err)}
@@ -385,6 +389,7 @@ function loop(now){
    boxer.position.x=-.22*e;
  }
  if(window.__rpXBotMixer){window.__rpXBotClock=window.__rpXBotClock||new THREE.Clock();window.__rpXBotMixer.update(Math.min(.05,window.__rpXBotClock.getDelta()));}
+ if(window.__rpKitUpdate)window.__rpKitUpdate();
  renderer.render(scene,camera);
 }
 function resize(){const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight);camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false)}
