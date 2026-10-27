@@ -233,7 +233,7 @@ try {
    // V6.3: V6.2 showed the model's BACK to the +Z camera.
    // Flip only the imported character by 180 degrees; preserve its pose,
    // accessories, and the V5.10 camera/punch tracking logic.
-   model.rotation.y += Math.PI;
+   model.rotation.y += Math.PI - THREE.MathUtils.degToRad(22); // V6.4: slight camera-facing turn (not a full flip)
    model.updateMatrixWorld(true);
    const frontBounds=new THREE.Box3().setFromObject(model);
    const frontCenter=frontBounds.getCenter(new THREE.Vector3());
