@@ -210,6 +210,32 @@ try {
    model.position.x-=center.x;
    model.position.z-=center.z;
    model.position.y-=b.min.y;
+   // V6.2: orient the imported human so the shoulder line faces the camera.
+   // Camera sits on +Z; align shoulders with screen X (zero-degree front view).
+   // Use the bind/initial pose only; keep rotation fixed during gameplay.
+   model.updateMatrixWorld(true);
+   const facingBones=[];
+   model.traverse(o=>{if(o.isBone)facingBones.push(o)});
+   const shoulder=(side)=>facingBones.find(o=>new RegExp(side+'(Shoulder|Arm)$','i').test(o.name));
+   const leftShoulder=shoulder('Left'),rightShoulder=shoulder('Right');
+   if(leftShoulder&&rightShoulder){
+     const lp=new THREE.Vector3(),rp=new THREE.Vector3();
+     leftShoulder.getWorldPosition(lp);rightShoulder.getWorldPosition(rp);
+     const dx=rp.x-lp.x,dz=rp.z-lp.z;
+     if(Math.hypot(dx,dz)>0.001){
+       // Rotation around Y: z' = -sin(yaw)*dx + cos(yaw)*dz.
+       model.rotation.y+=Math.atan2(dz,dx);
+       model.updateMatrixWorld(true);
+     }
+   }else{
+     model.rotation.y=0;
+   }
+   const frontBounds=new THREE.Box3().setFromObject(model);
+   const frontCenter=frontBounds.getCenter(new THREE.Vector3());
+   model.position.x-=frontCenter.x;
+   model.position.z-=frontCenter.z;
+   model.updateMatrixWorld(true);
+   console.info('REAL PUNCH V6.2: fixed front-facing orientation',model.rotation.y);
    // No external texture in supplied basemesh. Neutral skin-toned PBR material.
    const bodyMat=new THREE.MeshStandardMaterial({color:0xb9896d,roughness:0.88,metalness:0,side:THREE.DoubleSide});
    model.traverse(o=>{
