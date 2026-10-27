@@ -230,12 +230,17 @@ try {
    }else{
      model.rotation.y=0;
    }
+   // V6.3: V6.2 showed the model's BACK to the +Z camera.
+   // Flip only the imported character by 180 degrees; preserve its pose,
+   // accessories, and the V5.10 camera/punch tracking logic.
+   model.rotation.y += Math.PI;
+   model.updateMatrixWorld(true);
    const frontBounds=new THREE.Box3().setFromObject(model);
    const frontCenter=frontBounds.getCenter(new THREE.Vector3());
    model.position.x-=frontCenter.x;
    model.position.z-=frontCenter.z;
    model.updateMatrixWorld(true);
-   console.info('REAL PUNCH V6.2: fixed front-facing orientation',model.rotation.y);
+   console.info('REAL PUNCH V6.3: camera-facing correction',model.rotation.y);
    // No external texture in supplied basemesh. Neutral skin-toned PBR material.
    const bodyMat=new THREE.MeshStandardMaterial({color:0xb9896d,roughness:0.88,metalness:0,side:THREE.DoubleSide});
    model.traverse(o=>{
