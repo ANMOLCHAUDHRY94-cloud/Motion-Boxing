@@ -266,9 +266,9 @@ try {
      if(hand){
        const glove=new THREE.Group();scene.add(glove);
        const palm=makeMesh(new THREE.SphereGeometry(1,20,16),kitRed,glove);
-       palm.scale.set(.145,.17,.18);
+       palm.scale.set(.19,.205,.215);
        const thumb=makeMesh(new THREE.SphereGeometry(1,12,10),kitRed,glove);
-       thumb.scale.set(.065,.085,.075);thumb.position.set(side==='Left'?.12:-.12,-.03,.055);
+       thumb.scale.set(.082,.10,.09);thumb.position.set(side==='Left'?.12:-.12,-.03,.055);
        const cuff=makeMesh(new THREE.CylinderGeometry(.105,.095,.12,18),kitRed,glove);
        cuff.position.y=-.155;
        const strap=makeMesh(new THREE.CylinderGeometry(.101,.101,.032,18),kitWhite,glove);
@@ -280,11 +280,11 @@ try {
      if(foot){
        const boot=new THREE.Group();scene.add(boot);
        const shoe=makeMesh(new THREE.SphereGeometry(1,20,14),kitBlack,boot);
-       shoe.scale.set(.115,.105,.215);shoe.position.z=.085;
+       shoe.scale.set(.145,.125,.24);shoe.position.z=.085;
        const ankle=makeMesh(new THREE.CylinderGeometry(.108,.115,.19,16),kitBlack,boot);
        ankle.position.y=.055;
-       const sole=makeMesh(new THREE.BoxGeometry(.23,.035,.38),kitWhite,boot);
-       sole.position.set(0,-.09,.085);
+       const sole=makeMesh(new THREE.BoxGeometry(.29,.035,.44),kitWhite,boot);
+       sole.position.set(0,-.11,.085);
        for(let i=0;i<3;i++){
          const lace=makeMesh(new THREE.BoxGeometry(.09,.009,.014),kitWhite,boot);
          lace.position.set(0,.015-i*.032,.11+i*.032);
@@ -294,8 +294,8 @@ try {
      const upper=findBone(side,'UpLeg');
      const knee=findBone(side,'Leg');
      if(upper&&knee){
-       const tube=makeMesh(new THREE.CylinderGeometry(.19,.205,1,20,1,true),kitBlack,scene);
-       const hem=makeMesh(new THREE.CylinderGeometry(.207,.207,.034,20),kitWhite,scene);
+       const tube=makeMesh(new THREE.CylinderGeometry(.235,.255,1,24,1,false),kitBlack,scene);
+       const hem=makeMesh(new THREE.CylinderGeometry(.257,.257,.034,24),kitWhite,scene);
        legs.push({upper,knee,tube,hem});
      }
    }
@@ -311,27 +311,32 @@ try {
      const yaw=model.rotation.y;
      for(const {hand,glove} of gloves){
        glove.position.copy(worldPos(hand));
+       glove.position.y+=.035;
        // Glove covers the fist rather than sitting on the wrist.
        glove.rotation.set(0,yaw,0);
      }
      for(const {foot,toe,boot} of boots){
        boot.position.copy(worldPos(foot));
+       if(toe){
+         const toeP=worldPos(toe);
+         boot.position.lerp(toeP,.55);
+       }
        boot.rotation.set(0,yaw,0);
        if(toe){
          const direction=worldPos(toe).sub(boot.position);direction.y=0;
          if(direction.lengthSq()>.00001)boot.rotation.y=Math.atan2(direction.x,direction.z);
        }
        // FBX foot bone is generally near ankle; shift shoe down to sole.
-       boot.position.y-=.095;
+       boot.position.y-=.035;
      }
      for(const {upper,knee,tube,hem} of legs){
        const top=worldPos(upper),end=worldPos(knee);
        const direction=end.clone().sub(top);const length=Math.max(.1,direction.length());
-       const shortsLength=Math.min(.39,length*.54);
-       tube.position.copy(top).addScaledVector(direction,.25);
+       const shortsLength=Math.min(.43,length*.62);
+       tube.position.copy(top).addScaledVector(direction,shortsLength/(2*length));
        tube.quaternion.setFromUnitVectors(bodyUp,direction.clone().normalize());
        tube.scale.set(1,shortsLength,1);
-       hem.position.copy(top).addScaledVector(direction,.25+shortsLength/(2*length));
+       hem.position.copy(top).addScaledVector(direction,shortsLength/length);
        hem.quaternion.copy(tube.quaternion);
      }
      if(hips){
