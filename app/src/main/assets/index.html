@@ -1,16 +1,5 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>REAL PUNCH — V5.1</title><style>
+ <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><title>REAL PUNCH — HUMAN MODEL TEST</title><style>
 *{box-sizing:border-box}body{margin:0;background:#080e1e;color:white;font-family:system-ui,Arial;overflow:hidden}button{font:700 15px system-ui;color:#fff;border:0;border-radius:12px;background:#2668e7;padding:13px;touch-action:manipulation}button:active{filter:brightness(1.4)}#menu{position:absolute;inset:0;z-index:8;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:16px;background:radial-gradient(ellipse at 50% 20%,#20375b,#080e1e 70%);padding:18px;text-align:center}#menu h1{font-size:clamp(28px,7vw,52px);margin:0}#menu p{color:#bac6da;max-width:470px}#menu button{width:min(360px,90vw)}#game{display:none;position:absolute;inset:0;background:radial-gradient(ellipse at center,#2d405e,#101727 72%)}#arena{position:absolute;inset:68px 0 62px;overflow:hidden}#floor{position:absolute;bottom:0;width:100%;height:26%;background:linear-gradient(#45516c,#192234);border-top:3px solid #7c8ba8}#hud{position:absolute;top:0;left:0;right:0;height:64px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px;background:#08111ddd;z-index:3}.hp{width:32%;font-size:12px;font-weight:800}.track{height:13px;background:#4e1f2a;border-radius:12px;overflow:hidden;margin-top:5px}.fill{height:100%;width:100%;background:linear-gradient(90deg,#25dc86,#b9ef5c);transition:width .2s}#clock{font-size:23px;font-weight:900}#opponent{position:absolute;left:50%;bottom:8%;width:min(34vw,230px);height:80%;transform:translateX(-50%);transition:left .16s ease,transform .12s ease;--skin:#b77952;--shorts:#dc3e47}#opponent svg{height:100%;width:100%;overflow:visible;filter:drop-shadow(0 7px 9px #0007)}#opponent .skin{fill:var(--skin)}#opponent .shorts{fill:var(--shorts)}#opponent .glove{fill:#db3745;stroke:#811b2b;stroke-width:3}#opponent .boot{fill:#191d31}#opponent .hair{fill:#14111c}#opponent.dodging{filter:brightness(1.2)}#opponent.hit{filter:brightness(1.8)}#opponent.attack .rightglove{transform:translate(-18px,10px) scale(1.18);transform-origin:90px 120px}#opponent.attack .leftglove{transform:translate(18px,10px) scale(1.18);transform-origin:110px 120px}#opponent.ko{transform:translateX(-50%) rotate(75deg) translateY(25%)}#message{position:absolute;top:18%;left:0;right:0;text-align:center;font-weight:1000;font-size:clamp(19px,5vw,36px);text-shadow:0 3px 6px #000;pointer-events:none;z-index:4}#warning{color:#ffd34b}#camera{position:absolute;right:7px;bottom:70px;width:90px;height:120px;object-fit:cover;transform:scaleX(-1);opacity:.68;border:2px solid #8ab4ff;border-radius:10px;z-index:2}#status{position:absolute;bottom:0;left:0;right:0;min-height:58px;background:#080e1eea;display:flex;align-items:center;justify-content:space-around;gap:5px;padding:5px;z-index:4;font-size:11px}#status button{padding:10px 9px;font-size:12px}#help{max-width:54%;color:#b5c9e3}#debug{position:absolute;top:65px;left:8px;z-index:5;background:#061020cf;border:1px solid #5f94d0;border-radius:8px;padding:6px;font:700 11px monospace;max-width:64%;pointer-events:none}#opponent{min-width:125px}#overlay{display:none;position:absolute;inset:0;background:#060b19e9;z-index:9;align-items:center;justify-content:center;flex-direction:column;gap:18px;text-align:center;padding:20px}#overlay h2{font-size:35px}#overlay p{max-width:400px;color:#c8d6ee}@media(orientation:landscape){#debug{top:53px;font-size:10px}#arena{inset:52px 0 45px}#hud{height:50px}#opponent{width:min(24vw,210px);height:95%;bottom:0}#camera{height:76px;width:102px;bottom:51px}#status{min-height:43px}#status button{padding:7px}#message{top:9%}} 
-#tutorialBtn{background:#9a4525!important}
-#tutorialPanel{display:none;position:fixed;inset:0;z-index:30;background:radial-gradient(ellipse at 50% 22%,#233c60,#080e1e 72%);color:white;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:20px;gap:14px}
-#tutorialPanel.active{display:flex}
-#tutorialPanel h2{font-size:clamp(24px,6vw,38px);margin:0}
-#tutorialPanel p{max-width:420px;color:#c8d8f3;line-height:1.45;font-size:16px;margin:3px}
-#tutorialStep{font-size:13px;color:#9fc2f7;letter-spacing:2px;font-weight:800}
-#tutorialDemo{height:170px;width:170px;display:grid;place-items:center;border-radius:50%;border:2px solid #6788bc;background:radial-gradient(circle,#36577f,#111d31);font-size:90px}
-#tutorialPanel .tutorialControls{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
-#tutorialPanel button{min-width:105px}
-#tutorialSkip{background:#394960}
-#tutorialPractice{background:#158a61}
 </style><style id="visual43">#arena{background:radial-gradient(ellipse at 50% 33%,#3d5270 0%,#17263d 45%,#0b1423 90%)}#arena:before{content:"";position:absolute;inset:10% 0 25%;background:repeating-linear-gradient(to bottom,transparent 0 22%,#b9c8da99 22.5%,#b9c8da99 23%,transparent 23.5% 31%);opacity:.26;pointer-events:none}#floor{background:linear-gradient(170deg,#3d5372,#1c2a41 55%,#101827);border-top:4px solid #a8b7d0}#opponent{width:min(52vw,300px);min-width:155px;height:83%;bottom:4%;filter:drop-shadow(0 15px 13px #0008)}#opponent svg{filter:drop-shadow(4px 7px 5px #050b1d99)}#opponent .skin{fill:url(#skin3)}#opponent .shorts{fill:url(#pants3)}#opponent .glove{fill:url(#red3)}#opponent .boxer-body{transform-origin:110px 300px;animation:boxer-bob 1.6s ease-in-out infinite}#opponent .leftglove,#opponent .rightglove{transform-box:fill-box;transition:transform .15s}#opponent.attack .leftglove{transform:translate(14px,-29px) scale(1.25)}#opponent.attack .rightglove{transform:translate(-14px,-29px) scale(1.25)}#opponent.dodging .boxer-body{transform:skew(-6deg)}#opponent.hit svg{filter:brightness(1.65) drop-shadow(0 5px 8px #0009)}@keyframes boxer-bob{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(5px) rotate(1deg)}}@media(orientation:landscape){#opponent{width:min(31vw,300px);height:99%;bottom:0}#camera{right:12px;top:62px;bottom:auto;width:110px;height:82px}#debug{max-width:43%}#status{justify-content:space-between;padding:4px 15px}#message{top:12%}}@media(orientation:portrait){#opponent{width:min(55vw,280px);height:75%;bottom:4%}}</style><style id="landscape44">
 /* Mode-selected layout, independent of delayed device orientation events. */
 body.two-hand #hud{height:52px;padding:4px 16px}
@@ -51,13 +40,48 @@ body.two-hand #opponent.three-ready{width:min(39vw,480px)!important;height:96%!i
 #arena:after{content:"";position:absolute;left:0;right:0;top:43%;height:26%;pointer-events:none;background:linear-gradient(to bottom,transparent 12%,#d82c48 12%,#d82c48 15%,transparent 15%,transparent 43%,#f0f1f6 43%,#f0f1f6 46%,transparent 46%,transparent 76%,#246de0 76%,#246de0 79%,transparent 79%);filter:drop-shadow(0 2px 3px #000b);opacity:.9}
 #floor{background:linear-gradient(170deg,#30496c,#1a2c49 55%,#101827);border-top:4px solid #839cc2}
 #opponent{z-index:2}
-</style></head><body><section id="menu"><h1>🥊 REAL PUNCH</h1><p>REAL CAMERA BOXING · V5.1</p><button id="one">ONE-HAND BOXING<br><small>Portrait · Hold phone in left hand · Right punches</small></button><button id="tutorialBtn" type="button">🥊 BOXING TUTORIAL</button><button id="two">TWO-HAND BOXING<br><small>Landscape · Phone on stand · Both hands</small></button><p>Keep your face and punching arm(s) in camera view. Good lighting and a stable phone improve tracking. Camera access and internet are required on first launch.</p></section><section id="game"><div id="hud"><div class="hp">YOU<div class="track"><div class="fill" id="playerHp"></div></div></div><div id="clock">01:30</div><div class="hp" style="text-align:right">OPPONENT<div class="track"><div class="fill" id="enemyHp"></div></div></div></div><div id="debug">TRACKER: STARTING</div><div id="arena"><div id="floor"></div><div id="opponent"><div id="boxer3d" aria-label="3D boxer"></div><svg viewBox="0 0 220 360" preserveAspectRatio="xMidYMax meet" aria-label="Shaded full body boxer"><defs><linearGradient id="skin3"><stop stop-color="#693721"/><stop offset=".27" stop-color="#e0a277"/><stop offset=".65" stop-color="#ba704c"/><stop offset="1" stop-color="#54291f"/></linearGradient><linearGradient id="red3"><stop stop-color="#6f0d18"/><stop offset=".3" stop-color="#ff5b60"/><stop offset=".65" stop-color="#d51c2d"/><stop offset="1" stop-color="#590d17"/></linearGradient><linearGradient id="pants3"><stop stop-color="#77151e"/><stop offset=".42" stop-color="#f3434e"/><stop offset="1" stop-color="#82121b"/></linearGradient><linearGradient id="shoes3"><stop stop-color="#101525"/><stop offset=".55" stop-color="#46516c"/><stop offset="1" stop-color="#0a0c15"/></linearGradient><radialGradient id="chest3"><stop stop-color="#e9b38b"/><stop offset=".7" stop-color="#a95e40"/><stop offset="1" stop-color="#6b3629"/></radialGradient></defs>
+</style><style id="tutorial-styles">
+#tutorialBtn{background:#9a4525!important}
+#tutorialPanel{display:none;position:fixed;inset:0;z-index:30;background:radial-gradient(ellipse at 50% 22%,#233c60,#080e1e 72%);color:white;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:20px;gap:14px}
+#tutorialPanel.active{display:flex}
+#tutorialPanel h2{font-size:clamp(24px,6vw,38px);margin:0}
+#tutorialPanel p{max-width:420px;color:#c8d8f3;line-height:1.45;font-size:16px;margin:3px}
+#tutorialStep{font-size:13px;color:#9fc2f7;letter-spacing:2px;font-weight:800}
+#tutorialDemo{height:170px;width:170px;display:grid;place-items:center;border-radius:50%;border:2px solid #6788bc;background:radial-gradient(circle,#36577f,#111d31);font-size:90px}
+#tutorialPanel .tutorialControls{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+#tutorialPanel button{min-width:105px}
+#tutorialSkip{background:#394960}
+#tutorialPractice{background:#158a61}
+</style><style id="rp-feedback">#impactFlash{position:absolute;inset:0;z-index:5;pointer-events:none;opacity:0;background:radial-gradient(circle at 50% 45%,#fff9 0%,#ff3b3544 22%,transparent 65%)}#impactFlash.burst{animation:rpFlash .28s ease-out}#hitLabel{position:absolute;top:29%;left:0;right:0;z-index:6;text-align:center;font:1000 clamp(34px,10vw,68px) system-ui;color:#fff;text-shadow:0 3px 0 #b51b28,0 7px 20px #000;opacity:0;pointer-events:none}#hitLabel.pop{animation:rpPop .53s ease-out}#arena.shake{animation:rpShake .25s linear}#trackAlert{position:absolute;top:72px;left:50%;transform:translateX(-50%);width:min(92vw,420px);padding:10px;background:#321c11ed;color:#fff3b5;border:2px solid #ffb94e;border-radius:12px;text-align:center;font:800 13px system-ui;z-index:7;display:none;pointer-events:none}#trackAlert.show{display:block}@keyframes rpFlash{0%{opacity:.95}100%{opacity:0}}@keyframes rpPop{0%{opacity:0;transform:scale(.6)}25%{opacity:1;transform:scale(1.2)}80%{opacity:1}100%{opacity:0;transform:scale(1)}}@keyframes rpShake{0%,100%{translate:0 0}20%{translate:-7px 3px}40%{translate:6px -3px}60%{translate:-4px 2px}80%{translate:3px -1px}}</style><style id="rpProgressStyle">
+#rpProgressStats{color:#e9dba9;font-size:13px;font-weight:750;line-height:1.5;border:1px solid #657b9a;border-radius:12px;padding:9px 14px;background:#0b1b32aa;max-width:95vw}
+#rpNewRecord{display:none;color:#ffe26b;font-size:clamp(20px,5vw,30px);font-weight:1000;text-shadow:0 0 18px #f80}
+#rpResultStats{color:#c5dafa;font-size:14px;line-height:1.6}
+#watchAdContinue{background:#b97817;border:1px solid #f5cb6b}#watchAdContinue:disabled{background:#535b68;color:#c5cbd4;opacity:.7}#overlay button{width:min(330px,90vw)}
+</style><style id="rp-safe-v68">
+:root{--top:env(safe-area-inset-top,0px);--bot:env(safe-area-inset-bottom,0px)}
+#hud{height:calc(64px + var(--top))!important;padding:calc(8px + var(--top)) 12px 8px!important}
+body.two-hand #hud{height:calc(52px + var(--top))!important;padding:calc(4px + var(--top)) 16px 4px!important}
+#arena{inset:calc(68px + var(--top)) 0 calc(62px + var(--bot))!important}
+body.two-hand #arena{inset:calc(52px + var(--top)) 0 calc(50px + var(--bot))!important}
+#status{min-height:calc(58px + var(--bot))!important;padding-bottom:calc(5px + var(--bot))!important}
+body.two-hand #status{min-height:calc(50px + var(--bot))!important}
+#debug{top:calc(68px + var(--top))!important}
+body.two-hand #debug{top:calc(56px + var(--top))!important}
+body.two-hand #camera{top:calc(60px + var(--top))!important}
+#camera{bottom:calc(66px + var(--bot))!important}
+body.two-hand #camera{bottom:auto!important}
+/* tracking warning sits at the bottom of the arena so it never covers the attack cue */
+#trackAlert{top:auto!important;bottom:10px!important;left:8px!important;transform:none!important;width:calc(100vw - 118px)!important;max-width:420px}
+body.two-hand #trackAlert{width:calc(100vw - 150px)!important}
+#status button{white-space:nowrap!important;padding:10px 14px!important}
+#help{flex:1;min-width:0;max-width:none!important;font-size:10px;line-height:1.25}
+</style></head><body><section id="menu"><h1>🥊 REAL PUNCH</h1><p>REAL CAMERA BOXING · X BOT TEST0</p><div id="rpProgressStats">BEST SCORE: 0 · WINS: 0 · PUNCHES: 0</div><button id="one">ONE-HAND BOXING<br><small>Portrait · Hold phone in left hand · Right punches</small></button><button id="tutorialBtn" type="button">🥊 BOXING TUTORIAL</button><button id="two">TWO-HAND BOXING<br><small>Landscape · Phone on stand · Both hands</small></button><p>Keep your face and punching arm(s) in camera view. Good lighting and a stable phone improve tracking. Camera access and internet are required on first launch.</p></section><section id="game"><div id="hud"><div class="hp">YOU<div class="track"><div class="fill" id="playerHp"></div></div></div><div id="clock">01:30</div><div class="hp" style="text-align:right">OPPONENT<div class="track"><div class="fill" id="enemyHp"></div></div></div></div><div id="debug">TRACKER: STARTING</div><div id="arena"><div id="floor"></div><div id="opponent"><div id="boxer3d" aria-label="3D boxer"></div><svg viewBox="0 0 220 360" preserveAspectRatio="xMidYMax meet" aria-label="Shaded full body boxer"><defs><linearGradient id="skin3"><stop stop-color="#693721"/><stop offset=".27" stop-color="#e0a277"/><stop offset=".65" stop-color="#ba704c"/><stop offset="1" stop-color="#54291f"/></linearGradient><linearGradient id="red3"><stop stop-color="#6f0d18"/><stop offset=".3" stop-color="#ff5b60"/><stop offset=".65" stop-color="#d51c2d"/><stop offset="1" stop-color="#590d17"/></linearGradient><linearGradient id="pants3"><stop stop-color="#77151e"/><stop offset=".42" stop-color="#f3434e"/><stop offset="1" stop-color="#82121b"/></linearGradient><linearGradient id="shoes3"><stop stop-color="#101525"/><stop offset=".55" stop-color="#46516c"/><stop offset="1" stop-color="#0a0c15"/></linearGradient><radialGradient id="chest3"><stop stop-color="#e9b38b"/><stop offset=".7" stop-color="#a95e40"/><stop offset="1" stop-color="#6b3629"/></radialGradient></defs>
 <ellipse cx="111" cy="348" rx="79" ry="9" fill="#02050a" opacity=".45"/>
 <g class="boxer-body"><path d="M77 221L106 224 99 321 71 321 66 296Z" fill="url(#skin3)" stroke="#6a3525" stroke-width="2"/><path d="M114 224L146 219 154 318 126 322 117 273Z" fill="url(#skin3)" stroke="#6a3525" stroke-width="2"/><path d="M71 312L100 312 102 347 43 347Q42 331 71 312ZM124 313L154 312 178 347 121 347Z" fill="url(#shoes3)" stroke="#14121b" stroke-width="3"/><path d="M64 199Q109 207 154 198L151 248 115 250 110 229 105 249 61 247Z" fill="url(#pants3)" stroke="#6e1621" stroke-width="2"/><path d="M64 207Q111 214 153 206" fill="none" stroke="#f5e9df" stroke-width="10"/><path d="M108 214V245M86 221L79 242M132 219L140 242" stroke="#6f1522" stroke-width="3" opacity=".5"/>
 <path d="M85 83Q109 70 135 83Q151 93 154 123L143 187Q135 208 110 209Q84 207 75 188L63 122Q66 93 85 83Z" fill="url(#chest3)" stroke="#683a2a" stroke-width="2"/><path d="M82 115Q93 128 107 124M114 124Q130 128 141 112M110 131V193M89 176Q110 186 130 175" fill="none" stroke="#673b2c" stroke-width="3" opacity=".42"/><path d="M94 71H127L128 98Q109 108 92 97Z" fill="url(#skin3)"/>
 <g class="boxer-head"><path d="M77 36Q78 7 111 8Q146 10 146 43L141 72Q129 94 110 94Q88 91 78 69Z" fill="url(#skin3)" stroke="#693526" stroke-width="2"/><path d="M76 43Q69 15 91 12Q115 -1 137 13Q150 20 147 44L136 32 121 25 101 30 86 29Z" fill="#1b1619"/><path d="M90 49L101 48M120 48L132 49" stroke="#2c1717" stroke-width="4" stroke-linecap="round"/><path d="M111 53L106 65 115 66M101 77Q111 83 122 76" stroke="#753c2d" stroke-width="2" fill="none"/><path d="M98 84Q112 95 126 83" stroke="#3a2423" stroke-width="3" opacity=".6"/></g>
 <path d="M77 99Q55 93 48 120L39 163 59 173 79 135Z" fill="url(#skin3)" stroke="#6e3829" stroke-width="2"/><path d="M140 98Q164 91 173 123L183 160 164 174 143 134Z" fill="url(#skin3)" stroke="#6e3829" stroke-width="2"/>
-<g class="leftglove"><path d="M47 132Q17 118 14 144Q9 164 30 178Q53 186 67 162L62 140Z" fill="url(#red3)" stroke="#640b16" stroke-width="3"/><path d="M26 141Q28 132 44 137" stroke="#ffb0a8" stroke-width="4" fill="none" opacity=".6"/><path d="M44 173L57 175" stroke="#f1f0ed" stroke-width="8"/></g><g class="rightglove"><path d="M173 133Q199 120 208 144Q217 166 192 178Q168 183 156 160L161 141Z" fill="url(#red3)" stroke="#640b16" stroke-width="3"/><path d="M178 138Q190 131 199 146" stroke="#ffb0a8" stroke-width="4" fill="none" opacity=".6"/><path d="M169 174L182 174" stroke="#f1f0ed" stroke-width="8"/></g></g></svg></div><div id="message"></div><div id="attackCue" aria-live="polite"></div></div><video id="camera" autoplay muted playsinline></video><div id="status"><span id="help">Starting camera…</span><button id="dodgeL">DODGE ◀</button><button id="dodgeR">DODGE ▶</button><button id="duck">DUCK</button><button id="exit">MENU</button></div></section><div id="overlay"><h2 id="result"></h2><p id="resultDetail"></p><button id="again">PLAY AGAIN</button><button id="back">MAIN MENU</button></div><script>
+<g class="leftglove"><path d="M47 132Q17 118 14 144Q9 164 30 178Q53 186 67 162L62 140Z" fill="url(#red3)" stroke="#640b16" stroke-width="3"/><path d="M26 141Q28 132 44 137" stroke="#ffb0a8" stroke-width="4" fill="none" opacity=".6"/><path d="M44 173L57 175" stroke="#f1f0ed" stroke-width="8"/></g><g class="rightglove"><path d="M173 133Q199 120 208 144Q217 166 192 178Q168 183 156 160L161 141Z" fill="url(#red3)" stroke="#640b16" stroke-width="3"/><path d="M178 138Q190 131 199 146" stroke="#ffb0a8" stroke-width="4" fill="none" opacity=".6"/><path d="M169 174L182 174" stroke="#f1f0ed" stroke-width="8"/></g></g></svg></div><div id="impactFlash"></div><div id="hitLabel"></div><div id="trackAlert" role="status"></div><div id="message"></div><div id="attackCue" aria-live="polite"></div></div><video id="camera" autoplay muted playsinline></video><div id="status"><span id="help">Starting camera…</span><button id="dodgeL" aria-label="Dodge left">◀</button><button id="dodgeR" aria-label="Dodge right">▶</button><button id="duck">DUCK</button><button id="exit">MENU</button></div></section><div id="overlay"><h2 id="result"></h2><p id="resultDetail"></p><div id="rpNewRecord">🏆 NEW HIGH SCORE!</div><div id="rpResultStats"></div><button id="watchAdContinue">WATCH AD TO CONTINUE</button><button id="again">PLAY AGAIN</button><button id="back">MAIN MENU</button></div><script>
 /* Motion Boxing sound v1: synthesized locally with Web Audio; no recordings, downloads or uploads. */
 window.MBSound=(()=>{
  let ctx=null,enabled=true,last={};
@@ -67,7 +91,7 @@ window.MBSound=(()=>{
  function play(event){if(!enabled)return;const now=performance.now();if(now-(last[event]||0)<95)return;last[event]=now;switch(event){
  case 'bell':tone(760,.62,'sine',.15,710);setTimeout(()=>tone(920,.48,'sine',.1,850),150);break;
  case 'whoosh':noise(.16,.12,1400);tone(180,.13,'sawtooth',.025,70);break;
- case 'hit':noise(.19,.27,490);tone(135,.17,'triangle',.22,52);break;
+ case 'hit':noise(.23,.33,650);tone(115,.20,'triangle',.26,43);setTimeout(()=>tone(75,.10,'sine',.12,40),45);break;
  case 'block':noise(.1,.14,780);tone(350,.09,'triangle',.09,130);break;
  case 'dodge':noise(.11,.09,1600);tone(480,.08,'sine',.07,750);break;
  case 'ko':tone(185,.5,'sawtooth',.19,45);setTimeout(()=>tone(85,.55,'triangle',.18,38),180);break;
@@ -79,7 +103,25 @@ window.MBSound=(()=>{
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5/pose.js"></script>
 <script>
-'use strict';const $=x=>document.getElementById(x);let mode='',pose=null,stream=null,run=false,frameBusy=false,lastFrame=0,raf=0,enemyTimer=0,gameTimer=0,attackTimer=0,clearMsg=0,player=100,enemy=100,seconds=90,score=0,combo=0,warning=null,lastDodge=0,headBase=null,lastHead=null,headReady=false,lastPunch={left:0,right:0},arms={left:{ready:true,prev:null},right:{ready:true,prev:null}},lastCounter=0,enemySide=0,trackedFrames=0,frameTick=0;const video=$('camera');const clamp=(n,a,b)=>Math.min(b,Math.max(a,n));function msg(s,t=700){$('message').textContent=s;clearTimeout(clearMsg);clearMsg=setTimeout(()=>{$('message').textContent=''},t)}function hp(){$('playerHp').style.width=player+'%';$('enemyHp').style.width=enemy+'%'}function setOrientation(o){try{if(window.Android&&typeof window.Android.setOrientation==='function'){window.Android.setOrientation(o);return true;}if(screen.orientation&&screen.orientation.lock&&o!=='unspecified'){screen.orientation.lock(o==='portrait'?'portrait':'landscape').catch(()=>{});return true}}catch(e){console.error(e)}return false}function reset(){$('attackCue').classList.remove('active');player=100;enemy=100;seconds=90;score=0;combo=0;warning=null;headBase=null;lastHead=null;headReady=false;lastPunch={left:0,right:0};arms={left:{ready:true,prev:null,peak:0},right:{ready:true,prev:null,peak:0}};trackedFrames=0;frameTick=0;hp();$('clock').textContent='01:30';$('opponent').className=$('opponent').classList.contains('three-ready')?'three-ready':'';$('opponent').style.left='50%';$('overlay').style.display='none';window.dispatchEvent(new Event('mb-boxer-reset'))}async function start(m){MBSound.ready();stop();mode=m;document.body.classList.toggle('two-hand',m==='two');document.body.classList.toggle('one-hand',m==='one');reset();setOrientation(m==='one'?'portrait':'landscape');$('menu').style.display='none';$('game').style.display='block';run=true;$('debug').textContent='MODE: '+(m==='one'?'PORTRAIT':'LANDSCAPE')+' | WAITING FOR CAMERA';$('help').textContent='Allow camera access';try{stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:'user',width:{ideal:640},height:{ideal:480}}});video.srcObject=stream;await video.play();if(!window.Pose)throw Error('Pose tracker could not load. Connect to internet.');pose=new Pose({locateFile:f=>'https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5/'+f});pose.setOptions({modelComplexity:0,smoothLandmarks:true,minDetectionConfidence:.5,minTrackingConfidence:.45});pose.onResults(onPose);$('help').textContent='Move your head to dodge · Punch toward camera';raf=requestAnimationFrame(loop);enemyTimer=setTimeout(enemyAttack,2200);gameTimer=setInterval(()=>{if(!run)return;seconds--;let mm=String(Math.floor(seconds/60)).padStart(2,'0'),ss=String(seconds%60).padStart(2,'0');$('clock').textContent=mm+':'+ss;if(seconds<=0)finish()},1000);MBSound.play('bell');msg('FIGHT!',1100)}catch(e){$('help').textContent='Camera error: '+e.message;msg('CAMERA UNAVAILABLE',1800)}}function stop(){$('attackCue').classList.remove('active');$('opponent').classList.remove('attack-left','attack-right');run=false;clearTimeout(enemyTimer);clearTimeout(attackTimer);clearInterval(gameTimer);cancelAnimationFrame(raf);if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}video.srcObject=null;if(pose){try{pose.close()}catch(e){}pose=null}}function exit(){stop();document.body.classList.remove('two-hand','one-hand');setOrientation('unspecified');$('overlay').style.display='none';$('game').style.display='none';$('menu').style.display='flex'}async function loop(t){if(!run)return;raf=requestAnimationFrame(loop);if(frameBusy||!pose||video.readyState<2||t-lastFrame<65)return;frameBusy=true;lastFrame=t;try{await pose.send({image:video})}catch(e){$('help').textContent='Tracking error: '+e.message}finally{frameBusy=false}}function visible(p){return p&&p.visibility!==undefined?p.visibility>.48:!!p}function angle(a,b,c){let x=a.x-b.x,y=a.y-b.y,u=c.x-b.x,v=c.y-b.y;return Math.acos(clamp((x*u+y*v)/(Math.hypot(x,y)*Math.hypot(u,v)||1),-1,1))*180/Math.PI}function onPose(r){if(!run)return;let p=r.poseLandmarks;if(!p){$('help').textContent='Move back: show face and arms';$('debug').textContent='NO BODY FOUND | Move back / improve light';return}let nose=p[0],ls=p[11],rs=p[12];if(visible(nose)&&visible(ls)&&visible(rs)){let shoulderWidth=Math.max(.09,Math.hypot(ls.x-rs.x,ls.y-rs.y));let mid=(ls.x+rs.x)/2;let headX=(nose.x-mid)/shoulderWidth;let headY=(nose.y-(ls.y+rs.y)/2)/shoulderWidth;if(!headReady){headBase={x:headX,y:headY};headReady=true}else{let now=performance.now();let dx=headX-headBase.x,dy=headY-headBase.y; // Mirrored front-camera image: negate horizontal motion for intuitive left/right.
+/* REAL PUNCH progress: device-local only; no accounts or network calls. */
+const RPProgress=(()=>{
+ const KEY='realPunch.progress.v1';
+ const defaults=()=>({bestScore:0,totalWins:0,totalPunches:0});
+ let data=defaults();
+ try{const stored=JSON.parse(localStorage.getItem(KEY)||'null');if(stored&&typeof stored==='object'){
+  for(const k of Object.keys(data)){const n=Number(stored[k]);if(Number.isFinite(n)&&n>=0)data[k]=Math.floor(n)}
+ }}catch(e){console.warn('Progress load unavailable:',e)}
+ function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){console.warn('Progress save unavailable:',e)}}
+ function render(){const el=document.getElementById('rpProgressStats');if(el)el.textContent='🏆 BEST: '+data.bestScore+'  ·  WINS: '+data.totalWins+'  ·  PUNCHES: '+data.totalPunches}
+ function punch(){data.totalPunches++;save()}
+ function finish(score,won,roundPunches){let high=false;
+  if(won)data.totalWins++;
+  if(score>data.bestScore){data.bestScore=score;high=true}
+  save();render();return {high,...data,roundPunches};
+ }
+ return {render,punch,finish};
+})();
+'use strict';const $=x=>document.getElementById(x);let mode='',pose=null,stream=null,run=false,frameBusy=false,lastFrame=0,raf=0,enemyTimer=0,gameTimer=0,attackTimer=0,clearMsg=0,player=100,enemy=100,seconds=90,score=0,roundPunches=0,combo=0,warning=null,lastDodge=0,headBase=null,lastHead=null,headReady=false,lastPunch={left:0,right:0},arms={left:{ready:true,prev:null},right:{ready:true,prev:null}},lastCounter=0,enemySide=0,trackedFrames=0,frameTick=0;const video=$('camera');const clamp=(n,a,b)=>Math.min(b,Math.max(a,n));function msg(s,t=700){$('message').textContent=s;clearTimeout(clearMsg);clearMsg=setTimeout(()=>{$('message').textContent=''},t)}function hp(){$('playerHp').style.width=player+'%';$('enemyHp').style.width=enemy+'%'}function setOrientation(o){try{if(window.Android&&typeof window.Android.setOrientation==='function'){window.Android.setOrientation(o);return true;}if(screen.orientation&&screen.orientation.lock&&o!=='unspecified'){screen.orientation.lock(o==='portrait'?'portrait':'landscape').catch(()=>{});return true}}catch(e){console.error(e)}return false}function reset(){$('attackCue').classList.remove('active');player=100;enemy=100;seconds=90;score=0;roundPunches=0;combo=0;warning=null;headBase=null;lastHead=null;headReady=false;lastPunch={left:0,right:0};arms={left:{ready:true,prev:null,peak:0},right:{ready:true,prev:null,peak:0}};trackedFrames=0;frameTick=0;hp();$('clock').textContent='01:30';$('opponent').className=$('opponent').classList.contains('three-ready')?'three-ready':'';$('opponent').style.left='50%';$('overlay').style.display='none';window.dispatchEvent(new Event('mb-boxer-reset'))}let rpLastSeen=0,rpLastWarning='';function rpTrackingAlert(message){const el=$('trackAlert');if(!el)return;if(!message){el.classList.remove('show');rpLastWarning='';return;}el.textContent=message;el.classList.add('show');rpLastWarning=message;}function rpImpact(side,kind){const arena=$('arena'),flash=$('impactFlash'),label=$('hitLabel');label.textContent=(kind||'JAB')+'!';for(const [el,cls] of [[arena,'shake'],[flash,'burst'],[label,'pop']]){el.classList.remove(cls);void el.offsetWidth;el.classList.add(cls);setTimeout(()=>el.classList.remove(cls),570);}}async function start(m){MBSound.ready();stop();mode=m;document.body.classList.toggle('two-hand',m==='two');document.body.classList.toggle('one-hand',m==='one');reset();rpTrackingAlert('');setOrientation(m==='one'?'portrait':'landscape');$('menu').style.display='none';$('game').style.display='block';run=true;$('debug').textContent='MODE: '+(m==='one'?'PORTRAIT':'LANDSCAPE')+' | WAITING FOR CAMERA';$('help').textContent='Allow camera access';try{stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:'user',width:{ideal:640},height:{ideal:480}}});video.srcObject=stream;await video.play();if(!window.Pose)throw Error('Pose tracker could not load. Connect to internet.');pose=new Pose({locateFile:f=>'https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5/'+f});pose.setOptions({modelComplexity:0,smoothLandmarks:true,minDetectionConfidence:.5,minTrackingConfidence:.40});pose.onResults(onPose);$('help').textContent='Move your head to dodge · Punch toward camera';raf=requestAnimationFrame(loop);enemyTimer=setTimeout(enemyAttack,2200);gameTimer=setInterval(()=>{if(!run)return;seconds--;let mm=String(Math.floor(seconds/60)).padStart(2,'0'),ss=String(seconds%60).padStart(2,'0');$('clock').textContent=mm+':'+ss;if(seconds<=0)finish()},1000);MBSound.play('bell');msg('FIGHT!',1100)}catch(e){$('help').textContent='Camera error: '+e.message;msg('CAMERA UNAVAILABLE',1800)}}function stop(){$('attackCue').classList.remove('active');$('opponent').classList.remove('attack-left','attack-right');run=false;clearTimeout(enemyTimer);clearTimeout(attackTimer);clearInterval(gameTimer);cancelAnimationFrame(raf);if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}video.srcObject=null;if(pose){try{pose.close()}catch(e){}pose=null}}function exit(){rpTrackingAlert('');stop();document.body.classList.remove('two-hand','one-hand');setOrientation('unspecified');$('overlay').style.display='none';$('game').style.display='none';$('menu').style.display='flex'}async function loop(t){if(!run)return;raf=requestAnimationFrame(loop);if(frameBusy||!pose||video.readyState<2||t-lastFrame<42)return;frameBusy=true;lastFrame=t;try{await pose.send({image:video})}catch(e){$('help').textContent='Tracking error: '+e.message}finally{frameBusy=false}}function visible(p){return p&&p.visibility!==undefined?p.visibility>.48:!!p}function angle(a,b,c){let x=a.x-b.x,y=a.y-b.y,u=c.x-b.x,v=c.y-b.y;return Math.acos(clamp((x*u+y*v)/(Math.hypot(x,y)*Math.hypot(u,v)||1),-1,1))*180/Math.PI}function onPose(r){if(!run)return;let p=r.poseLandmarks;if(!p){rpTrackingAlert('BODY NOT FOUND — Improve lighting and stand farther back so your face and arms are visible.');$('help').textContent='Move back: show face and arms';$('debug').textContent='NO BODY FOUND | Move back / improve light';return}let nose=p[0],ls=p[11],rs=p[12];if(!visible(nose)||!visible(ls)||!visible(rs)){rpTrackingAlert('TRACKING WEAK — Face the camera, improve lighting and keep shoulders in frame.');}else{let sw=Math.hypot(ls.x-rs.x,ls.y-rs.y);rpTrackingAlert(sw>.52?'TOO CLOSE — Step back until your upper body fits in frame.':sw<.075?'TOO FAR — Move closer to the camera.':'');}if(visible(nose)&&visible(ls)&&visible(rs)){let shoulderWidth=Math.max(.09,Math.hypot(ls.x-rs.x,ls.y-rs.y));let mid=(ls.x+rs.x)/2;let headX=(nose.x-mid)/shoulderWidth;let headY=(nose.y-(ls.y+rs.y)/2)/shoulderWidth;if(!headReady){headBase={x:headX,y:headY};headReady=true}else{let now=performance.now();let dx=headX-headBase.x,dy=headY-headBase.y; // Mirrored front-camera image: negate horizontal motion for intuitive left/right.
 if(now-lastDodge>440){if(dx<-.23){dodge('left');lastDodge=now}else if(dx>.23){dodge('right');lastDodge=now}else if(dy>.30){dodge('duck');lastDodge=now}}if(Math.abs(dx)<.16&&Math.abs(dy)<.17){headBase.x=headBase.x*.996+headX*.004;headBase.y=headBase.y*.996+headY*.004}lastHead={x:dx,y:dy};} }
 let debugParts=[];
 for(let side of (mode==='one'?['right']:['left','right'])){
@@ -93,25 +135,36 @@ for(let side of (mode==='one'?['right']:['left','right'])){
   const dt=st.prev?Math.max(.03,(now-st.prev.t)/1000):.07;
   const velocity=st.prev?Math.hypot(c.x-st.prev.x,c.y-st.prev.y)/sw/dt:0;
   const extension=st.prev?(reach-st.prev.reach):0;
-  const forward=st.prev?Math.abs(c.x-st.prev.x)/sw:0;
-  // Accept a clear extension OR a fast wrist thrust, not only a fully straight elbow.
-  const thrust=(extension>.065&&bend>92)||(velocity>1.15&&reach>.49&&bend>95)||(forward>.14&&bend>120);
-  if(st.ready&&thrust&&reach>.47&&now-lastPunch[side]>330){st.ready=false;lastPunch[side]=now;punch(side)}
-  // Rearm on arm withdrawal; timeout also permits repeated jabs when depth isn't visible.
-  if((st.prev&&reach<st.prev.reach-.055)||bend<102||now-lastPunch[side]>900)st.ready=true;
-  st.prev={x:c.x,y:c.y,reach,t:now};
-  debugParts.push(side.toUpperCase()+': '+(st.ready?'READY':'PUNCH')+' '+Math.round(reach*100)+'%');
+  // V5.10: lower latency, modest extension threshold, and hysteresis.
+  // Detect the beginning of a thrust rather than waiting for full arm lockout.
+  const good=visible(b)&&a.visibility>.42&&b.visibility>.42&&c.visibility>.42;
+  const wristJump=st.prev?Math.hypot(c.x-st.prev.x,c.y-st.prev.y)/sw:0;
+  const validFrame=good&&dt<.32&&wristJump<1.12&&reach<2.35;
+  const extending=extension>.038&&extension<.90&&velocity>.28&&velocity<13&&bend>92&&reach>.53;
+  const thrust=validFrame&&st.prev&&extending;
+  if(st.ready&&thrust&&now-lastPunch[side]>280){
+    st.ready=false;st.waitReturn=now;st.peak=reach;lastPunch[side]=now;punch(side);
+  }
+  if(!st.ready){
+    st.peak=Math.max(st.peak||reach,reach);
+    // A measurable return movement is needed before accepting the next punch.
+    // No time-only rearm: holding the fist out must never auto-repeat.
+    if((st.peak-reach>.13 && (bend<148||reach<.88)) ||
+       (reach<.58&&bend<125)) {st.ready=true;st.peak=reach;}
+  }
+  st.prev=validFrame?{x:c.x,y:c.y,reach,t:now}:null;
+  debugParts.push(side.toUpperCase()+': '+(!good?'LOW CONFIDENCE':st.ready?'READY':'RETURN TO GUARD')+' '+Math.round(reach*100)+'%');
 }
 if(performance.now()-frameTick>200){frameTick=performance.now();$('debug').textContent='CAMERA TRACKING | '+debugParts.join(' | ');}
-$('help').textContent=mode==='one'?'RIGHT PUNCH · HEAD DODGE':'BOTH HANDS · HEAD DODGE';}function punch(side){if(!run)return;let now=performance.now();if(warning&&now<warning.impact){ // attacking during windup is allowed
-}let dodges=Math.random()<.27;let el=$('opponent');if(dodges){let dir=Math.random()<.5?-1:1;enemySide=clamp(enemySide+dir*11,-22,22);el.style.left=(50+enemySide)+'%';el.classList.add('dodging');MBSound.play('dodge');msg('OPPONENT DODGED!',550);setTimeout(()=>el.classList.remove('dodging'),300);combo=0;return}let damage=mode==='one'?9:7;if(now-lastCounter<1700)damage+=4;enemy=clamp(enemy-damage,0,100);score+=damage;combo++;hp();MBSound.play('hit');el.classList.add('hit');window.dispatchEvent(new CustomEvent('mb-boxer-hit',{detail:{side,damage}}));setTimeout(()=>el.classList.remove('hit'),160);msg((side==='left'?'LEFT':'RIGHT')+' HIT!'+(combo>1?' COMBO x'+combo:''),440);if(enemy<=0)finish()}function dodge(direction){if(!run||!warning)return;let now=performance.now();if(now>warning.impact||now<warning.impact-1100)return;if(direction===warning.direction||(direction==='duck'&&warning.kind==='hook')){warning.dodged=true;lastCounter=now;score+=5;MBSound.play('dodge');msg('PERFECT DODGE! +5',600)}else{msg('WRONG DIRECTION!',450)}}function enemyAttack(){
- if(!run)return;
+$('help').textContent=mode==='one'?'RIGHT PUNCH · HEAD DODGE':'BOTH HANDS · HEAD DODGE';}function punch(side){if(!run)return;if(window.RPTraining&&window.RPTraining.active){window.RPTraining.accept('punch',side);return;}roundPunches++;RPProgress.punch();let now=performance.now();if(warning&&now<warning.impact){ // attacking during windup is allowed
+}let dodges=Math.random()<.27;let el=$('opponent');if(dodges){let dir=Math.random()<.5?-1:1;enemySide=clamp(enemySide+dir*11,-22,22);el.style.left=(50+enemySide)+'%';el.classList.add('dodging');MBSound.play('dodge');msg('OPPONENT DODGED!',550);setTimeout(()=>el.classList.remove('dodging'),300);combo=0;return}let damage=mode==='one'?9:7;if(now-lastCounter<1700)damage+=4;enemy=clamp(enemy-damage,0,100);score+=damage;combo++;hp();MBSound.play('hit');rpImpact(side,combo%3===0?'HOOK':side==='left'?'JAB':'CROSS');el.classList.add('hit');window.dispatchEvent(new CustomEvent('mb-boxer-hit',{detail:{side,damage}}));setTimeout(()=>el.classList.remove('hit'),160);msg((side==='left'?'LEFT':'RIGHT')+' HIT!'+(combo>1?' COMBO x'+combo:''),440);if(enemy<=0)finish()}function dodge(direction){if(window.RPTraining&&window.RPTraining.active){window.RPTraining.accept('dodge',direction);return;}if(!run||!warning)return;let now=performance.now();if(now>warning.impact||now<warning.impact-1100)return;if(direction===warning.direction||(direction==='duck'&&warning.kind==='hook')){warning.dodged=true;lastCounter=now;score+=5;MBSound.play('dodge');msg('PERFECT DODGE! +5',600)}else{msg('WRONG DIRECTION!',450)}}function enemyAttack(){
+ if(!run)return;if(window.RPTraining&&window.RPTraining.active)return;
  const direction=Math.random()<.5?'left':'right';
  const kind=Math.random()<.25?'hook':'straight';
  const delay=1650; // More time to read the cue and move your head.
  const cue=$('attackCue');
  warning={direction,kind,impact:performance.now()+delay,dodged:false};
- cue.textContent='DODGE '+direction.toUpperCase()+'  ◀ ▶';
+ cue.textContent=(kind==='hook'?'HOOK':direction==='left'?'JAB':'CROSS')+' INCOMING · DODGE '+direction.toUpperCase()+' ◀ ▶';
  cue.classList.add('active');MBSound.play('whoosh');
  // Show only the punching arm during the wind-up.
  const boxer=$('opponent');
@@ -126,25 +179,246 @@ $('help').textContent=mode==='one'?'RIGHT PUNCH · HEAD DODGE':'BOTH HANDS · HE
   if(w&&!w.dodged){
    const damage=kind==='hook'?13:10;
    player=clamp(player-damage,0,100);hp();combo=0;
-   MBSound.play('hit');msg('YOU WERE HIT! -'+damage,700);
+   MBSound.play('hit');rpImpact(direction,kind==='hook'?'HOOK':direction==='left'?'JAB':'CROSS');msg('YOU WERE HIT! -'+damage,700);
    if(player<=0){finish();return}
   }else {MBSound.play('dodge');msg('MISSED!',650);}
   enemyTimer=setTimeout(enemyAttack,1600+Math.random()*900);
  },delay);
 }
-function finish(){if(!run)return;let won=enemy<=0||(seconds<=0&&player>=enemy);let title=enemy<=0?'KNOCKOUT!':player<=0?'YOU WERE KNOCKED OUT':won?'YOU WIN!':'YOU LOSE';if(enemy<=0){$('opponent').classList.add('ko');window.dispatchEvent(new Event('mb-boxer-ko'));}MBSound.play(player<=0||enemy<=0?'ko':'win');stop();$('result').textContent=title;$('resultDetail').textContent='Your Health: '+player+'% · Opponent Health: '+enemy+'% · Score: '+score;if(enemy<=0){setTimeout(()=>{$('overlay').style.display='flex'},2600)}else{$('overlay').style.display='flex'}}const soundToggle=document.createElement('button');soundToggle.id='soundToggle';soundToggle.textContent='🔊 SOUND ON';soundToggle.style.cssText='position:absolute;right:9px;top:68px;z-index:7;padding:7px 10px;font-size:11px;background:#244565';document.getElementById('game').appendChild(soundToggle);soundToggle.onclick=()=>{let on=MBSound.setEnabled(!MBSound.enabled);soundToggle.textContent=on?'🔊 SOUND ON':'🔇 SOUND OFF';if(on)MBSound.play('bell')};$('one').onclick=()=>start('one');$('two').onclick=()=>start('two');$('exit').onclick=exit;$('back').onclick=exit;$('again').onclick=()=>start(mode);$('dodgeL').onclick=()=>dodge('left');$('dodgeR').onclick=()=>dodge('right');$('duck').onclick=()=>dodge('duck');document.addEventListener('visibilitychange',()=>{if(document.hidden&&run){msg('PAUSED - RETURN TO GAME',2000)}});
+function finish(){if(!run)return;let won=enemy<=0||(seconds<=0&&player>=enemy);let title=enemy<=0?'KNOCKOUT!':player<=0?'YOU WERE KNOCKED OUT':won?'YOU WIN!':'YOU LOSE';if(enemy<=0){$('opponent').classList.add('ko');window.dispatchEvent(new Event('mb-boxer-ko'));}MBSound.play(player<=0||enemy<=0?'ko':'win');stop();const progress=RPProgress.finish(score,won,roundPunches);$('result').textContent=title;$('resultDetail').textContent='Your Health: '+player+'% · Opponent Health: '+enemy+'% · Score: '+score;
+$('watchAdContinue').disabled=won; $('watchAdContinue').textContent=won?'CONTINUE (LOSSES ONLY)':'WATCH AD TO CONTINUE';$('rpNewRecord').style.display=progress.high?'block':'none';$('rpResultStats').textContent='Round Punches: '+progress.roundPunches+' · Best Score: '+progress.bestScore+' · Total Wins: '+progress.totalWins+' · Total Punches: '+progress.totalPunches;if(enemy<=0){setTimeout(()=>{$('overlay').style.display='flex'},2600)}else{$('overlay').style.display='flex'}}const soundToggle=document.createElement('button');soundToggle.id='soundToggle';soundToggle.textContent='🔊 SOUND ON';soundToggle.style.cssText='position:absolute;right:9px;top:68px;z-index:7;padding:7px 10px;font-size:11px;background:#244565';document.getElementById('game').appendChild(soundToggle);soundToggle.onclick=()=>{let on=MBSound.setEnabled(!MBSound.enabled);soundToggle.textContent=on?'🔊 SOUND ON':'🔇 SOUND OFF';if(on)MBSound.play('bell')};RPProgress.render();$('one').onclick=()=>start('one');$('two').onclick=()=>start('two');$('exit').onclick=exit;$('back').onclick=exit;$('watchAdContinue').onclick=()=>{
+ // Temporary reward simulation: NO ad network or Android bridge is called.
+ // Continue is available only after a loss. Keep earned score and remaining opponent HP.
+ if(run || enemy<=0 || (seconds<=0 && player>=enemy))return;
+ const savedScore=score,savedPunches=roundPunches,savedEnemy=enemy;
+ start(mode);
+ player=50;enemy=Math.max(1,savedEnemy);score=savedScore;roundPunches=savedPunches;seconds=45;
+ hp();$('clock').textContent='00:45';
+ $('overlay').style.display='none';
+ msg('CONTINUE! +50 HEALTH · 45 SECONDS',1800);
+};$('again').onclick=()=>start(mode);$('dodgeL').onclick=()=>dodge('left');$('dodgeR').onclick=()=>dodge('right');$('duck').onclick=()=>dodge('duck');document.addEventListener('visibilitychange',()=>{if(document.hidden&&run){msg('PAUSED - RETURN TO GAME',2000)}});
 
-</script><script type="module">
+</script><script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js"}}</script><script type="module">
 
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js';
+import {FBXLoader} from 'https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/loaders/FBXLoader.js';
+function rpDress(model){
+ /* V6.8: shorts and boots are cut from the body's own skinned mesh and inflated slightly, so they follow every muscle and bone. */
+ const skinned=[];model.traverse(o=>{if(o.isSkinnedMesh&&o.skeleton)skinned.push(o)});
+ for(const src of skinned){
+  const g=src.geometry,pos=g.attributes.position,si=g.attributes.skinIndex,sw=g.attributes.skinWeight;
+  if(!pos||!si||!sw)continue;
+  const bones=src.skeleton.bones,bp=bones.map((b,i)=>new THREE.Vector3().setFromMatrixPosition(new THREE.Matrix4().copy(src.skeleton.boneInverses[i]).invert()));
+  const find=re=>bones.findIndex(b=>re.test(b.name)),hipsI=find(/Hips$/),legs={},role={};
+  for(const s of['Left','Right'])legs[s]={up:find(new RegExp(s+'UpLeg$')),kn:find(new RegExp(s+'Leg$')),ft:find(new RegExp(s+'Foot$'))};
+  if(hipsI<0||Object.values(legs).some(l=>l.up<0||l.kn<0||l.ft<0)){console.warn('rpDress: bones not found');continue}
+  for(const s in legs){role[legs[s].up]=[s,'up'];role[legs[s].kn]=[s,'kn'];role[legs[s].ft]=[s,'ft']}
+  bones.forEach((b,i)=>{const m=/(Left|Right)(ToeBase|Toe_End)$/.exec(b.name);if(m)role[i]=[m[1],'ft']});
+  g.computeBoundingBox();const hg=g.boundingBox.max.y-g.boundingBox.min.y,n=pos.count,v=new THREE.Vector3(),bp3=new Float32Array(n*3),dom=new Int32Array(n);
+  let minY=1e9,maxY=-1e9;
+  for(let i=0;i<n;i++){v.fromBufferAttribute(pos,i).applyMatrix4(src.bindMatrix);bp3[i*3]=v.x;bp3[i*3+1]=v.y;bp3[i*3+2]=v.z;minY=Math.min(minY,v.y);maxY=Math.max(maxY,v.y);
+   let b=0,w=-1;for(let k=0;k<4;k++){const ww=sw.getComponent(i,k);if(ww>w){w=ww;b=si.getComponent(i,k)}}dom[i]=b}
+  const H=maxY-minY,waistY=bp[hipsI].y+.035*H;
+  const axisT=(i,a,b)=>{const dx=bp[b].x-bp[a].x,dy=bp[b].y-bp[a].y,dz=bp[b].z-bp[a].z;return((bp3[i*3]-bp[a].x)*dx+(bp3[i*3+1]-bp[a].y)*dy+(bp3[i*3+2]-bp[a].z)*dz)/(dx*dx+dy*dy+dz*dz||1)};
+  /* selector result: 0 = bare skin, 1 = main colour, 2 = white trim */
+  const shorts=i=>{const b=dom[i],r=role[b],y=bp3[i*3+1];if(b===hipsI)return y<waistY?(y>waistY-.03*H?2:1):0;if(r&&r[1]==='up'){const t=axisT(i,legs[r[0]].up,legs[r[0]].kn);return t<.5?(t>.42?2:1):0}return 0};
+  const boots=i=>{const r=role[dom[i]],y=bp3[i*3+1];if(!r)return 0;if(r[1]==='ft')return y<minY+.025*H?2:1;if(r[1]==='kn'){const t=axisT(i,legs[r[0]].kn,legs[r[0]].ft);return t>.78?(t<.84?2:1):0}return 0};
+  const make=(sel,base,trim)=>{
+   const st=new Uint8Array(n);for(let i=0;i<n;i++)st[i]=sel(i);
+   const idx=g.index?g.index.array:null,tri=(idx?idx.length:n)/3,out=[];
+   for(let t=0;t<tri;t++){const a=idx?idx[t*3]:t*3,b=idx?idx[t*3+1]:t*3+1,c=idx?idx[t*3+2]:t*3+2;if(st[a]&&st[b]&&st[c])out.push(a,b,c)}
+   if(!out.length){console.warn('rpDress: empty garment');return}
+   const col=new Float32Array(n*3);for(let i=0;i<n;i++){const c=st[i]===2?trim:base;col[i*3]=c[0];col[i*3+1]=c[1];col[i*3+2]=c[2]}
+   const ng=new THREE.BufferGeometry();for(const k of['position','normal','uv','skinIndex','skinWeight'])if(g.attributes[k])ng.setAttribute(k,g.attributes[k]);
+   ng.setAttribute('color',new THREE.BufferAttribute(col,3));ng.setIndex(out);
+   const m=new THREE.MeshStandardMaterial({vertexColors:true,roughness:.85,side:THREE.DoubleSide});
+   m.onBeforeCompile=sh=>{sh.uniforms.uInfl={value:hg*.007};sh.vertexShader='uniform float uInfl;\n'+sh.vertexShader.replace('#include <begin_vertex>','vec3 transformed=position+normalize(normal)*uInfl;')};
+   const sm=new THREE.SkinnedMesh(ng,m);sm.bind(src.skeleton,src.bindMatrix);sm.frustumCulled=false;sm.position.copy(src.position);sm.quaternion.copy(src.quaternion);sm.scale.copy(src.scale);src.parent.add(sm)};
+  make(shorts,[.06,.07,.1],[.93,.93,.95]);make(boots,[.06,.07,.1],[.93,.93,.95]);
+ }
+}
 const host=document.getElementById('boxer3d'),root=document.getElementById('opponent'); const status={set textContent(value){if(value.startsWith('Error'))console.error(value)}};
 try{
 const scene=new THREE.Scene();
 const camera=new THREE.PerspectiveCamera(36,1,.1,100);camera.position.set(0,2.1,8.7);camera.lookAt(0,1.85,0);
-const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'low-power'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setSize(Math.max(1,host.clientWidth),Math.max(1,host.clientHeight));renderer.shadowMap.enabled=true;host.appendChild(renderer.domElement);
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'low-power'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.25));renderer.setSize(Math.max(1,host.clientWidth),Math.max(1,host.clientHeight));renderer.shadowMap.enabled=true;host.appendChild(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xdbeafe,0x263248,2.3));const key=new THREE.DirectionalLight(0xffffff,3);key.position.set(-3,8,6);scene.add(key);
 const mat=(color,roughness=.8)=>new THREE.MeshStandardMaterial({color,roughness});const skin=mat(0xc98a63),shirt=mat(0x2172a9),shorts=mat(0x171c2a),red=mat(0xe72c42,.4),black=mat(0x10141e),white=mat(0xf3f5f7),hair=mat(0x15151b);
 const boxer=new THREE.Group();scene.add(boxer);
+// Human FBX test; original procedural boxer remains fallback.
+// Keep Dancing Basemesh.fbx and (none) beside index.html.
+let xBotModel=null;
+try {
+ const loader=new FBXLoader();
+ loader.load('./Dancing Basemesh.fbx', model=>{
+  try {
+   const bounds=new THREE.Box3().setFromObject(model);
+   const size=bounds.getSize(new THREE.Vector3());
+   if(!Number.isFinite(size.y)||size.y<=0)throw new Error('Invalid basemesh bounds');
+   const scale=3.35/size.y;
+   model.scale.multiplyScalar(scale);
+   model.updateMatrixWorld(true);
+   const b=new THREE.Box3().setFromObject(model);
+   const center=b.getCenter(new THREE.Vector3());
+   model.position.x-=center.x;
+   model.position.z-=center.z;
+   model.position.y-=b.min.y;
+   // V6.2: orient the imported human so the shoulder line faces the camera.
+   // Camera sits on +Z; align shoulders with screen X (zero-degree front view).
+   // Use the bind/initial pose only; keep rotation fixed during gameplay.
+   model.updateMatrixWorld(true);
+   const facingBones=[];
+   model.traverse(o=>{if(o.isBone)facingBones.push(o)});
+   const shoulder=(side)=>facingBones.find(o=>new RegExp(side+'(Shoulder|Arm)$','i').test(o.name));
+   const leftShoulder=shoulder('Left'),rightShoulder=shoulder('Right');
+   if(leftShoulder&&rightShoulder){
+     const lp=new THREE.Vector3(),rp=new THREE.Vector3();
+     leftShoulder.getWorldPosition(lp);rightShoulder.getWorldPosition(rp);
+     const dx=rp.x-lp.x,dz=rp.z-lp.z;
+     if(Math.hypot(dx,dz)>0.001){
+       // Rotation around Y: z' = -sin(yaw)*dx + cos(yaw)*dz.
+       model.rotation.y+=Math.atan2(dz,dx);
+       model.updateMatrixWorld(true);
+     }
+   }else{
+     model.rotation.y=0;
+   }
+   // V6.3: V6.2 showed the model's BACK to the +Z camera.
+   // Flip only the imported character by 180 degrees; preserve its pose,
+   // accessories, and the V5.10 camera/punch tracking logic.
+   model.rotation.y += Math.PI - THREE.MathUtils.degToRad(32); // V6.5 orientation retained; no additional rotation in V6.6
+   model.updateMatrixWorld(true);
+   const frontBounds=new THREE.Box3().setFromObject(model);
+   const frontCenter=frontBounds.getCenter(new THREE.Vector3());
+   model.position.x-=frontCenter.x;
+   model.position.z-=frontCenter.z;
+   model.updateMatrixWorld(true);
+   console.info('REAL PUNCH V6.3: camera-facing correction',model.rotation.y);
+   // No external texture in supplied basemesh. Neutral skin-toned PBR material.
+   const bodyMat=new THREE.MeshStandardMaterial({color:0xb9896d,roughness:0.88,metalness:0,side:THREE.DoubleSide});
+   model.traverse(o=>{
+    if(o.isMesh){o.frustumCulled=false;o.castShadow=false;o.receiveShadow=false;o.material=bodyMat;}
+   });
+   try{rpDress(model)}catch(e){console.error('dress failed',e)}
+   // V6.1: all accessory dimensions are in normalized scene meters.
+   // Never parent geometries to FBX bones: imported bone scales are in FBX source units.
+   // Instead, update small world-space accessories from bone positions each frame.
+   const bones=[];model.traverse(o=>{if(o.isBone)bones.push(o)});
+   const findBone=(side,part)=>bones.find(o=>new RegExp(side+part+'$', 'i').test(o.name));
+   const kitRed=new THREE.MeshStandardMaterial({color:0xd91635,roughness:.43});
+   const kitBlack=new THREE.MeshStandardMaterial({color:0x11141c,roughness:.88,side:THREE.DoubleSide});
+   const kitWhite=new THREE.MeshStandardMaterial({color:0xe8e8ec,roughness:.75});
+   // V6.6 outfit: place accessories from anatomical landmarks in world space.
+   // This avoids FBX source-unit scaling and arbitrary bone-local axes.
+   const accessories=[];
+   const worldPos=(bone)=>{const p=new THREE.Vector3();bone.getWorldPosition(p);return p;};
+   const makeMesh=(geometry,material,parent)=>{const m=new THREE.Mesh(geometry,material);parent.add(m);return m;};
+   const bodyUp=new THREE.Vector3(0,1,0);
+   const gloves=[];const boots=[];const legs=[];
+   for(const side of ['Left','Right']){
+     const hand=findBone(side,'Hand');
+     if(hand){
+       const glove=new THREE.Group();scene.add(glove);
+       const palm=makeMesh(new THREE.SphereGeometry(1,20,16),kitRed,glove);
+       palm.scale.set(.19,.205,.215);
+       const thumb=makeMesh(new THREE.SphereGeometry(1,12,10),kitRed,glove);
+       thumb.scale.set(.082,.10,.09);thumb.position.set(side==='Left'?.12:-.12,-.03,.055);
+       const cuff=makeMesh(new THREE.CylinderGeometry(.105,.095,.12,18),kitRed,glove);
+       cuff.position.y=-.155;
+       const strap=makeMesh(new THREE.CylinderGeometry(.101,.101,.032,18),kitWhite,glove);
+       strap.position.y=-.205;
+       gloves.push({hand,glove});
+     }
+     const foot=findBone(side,'Foot');
+     const toe=findBone(side,'ToeBase');
+     if(false&&foot){
+       const boot=new THREE.Group();scene.add(boot);
+       const shoe=makeMesh(new THREE.SphereGeometry(1,20,14),kitBlack,boot);
+       shoe.scale.set(.145,.125,.24);shoe.position.z=.085;
+       const ankle=makeMesh(new THREE.CylinderGeometry(.108,.115,.19,16),kitBlack,boot);
+       ankle.position.y=.055;
+       const sole=makeMesh(new THREE.BoxGeometry(.29,.035,.44),kitWhite,boot);
+       sole.position.set(0,-.11,.085);
+       for(let i=0;i<3;i++){
+         const lace=makeMesh(new THREE.BoxGeometry(.09,.009,.014),kitWhite,boot);
+         lace.position.set(0,.015-i*.032,.11+i*.032);
+       }
+       boots.push({foot,toe,boot});
+     }
+     const upper=findBone(side,'UpLeg');
+     const knee=findBone(side,'Leg');
+     if(false&&upper&&knee){
+       const tube=makeMesh(new THREE.CylinderGeometry(.235,.255,1,24,1,false),kitBlack,scene);
+       const hem=makeMesh(new THREE.CylinderGeometry(.257,.257,.034,24),kitWhite,scene);
+       legs.push({upper,knee,tube,hem});
+     }
+   }
+   const hips=bones.find(o=>/Hips$/i.test(o.name));
+   const leftUpper=findBone('Left','UpLeg'),rightUpper=findBone('Right','UpLeg');
+   const waistGroup=new THREE.Group();scene.add(waistGroup);waistGroup.visible=false;
+   const waist=makeMesh(new THREE.CylinderGeometry(.30,.335,.29,24),kitBlack,waistGroup);
+   waist.position.y=-.12;
+   const belt=makeMesh(new THREE.CylinderGeometry(.304,.304,.065,24),kitWhite,waistGroup);
+   belt.position.y=.045;
+   window.__rpKitUpdate=()=>{
+     model.updateMatrixWorld(true);
+     const yaw=model.rotation.y;
+     for(const {hand,glove} of gloves){
+       glove.position.copy(worldPos(hand));
+       glove.position.y+=.035;
+       // Glove covers the fist rather than sitting on the wrist.
+       glove.rotation.set(0,yaw,0);
+     }
+     for(const {foot,toe,boot} of boots){
+       boot.position.copy(worldPos(foot));
+       if(toe){
+         const toeP=worldPos(toe);
+         boot.position.lerp(toeP,.55);
+       }
+       boot.rotation.set(0,yaw,0);
+       if(toe){
+         const direction=worldPos(toe).sub(boot.position);direction.y=0;
+         if(direction.lengthSq()>.00001)boot.rotation.y=Math.atan2(direction.x,direction.z);
+       }
+       // FBX foot bone is generally near ankle; shift shoe down to sole.
+       boot.position.y-=.035;
+     }
+     for(const {upper,knee,tube,hem} of legs){
+       const top=worldPos(upper),end=worldPos(knee);
+       const direction=end.clone().sub(top);const length=Math.max(.1,direction.length());
+       const shortsLength=Math.min(.43,length*.62);
+       tube.position.copy(top).addScaledVector(direction,shortsLength/(2*length));
+       tube.quaternion.setFromUnitVectors(bodyUp,direction.clone().normalize());
+       tube.scale.set(1,shortsLength,1);
+       hem.position.copy(top).addScaledVector(direction,shortsLength/length);
+       hem.quaternion.copy(tube.quaternion);
+     }
+     if(hips){
+       waistGroup.position.copy(worldPos(hips));
+       waistGroup.rotation.set(0,yaw,0);
+       // Pelvis centre should sit between left/right upper legs.
+       if(leftUpper&&rightUpper){
+         const mid=worldPos(leftUpper).add(worldPos(rightUpper)).multiplyScalar(.5);
+         waistGroup.position.x=mid.x;
+         waistGroup.position.z=mid.z;
+         waistGroup.position.y=mid.y+.14;
+       }
+     }
+   };
+   window.__rpKitUpdate();
+   scene.add(model);xBotModel=model;
+   boxer.visible=false;
+   // Preview any bundled animation; boxing animations are NOT included.
+   if(model.animations && model.animations.length){
+    const mixer=new THREE.AnimationMixer(model);
+    const clip=model.animations.find(a=>a.duration>0);
+    if(clip){mixer.clipAction(clip).play();window.__rpXBotMixer=mixer;}
+   }
+   console.info('REAL PUNCH V6.1: scaled boxer kit loaded',model.animations?.length||0,'animations');
+  }catch(err){console.error('Human model setup failed; using old boxer',err)}
+ },undefined,err=>console.error('Human model FBX loading failed; using old boxer',err));
+}catch(err){console.error('FBXLoader unavailable; using old boxer',err)}
+
 function part(parent,geometry,material,x=0,y=0,z=0){let mesh=new THREE.Mesh(geometry,material);mesh.position.set(x,y,z);parent.add(mesh);return mesh}
 const sphere=(parent,material,x,y,z,sx,sy,sz)=>{let m=part(parent,new THREE.SphereGeometry(1,20,14),material,x,y,z);m.scale.set(sx,sy,sz);return m};
 const capsule=(parent,material,x,y,z,r,length)=>part(parent,new THREE.CapsuleGeometry(r,length,8,16),material,x,y,z);
@@ -182,8 +456,10 @@ function play(move){state.move=move;state.start=performance.now();state.holding=
 let lastAttack='',lastDodge=false,lastHit=false;
 function smooth(t){return t*t*(3-2*t)}
 function apply(a,base,ext,w){a.shoulder.rotation.x=base[0]+(ext[0]-base[0])*w;a.shoulder.rotation.z=base[1]*a.s+(ext[1]-base[1])*a.s*w;a.elbow.rotation.x=base[2]+(ext[2]-base[2])*w;a.elbow.rotation.z=(base[3]+(ext[3]-base[3])*w)*a.s;}
+let lastRender=0;
 function loop(now){
  requestAnimationFrame(loop);
+ if(now-lastRender<30)return;lastRender=now;
  const t=now*.001;
  const attack=root.classList.contains('attack-left')?'left':root.classList.contains('attack-right')?'right':'';
  const dodging=root.classList.contains('dodging');
@@ -243,6 +519,8 @@ function loop(now){
    boxer.position.z=-.48*e;
    boxer.position.x=-.22*e;
  }
+ if(window.__rpXBotMixer){window.__rpXBotClock=window.__rpXBotClock||new THREE.Clock();window.__rpXBotMixer.update(Math.min(.05,window.__rpXBotClock.getDelta()));}
+ if(window.__rpKitUpdate)window.__rpKitUpdate();
  renderer.render(scene,camera);
 }
 function resize(){const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight);camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false)}
@@ -275,6 +553,36 @@ status.textContent='✓ Animated 3D boxer ready';requestAnimationFrame(loop);
  el('tutorialNext').addEventListener('click',function(){if(i<steps.length-1){i++;draw()}});
  el('tutorialBack').addEventListener('click',function(){if(i>0){i--;draw()}});
  el('tutorialSkip').addEventListener('click',close);
- el('tutorialPractice').addEventListener('click',function(){close();el('one').click()});
+ el('tutorialPractice').addEventListener('click',function(){close();window.RPTraining.begin()});
+})();
+</script><style id="rp-training-css">
+#rpTraining{display:none;position:absolute;top:75px;left:50%;transform:translateX(-50%);z-index:12;width:min(94vw,420px);background:#071326ef;border:2px solid #62a4ff;border-radius:16px;padding:12px;text-align:center;box-shadow:0 8px 25px #0009}
+#rpTraining strong{display:block;font-size:20px;color:#fff}#rpTraining p{margin:7px 0;color:#d4e5ff;font-size:13px}#rpTraining button{padding:9px 12px;margin:3px;font-size:12px}
+#rpTrainState{color:#80ffbc;font-weight:900;font-size:13px}
+@media(orientation:landscape){#rpTraining{top:54px;width:min(62vw,420px)}}
+</style><div id="rpTraining" aria-live="polite"><strong id="rpTrainTitle">TRAINING</strong><p id="rpTrainHelp"></p><div id="rpTrainState">WAITING FOR MOVE</div><button id="rpTrainSkip">END TRAINING</button><button id="rpTrainNext" style="display:none">NEXT ▶</button></div>
+<script id="rp-interactive-training">
+/* Additive training adapter: V5.4's pose tracker, camera and game engine remain intact. */
+(function(){'use strict';
+ var panel=document.getElementById('rpTraining'),title=document.getElementById('rpTrainTitle'),help=document.getElementById('rpTrainHelp'),state=document.getElementById('rpTrainState'),next=document.getElementById('rpTrainNext');
+ var tasks=[
+  {type:'punch',value:'right',name:'1 / 3 — RIGHT JAB',hint:'Keep your right hand in camera view. Throw one clear right-hand punch toward the camera.'},
+  {type:'dodge',value:'left',name:'2 / 3 — DODGE LEFT',hint:'Move your head to your LEFT. If tracking is difficult, tap DODGE ◀.'},
+  {type:'dodge',value:'right',name:'3 / 3 — DODGE RIGHT',hint:'Move your head to your RIGHT. If tracking is difficult, tap DODGE ▶.'}
+ ];
+ var index=0,passed=false,active=false;
+ function draw(){var t=tasks[index];title.textContent=t.name;help.textContent=t.hint;state.textContent='WAITING FOR MOVE…';passed=false;next.style.display='none'}
+ function end(){active=false;panel.style.display='none';window.RPTraining.active=false;try{clearTimeout(enemyTimer);enemyTimer=setTimeout(enemyAttack,1600)}catch(e){}}
+ window.RPTraining={active:false,begin:function(){
+   index=0;passed=false;active=true;window.RPTraining.active=true;
+   // Start existing portrait mode; the standard camera tracker detects moves.
+   document.getElementById('one').click();panel.style.display='block';draw();
+ },accept:function(type,value){if(!active||passed)return;var t=tasks[index];if(t.type!==type||t.value!==value)return;
+   passed=true;state.textContent='✓ SUCCESS!';next.textContent=index===tasks.length-1?'FINISH TRAINING':'NEXT ▶';next.style.display='inline-block';
+ }};
+ next.addEventListener('click',function(){if(!passed)return;if(index===tasks.length-1){end();return;}index++;draw()});
+ document.getElementById('rpTrainSkip').addEventListener('click',end);
+ document.getElementById('exit').addEventListener('click',function(){active=false;window.RPTraining.active=false;panel.style.display='none'});
+ document.getElementById('back').addEventListener('click',function(){active=false;window.RPTraining.active=false;panel.style.display='none'});
 })();
 </script></body></html>
