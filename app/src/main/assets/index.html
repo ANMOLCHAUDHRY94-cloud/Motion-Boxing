@@ -75,7 +75,7 @@ body.two-hand #camera{bottom:auto!important}
 body.two-hand #trackAlert{width:calc(100vw - 150px)!important}
 #status button{white-space:nowrap!important;padding:10px 14px!important}
 #help{flex:1;min-width:0;max-width:none!important;font-size:10px;line-height:1.25}
-#soundToggle{top:calc(74px + var(--top))!important;right:auto!important;left:8px!important}
+#soundToggle{top:calc(72px + var(--top))!important;left:auto!important;right:8px!important}
 body.two-hand #soundToggle{top:calc(60px + var(--top))!important}
 </style></head><body><section id="menu"><h1>🥊 REAL PUNCH</h1><p>REAL CAMERA BOXING · X BOT TEST0</p><div id="rpProgressStats">BEST SCORE: 0 · WINS: 0 · PUNCHES: 0</div><button id="one">ONE-HAND BOXING<br><small>Portrait · Hold phone in left hand · Right punches</small></button><button id="tutorialBtn" type="button">🥊 BOXING TUTORIAL</button><button id="two">TWO-HAND BOXING<br><small>Landscape · Phone on stand · Both hands</small></button><p>Keep your face and punching arm(s) in camera view. Good lighting and a stable phone improve tracking. Camera access and internet are required on first launch.</p></section><section id="game"><div id="hud"><div class="hp">YOU<div class="track"><div class="fill" id="playerHp"></div></div></div><div id="clock">01:30</div><div class="hp" style="text-align:right">OPPONENT<div class="track"><div class="fill" id="enemyHp"></div></div></div></div><div id="debug">TRACKER: STARTING</div><div id="arena"><div id="floor"></div><div id="opponent"><div id="boxer3d" aria-label="3D boxer"></div><svg viewBox="0 0 220 360" preserveAspectRatio="xMidYMax meet" aria-label="Shaded full body boxer"><defs><linearGradient id="skin3"><stop stop-color="#693721"/><stop offset=".27" stop-color="#e0a277"/><stop offset=".65" stop-color="#ba704c"/><stop offset="1" stop-color="#54291f"/></linearGradient><linearGradient id="red3"><stop stop-color="#6f0d18"/><stop offset=".3" stop-color="#ff5b60"/><stop offset=".65" stop-color="#d51c2d"/><stop offset="1" stop-color="#590d17"/></linearGradient><linearGradient id="pants3"><stop stop-color="#77151e"/><stop offset=".42" stop-color="#f3434e"/><stop offset="1" stop-color="#82121b"/></linearGradient><linearGradient id="shoes3"><stop stop-color="#101525"/><stop offset=".55" stop-color="#46516c"/><stop offset="1" stop-color="#0a0c15"/></linearGradient><radialGradient id="chest3"><stop stop-color="#e9b38b"/><stop offset=".7" stop-color="#a95e40"/><stop offset="1" stop-color="#6b3629"/></radialGradient></defs>
 <ellipse cx="111" cy="348" rx="79" ry="9" fill="#02050a" opacity=".45"/>
@@ -232,7 +232,7 @@ function rpDress(model){
    if(b===hipsI||isSpine(b))return[c,c+BAND];
    if(r&&r[1]==='up'){c=Math.max(c,axisT(i,legs[r[0]].up,legs[r[0]].kn)-.5);return[c,c+BAND]}
    return null};
-  const bootsCut=i=>{const r=role[dom[i]],sole=(minY+.03*H-bp3[i*3+1])/(.03*H);if(!r)return null;
+  const bootsCut=i=>{const r=role[dom[i]],sole=(minY+.014*H-bp3[i*3+1])/(.014*H);if(!r)return null;
    if(r[1]==='ft')return[-1,sole];
    if(r[1]==='kn'){const c=.78-axisT(i,legs[r[0]].kn,legs[r[0]].ft);return[c,Math.max(sole,c+.06)]}
    return null};
@@ -277,7 +277,7 @@ try {
    const center=b.getCenter(new THREE.Vector3());
    model.position.x-=center.x;
    model.position.z-=center.z;
-   model.position.y-=b.min.y;
+   model.position.y-=b.min.y+.03;
    // V6.2: orient the imported human so the shoulder line faces the camera.
    // Camera sits on +Z; align shoulders with screen X (zero-degree front view).
    // Use the bind/initial pose only; keep rotation fixed during gameplay.
@@ -301,7 +301,7 @@ try {
    // V6.3: V6.2 showed the model's BACK to the +Z camera.
    // Flip only the imported character by 180 degrees; preserve its pose,
    // accessories, and the V5.10 camera/punch tracking logic.
-   const RP_TURN_DEG=12; /* how many degrees the boxer is turned away from facing the screen: 0 = straight at you, 32 = old value */
+   const RP_TURN_DEG=44; /* how many degrees the boxer is turned away from facing the screen: 0 = straight at you, 32 = old value */
    model.rotation.y += Math.PI - THREE.MathUtils.degToRad(RP_TURN_DEG); // V6.5 orientation retained; no additional rotation in V6.6
    model.updateMatrixWorld(true);
    const frontBounds=new THREE.Box3().setFromObject(model);
@@ -376,9 +376,15 @@ try {
    waist.position.y=-.12;
    const belt=makeMesh(new THREE.CylinderGeometry(.304,.304,.065,24),kitWhite,waistGroup);
    belt.position.y=.045;
+   const shTex=(()=>{const c=document.createElement('canvas');c.width=c.height=64;const x=c.getContext('2d'),g=x.createRadialGradient(32,32,2,32,32,31);g.addColorStop(0,'rgba(0,0,0,.7)');g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(0,0,64,64);return new THREE.CanvasTexture(c)})();
+   const shadowPlane=(w,d,op)=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,d),new THREE.MeshBasicMaterial({map:shTex,transparent:true,opacity:op,depthWrite:false}));m.rotation.x=-Math.PI/2;m.renderOrder=-1;scene.add(m);return m};
+   const rpShadows=[];for(const side of ['Left','Right']){const foot=findBone(side,'Foot');if(foot)rpShadows.push({foot,m:shadowPlane(.8,1.0,1)})}
+   const rpCenterShadow=rpShadows.length===2?shadowPlane(1.7,1.3,.7):null;
    window.__rpKitUpdate=()=>{
      model.updateMatrixWorld(true);
      const yaw=model.rotation.y;
+     for(const {foot,m} of rpShadows){const p=worldPos(foot);m.position.set(p.x,.012,p.z)}
+     if(rpCenterShadow){const a=worldPos(rpShadows[0].foot),b=worldPos(rpShadows[1].foot);rpCenterShadow.position.set((a.x+b.x)/2,.008,(a.z+b.z)/2)}
      for(const {hand,glove,fore} of gloves){
        const hp=worldPos(hand);
        if(fore){const d=hp.clone().sub(worldPos(fore)).normalize();glove.position.copy(hp).addScaledVector(d,.1);glove.quaternion.setFromUnitVectors(bodyUp,d)}
