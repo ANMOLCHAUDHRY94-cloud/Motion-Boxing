@@ -249,22 +249,27 @@ for(let side of (mode==='one'?['right']:['left','right'])){
   const extension=st.prev?(reach-st.prev.reach):0;
   // V5.10: lower latency, modest extension threshold, and hysteresis.
   // Detect the beginning of a thrust rather than waiting for full arm lockout.
-  const good=visible(b)&&a.visibility>.42&&b.visibility>.42&&c.visibility>.42;
+  const good=a.visibility>.4&&c.visibility>.4&&(b.visibility===undefined||b.visibility>.3);
   const wristJump=st.prev?Math.hypot(c.x-st.prev.x,c.y-st.prev.y)/sw:0;
-  const validFrame=good&&dt<.32&&wristJump<1.12&&reach<2.35;
-  const extending=extension>.038&&extension<.90&&velocity>.28&&velocity<13&&bend>92&&reach>.53;
+  const validFrame=good&&dt<.32&&wristJump<1.7&&reach<2.35;
+  /* V6.19: besides sideways extension, also detect a punch thrown TOWARD the camera (wrist depth shrinks vs the shoulder) and a quickly opening elbow. */
+  const zRel=(c.z!==undefined&&a.z!==undefined)?(c.z-a.z)/sw:0;
+  const dz=st.prev&&st.prev.z!==undefined?st.prev.z-zRel:0;
+  const bendGain=st.prev&&st.prev.bend!==undefined?bend-st.prev.bend:0;
+  const flat=extension>.03&&extension<.90&&velocity>.25&&velocity<13&&bend>90&&reach>.45;
+  const depthPunch=dz>.11&&dz<2&&bend>85&&reach>.3;
+  const opening=bendGain>14&&bend>105&&reach>.4&&velocity>.2;
+  const extending=flat||depthPunch||opening;
   const thrust=validFrame&&st.prev&&extending;
   if(st.ready&&thrust&&now-lastPunch[side]>280){
-    st.ready=false;st.waitReturn=now;st.peak=reach;lastPunch[side]=now;punch(side);
+    st.ready=false;st.waitReturn=now;st.peak=reach;st.zMin=zRel;lastPunch[side]=now;punch(side);
   }
   if(!st.ready){
     st.peak=Math.max(st.peak||reach,reach);
-    // A measurable return movement is needed before accepting the next punch.
-    // No time-only rearm: holding the fist out must never auto-repeat.
-    if((st.peak-reach>.13 && (bend<148||reach<.88)) ||
-       (reach<.58&&bend<125)) {st.ready=true;st.peak=reach;}
+    st.zMin=Math.min(st.zMin===undefined?zRel:st.zMin,zRel);
+    if((st.peak-reach>.07&&(bend<150||reach<.9))||(reach<.58&&bend<125)||(zRel-st.zMin>.12&&bend<140)||(now-lastPunch[side]>650&&bend<132)){st.ready=true;st.peak=reach;st.zMin=undefined;}
   }
-  st.prev=validFrame?{x:c.x,y:c.y,reach,t:now}:null;
+  st.prev=validFrame?{x:c.x,y:c.y,reach,t:now,z:zRel,bend}:null;
   debugParts.push(side.toUpperCase()+': '+(!good?'LOW CONFIDENCE':st.ready?'READY':'RETURN TO GUARD')+' '+Math.round(reach*100)+'%');
 }
 if(performance.now()-frameTick>200){frameTick=performance.now();$('debug').textContent='CAMERA TRACKING | '+debugParts.join(' | ');}
@@ -558,7 +563,10 @@ try {
      const lp=new THREE.Vector3(),rp=new THREE.Vector3();LEG[1].u.getWorldPosition(lp);LEG[-1].u.getWorldPosition(rp);
      const left=lp.sub(rp).setY(0).normalize(),up=V(0,1,0),fwd=left.clone().cross(up).normalize();
      const D=(a,b,c)=>left.clone().multiplyScalar(a).addScaledVector(up,b).addScaledVector(fwd,c);
-     for(const k of[-1,1]){const l=LEG[k];aimBone(l.u,l.k,D(k*.26,-.95,k===1?.24:.04));aimBone(l.k,l.f,D(k*.03,-.98,-.2));aimBone(l.f,l.t,D(k*.05,-.12,1))}
+     const upLocal={};
+     for(const k of[-1,1]){const wq=new THREE.Quaternion();LEG[k].f.getWorldQuaternion(wq);let best=-2,ax=V(0,1,0);for(const c of[V(1,0,0),V(-1,0,0),V(0,1,0),V(0,-1,0),V(0,0,1),V(0,0,-1)]){const d=c.clone().applyQuaternion(wq).dot(up);if(d>best){best=d;ax=c}}upLocal[k]=ax}
+     const levelRoll=(bone,toeDir,localUp)=>{const wq=new THREE.Quaternion(),pq=new THREE.Quaternion();bone.updateWorldMatrix(true,false);bone.getWorldQuaternion(wq);const d=toeDir.clone().normalize(),u=localUp.clone().applyQuaternion(wq);u.addScaledVector(d,-u.dot(d)).normalize();const w=V(0,1,0).addScaledVector(d,-d.y).normalize(),ang=Math.atan2(d.dot(u.clone().cross(w)),u.dot(w));wq.premultiply(new THREE.Quaternion().setFromAxisAngle(d,ang));bone.parent.getWorldQuaternion(pq).invert();bone.quaternion.copy(pq.multiply(wq))};
+     for(const k of[-1,1]){const l=LEG[k];aimBone(l.u,l.k,D(k*.26,-.95,k===1?.24:.04));aimBone(l.k,l.f,D(k*.03,-.98,-.2));const toe=D(k*.1,-.1,1);aimBone(l.f,l.t,toe);levelRoll(l.f,toe,upLocal[k])}
      model.updateMatrixWorld(true);
      model.traverse(o=>{if(o.isSkinnedMesh){o.skeleton.update();o.boundingBox=null;o.computeBoundingBox()}});
      const bb=new THREE.Box3().setFromObject(model);model.position.y-=bb.min.y+.03;model.updateMatrixWorld(true);
