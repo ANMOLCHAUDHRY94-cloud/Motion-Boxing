@@ -224,7 +224,7 @@ function rpDress(model){
   const hb=bones.map(b=>/Hand/i.test(b.name)),hw=new Float32Array(n);
   for(let i=0;i<n;i++){let w=0;for(let k=0;k<4;k++)if(hb[si.getComponent(i,k)])w+=sw.getComponent(i,k);hw[i]=w}
   g.setAttribute('ghand',new THREE.BufferAttribute(hw,1));
-  const bm=src.material;if(bm&&!bm.userData.handCut){bm.userData.handCut=1;bm.onBeforeCompile=sh=>{sh.vertexShader='attribute float ghand;varying float vHand;\n'+sh.vertexShader.replace('#include <begin_vertex>','vHand=ghand;\n#include <begin_vertex>');sh.fragmentShader='varying float vHand;\n'+sh.fragmentShader.replace('#include <clipping_planes_fragment>','if(vHand>0.5)discard;\n#include <clipping_planes_fragment>')};bm.needsUpdate=true}
+  const bm=src.material;if(bm&&!bm.userData.handCut){bm.userData.handCut=1;bm.onBeforeCompile=sh=>{sh.vertexShader='attribute float ghand;varying float vHand;\n'+sh.vertexShader.replace('#include <begin_vertex>','vHand=ghand;\n#include <begin_vertex>');sh.fragmentShader='varying float vHand;\n'+sh.fragmentShader.replace('#include <clipping_planes_fragment>','if(vHand>0.25)discard;\n#include <clipping_planes_fragment>')};bm.needsUpdate=true}
   const axisT=(i,a,b)=>{const dx=bp[b].x-bp[a].x,dy=bp[b].y-bp[a].y,dz=bp[b].z-bp[a].z;return((bp3[i*3]-bp[a].x)*dx+(bp3[i*3+1]-bp[a].y)*dy+(bp3[i*3+2]-bp[a].z)*dz)/(dx*dx+dy*dy+dz*dz||1)};
   /* V6.9: each vertex gets a signed cut value; the shader discards pixels past 0, so hems and waistbands are perfectly straight. */
   const WAIST=2.67,BAND=.08,isSpine=b=>/Spine/i.test(bones[b].name);
@@ -427,7 +427,29 @@ try {
      }
    };
    window.__rpKitUpdate();
-   scene.add(model);xBotModel=model;
+   const rpRoot=new THREE.Group();scene.add(rpRoot);rpRoot.add(model);xBotModel=model;
+   /* V6.15: procedural boxing animation on the real FBX skeleton. Bones are aimed at world-space directions, so it works whatever the rig's local axes are. */
+   try{
+    const ARM={'-1':{u:findBone('Right','Arm'),f:findBone('Right','ForeArm'),h:findBone('Right','Hand')},'1':{u:findBone('Left','Arm'),f:findBone('Left','ForeArm'),h:findBone('Left','Hand')}};
+    if(![-1,1].every(k=>ARM[k].u&&ARM[k].f&&ARM[k].h))throw new Error('arm bones not found');
+    const _P=new THREE.Vector3(),_C=new THREE.Vector3(),_Q=new THREE.Quaternion(),_W=new THREE.Quaternion(),V=(x,y,z)=>new THREE.Vector3(x,y,z);
+    const aimBone=(b,child,dir)=>{b.updateWorldMatrix(true,true);b.getWorldPosition(_P);child.getWorldPosition(_C);_Q.setFromUnitVectors(_C.sub(_P).normalize(),dir.clone().normalize());b.getWorldQuaternion(_W);_W.premultiply(_Q);b.parent.getWorldQuaternion(_Q);_Q.invert();b.quaternion.copy(_Q.multiply(_W))};
+    const rest={};for(const k of[-1,1])rest[k]=[ARM[k].u.quaternion.clone(),ARM[k].f.quaternion.clone()];
+    const DIRS={guard:k=>[V(k*.32,-.9,.35),V(-k*.12,.92,.4)],straight:k=>[V(k*.18,.02,1),V(k*.06,.03,1)],hook:k=>[V(k,.05,.2),V(-k*.55,.05,.85)]};
+    const POSE={};
+    for(const name in DIRS){POSE[name]={};for(const k of[-1,1]){const a=ARM[k];a.u.quaternion.copy(rest[k][0]);a.f.quaternion.copy(rest[k][1]);a.u.updateWorldMatrix(true,true);const[du,df]=DIRS[name](k);aimBone(a.u,a.f,du);aimBone(a.f,a.h,df);POSE[name][k]=[a.u.quaternion.clone(),a.f.quaternion.clone()]}}
+    window.__rpAnim=S=>{
+     const m=S.move,w=S.w,atk=/^(jab|cross|hookL|hookR)$/.test(m),side=(m==='jab'||m==='hookL')?-1:1,kind=m.startsWith('hook')?'hook':'straight';
+     for(const k of[-1,1]){const g=POSE.guard[k],e=(atk&&k===side)?POSE[kind][k]:g;ARM[k].u.quaternion.copy(g[0]).slerp(e[0],w);ARM[k].f.quaternion.copy(g[1]).slerp(e[1],w)}
+     rpRoot.rotation.set(0,0,0);rpRoot.position.set(0,Math.sin(S.t*3)*.025,0);
+     if(!S.ko){
+      if(m==='dodgeL')rpRoot.rotation.z=.28*w;else if(m==='dodgeR')rpRoot.rotation.z=-.28*w;
+      if(atk)rpRoot.position.z=.38*w;
+      if(S.reactionStart>=0){const u=(S.now-S.reactionStart)/680;if(u>=0&&u<1){const q=Math.sin(Math.PI*u);rpRoot.rotation.x=-.18*q;rpRoot.rotation.z+=(S.hitSide==='left'?-.1:.1)*q;rpRoot.position.z-=.3*q}}
+     }else{const u=Math.min(1,(S.now-S.koStart)/2050),e=u*u*(3-2*u);rpRoot.rotation.set(-1.4*e,0,-.25*e);rpRoot.position.set(-.2*e,-.1*e,-.4*e)}
+     rpRoot.updateMatrixWorld(true);
+    };
+   }catch(err){console.error('V6.15 animation setup failed',err)}
    boxer.visible=false;
    // Preview any bundled animation; boxing animations are NOT included.
    if(model.animations && model.animations.length){
@@ -541,6 +563,7 @@ function loop(now){
    boxer.position.x=-.22*e;
  }
  if(window.__rpXBotMixer){window.__rpXBotClock=window.__rpXBotClock||new THREE.Clock();window.__rpXBotMixer.update(Math.min(.05,window.__rpXBotClock.getDelta()));}
+ if(window.__rpAnim)window.__rpAnim({move:state.move,w,now,t,ko,koStart,reactionStart,hitSide});
  if(window.__rpKitUpdate)window.__rpKitUpdate();
  renderer.render(scene,camera);
 }
