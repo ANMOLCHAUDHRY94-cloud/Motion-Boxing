@@ -305,8 +305,30 @@ for(let side of (mode==='one'?['right']:['left','right'])){
   const flat=nOld>=3&&reach-minR>.30&&reach>.5&&velocity>.35&&wristJump*sw>.014;
   const depthPunch=nOld>=3&&maxZ-zRel>(mode==='one'?.5:.9)&&dz>.05&&reach>.35&&bend>85;
   const opening=nOld>=3&&bend-minB>40&&bend>110&&reach>.45&&velocity>.3&&(b.visibility===undefined||b.visibility>.5);
+  /* V6.32 TWO-HAND FIX: raising a fist into guard must not count as a punch.
+     A punch needs horizontal/depth extension AWAY from a settled guard, not
+     vertical wrist movement or elbow opening alone. One-hand is unchanged. */
+  let twoHandGuardBlock=false;
+  if(mode==='two'){
+    const nearHead=visible(nose)&&Math.hypot(c.x-nose.x,c.y-nose.y)/sw<1.12;
+    const upward=st.prev&&(st.prev.y-c.y)/sw>.055;
+    const approachHead=st.prev&&visible(nose)&&
+      Math.hypot(st.prev.x-nose.x,st.prev.y-nose.y)>
+      Math.hypot(c.x-nose.x,c.y-nose.y)+.015;
+    const retreatFromHead=st.prev&&visible(nose)&&
+      (Math.hypot(c.x-nose.x,c.y-nose.y)-Math.hypot(st.prev.x-nose.x,st.prev.y-nose.y))/sw>.055;
+    const horizontalOut=st.prev&&Math.abs(c.x-st.prev.x)/sw>.045;
+    const depthOut=st.prev&&dz>.09;
+    const actualExtension=(flat&&(horizontalOut||depthOut))||
+      (depthPunch&&depthOut)||(opening&&(horizontalOut||depthOut)&&retreatFromHead);
+    // On guard entry, suppress false positives for a short settling period.
+    if(nearHead&&(upward||approachHead))st.guardUntil=now+260;
+    twoHandGuardBlock=(now<(st.guardUntil||0))||!actualExtension;
+    // Prevent tracking jumps and a raised fist from creating an instant hit.
+    if(!good||!validFrame)st.guardUntil=now+300;
+  }
   const extending=flat||depthPunch||opening;
-  const thrust=validFrame&&st.prev&&extending;
+  const thrust=validFrame&&st.prev&&extending&&!twoHandGuardBlock;
   /* V6.28: both arms are judged together. Only the stronger arm fires in a frame, and the other arm is muted for 240 ms (body twist from one punch used to trigger the other glove). */
   const other=side==='left'?'right':'left',armUp=c.y<a.y+1.3*sw;
   if(st.ready&&thrust&&armUp&&now-lastPunch[side]>280&&now-lastPunch[other]>240){
