@@ -315,24 +315,38 @@ for(let side of (mode==='one'?['right']:['left','right'])){
     const approachHead=st.prev&&visible(nose)&&
       Math.hypot(st.prev.x-nose.x,st.prev.y-nose.y)>
       Math.hypot(c.x-nose.x,c.y-nose.y)+.012;
-    // A guard-entry movement must settle before any new punch can fire.
-    if(nearHead&&(upward||approachHead))st.guardUntil=now+340;
-    if(!good||!validFrame){st.guardUntil=now+350;st.twoStable=0;}
-    else st.twoStable=Math.min(10,(st.twoStable||0)+1);
-    const old=hist.find(h=>now-h.t>=130&&now-h.t<=420);
+    // V3: keep the guard-entry lock short. A genuine punch must work immediately
+    // after a player settles into guard; V2's rolling 340ms lock rejected it.
+    if(nearHead&&(upward||approachHead)&&!st.guardSettled)st.guardUntil=now+150;
+    if(!good||!validFrame){st.guardUntil=now+220;st.twoStable=0;st.guardSettled=false;}
+    else {st.twoStable=Math.min(10,(st.twoStable||0)+1);
+      if(nearHead&&(st.twoStable||0)>=4&&!upward)st.guardSettled=true;
+      if(!nearHead&&st.twoStable>=4)st.guardSettled=false;
+    }
+    const old=hist.find(h=>now-h.t>=110&&now-h.t<=390);
     const oldX=old&&old.x,oldY=old&&old.y;
     const deltaX=old?Math.abs(c.x-oldX)/sw:0;
     const deltaY=old?(oldY-c.y)/sw:0; // positive means hand raised
     const deltaZ=old?old.z-zRel:0; // positive means forward toward camera
     const outward=old&&Math.abs(c.x-a.x)>Math.abs(oldX-a.x)+.065*sw;
-    const lateralThrust=old&&outward&&deltaX>.16&&reach>.65&&bend>95&&
-      deltaX>Math.max(0,deltaY)*1.15;
-    const forwardThrust=old&&deltaZ>.24&&dz>.025&&bend>105&&reach>.48&&
-      deltaY<.15;
+    // Portrait framing reduces lateral travel. Accept a smaller, sustained
+    // extension while still rejecting upward-only guard movements.
+    const portrait=window.innerHeight>window.innerWidth;
+    const lateralThrust=old&&outward&&deltaX>(portrait?.105:.16)&&
+      reach>(portrait?.52:.65)&&bend>95&&deltaX>Math.max(0,deltaY)*1.05;
+    const forwardThrust=old&&deltaZ>(portrait?.15:.24)&&dz>.018&&
+      bend>100&&reach>.43&&deltaY<.18;
     const confirmed=(lateralThrust||forwardThrust)&&
-      (flat||depthPunch||opening);
-    twoHandGuardBlock=now<(st.guardUntil||0)||
-      (st.twoStable||0)<4||!confirmed;
+      (flat||depthPunch||opening||
+       (portrait&&old&&bend-minB>23&&bend>105&&velocity>.35));
+    const blockedByGuard=now<(st.guardUntil||0);
+    const blockedByStability=(st.twoStable||0)<3;
+    twoHandGuardBlock=blockedByGuard||blockedByStability||!confirmed;
+    st.reason=!good?'LOW CONFIDENCE':!validFrame?'TRACKING JUMP':
+      blockedByStability?'STABILIZING':blockedByGuard?'GUARD ENTRY':
+      !old?'WAIT FOR MOTION':!confirmed?(deltaY>.17?'UPWARD / GUARD':
+      deltaX<.10&&deltaZ<.14?'TOO LITTLE EXTENSION':'SPEED / DIRECTION'):
+      !st.ready?'RETURN TO GUARD':'PUNCH READY';
   }
   const extending=flat||depthPunch||opening;
   const thrust=validFrame&&st.prev&&extending&&!twoHandGuardBlock;
@@ -347,11 +361,13 @@ for(let side of (mode==='one'?['right']:['left','right'])){
     if((st.peak-reach>.07&&(bend<150||reach<.9))||(reach<.58&&bend<125)||(zRel-st.zMin>.12&&bend<140)||(now-lastPunch[side]>650&&bend<132)){st.ready=true;st.peak=reach;st.zMin=undefined;}
   }
   st.prev=validFrame?{x:c.x,y:c.y,reach,t:now,z:zRel,bend,dz}:null;
-  debugParts.push(side.toUpperCase()+': '+(!good?'LOW CONFIDENCE':st.ready?'READY':'RETURN TO GUARD')+' '+Math.round(reach*100)+'%');
+  debugParts.push(side.toUpperCase()+': '+(mode==='two'?(st.reason||'CHECKING'):
+    (!good?'LOW CONFIDENCE':st.ready?'READY':'RETURN TO GUARD'))+' '+Math.round(reach*100)+'%');
 }
 if(fires.length){fires.sort(function(x,y){return y.score-x.score});var wn=fires[0];wn.st.ready=false;wn.st.waitReturn=wn.now;wn.st.peak=wn.reach;wn.st.zMin=wn.zRel;lastPunch[wn.side]=wn.now;(window.rpCnt=window.rpCnt||{left:0,right:0})[wn.side]++;punch(wn.side)}
 if(performance.now()-frameTick>200){frameTick=performance.now();$('debug').textContent='CAMERA TRACKING | '+debugParts.join(' | ')+' | HITS L:'+((window.rpCnt||{}).left||0)+' R:'+((window.rpCnt||{}).right||0);}
-$('help').textContent=mode==='one'?'RIGHT PUNCH · HEAD DODGE':'BOTH HANDS · HEAD DODGE';}function punch(side){if(!run)return;try{window.rpGloveFx&&window.rpGloveFx(side)}catch(e){}if(window.RPTraining&&window.RPTraining.active){window.RPTraining.accept('punch',side);return;}roundPunches++;RPProgress.punch();let now=performance.now();if(warning&&now<warning.impact){ // attacking during windup is allowed
+$('help').textContent=mode==='one'?'RIGHT PUNCH · HEAD DODGE':
+ 'BOTH HANDS · '+(arms.left.reason||'TRACKING')+' / '+(arms.right.reason||'TRACKING');}function punch(side){if(!run)return;try{window.rpGloveFx&&window.rpGloveFx(side)}catch(e){}if(window.RPTraining&&window.RPTraining.active){window.RPTraining.accept('punch',side);return;}roundPunches++;RPProgress.punch();let now=performance.now();if(warning&&now<warning.impact){ // attacking during windup is allowed
 }/* V6.16: no random dodge. The opponent only guards if you spam more than 4 punches within 1.5 s. */
 window.rpRecent=(window.rpRecent||[]).filter(t=>now-t<1500);window.rpRecent.push(now);let dodges=window.rpRecent.length>4;let el=$('opponent');if(dodges){let dir=Math.random()<.5?-1:1;enemySide=clamp(enemySide+dir*11,-22,22);el.style.left=(50+enemySide)+'%';el.classList.add('dodging');MBSound.play('dodge');msg('GUARDED! SLOW DOWN',700);setTimeout(()=>el.classList.remove('dodging'),300);combo=0;return}if(window.rpGuard&&now<window.rpGuard.until){msg('BLOCKED!',600);MBSound.play('block');combo=0;return}
 let damage=mode==='one'?9:7;if(now-lastCounter<1700)damage+=4;const dealt=Math.max(1,Math.round(damage/3));enemy=clamp(enemy-dealt,0,100);score+=damage;combo++;hp();MBSound.play('hit');rpImpact(side,combo%3===0?'HOOK':side==='left'?'JAB':'CROSS');el.classList.add('hit');window.dispatchEvent(new CustomEvent('mb-boxer-hit',{detail:{side,damage}}));setTimeout(()=>el.classList.remove('hit'),160);msg((side==='left'?'LEFT':'RIGHT')+' HIT!'+(combo>1?' COMBO x'+combo:''),440);if(enemy<=0)finish()}function dodge(direction){if(window.RPTraining&&window.RPTraining.active){window.RPTraining.accept('dodge',direction);return;}if(!run||!warning)return;let now=performance.now();if(now>warning.impact||now<warning.impact-1100)return;if(direction===(warning.direction==='left'?'right':'left')||(direction==='duck'&&warning.kind==='hook')){warning.dodged=true;lastCounter=now;score+=5;MBSound.play('dodge');msg('PERFECT DODGE! +5',600)}else{msg('WRONG DIRECTION!',450)}}function enemyAttack(){
