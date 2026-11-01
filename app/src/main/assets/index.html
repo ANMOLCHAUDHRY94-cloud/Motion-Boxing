@@ -298,34 +298,41 @@ for(let side of (mode==='one'?['right']:['left','right'])){
   const bendGain=st.prev&&st.prev.bend!==undefined?bend-st.prev.bend:0;
   const dzPrev=st.prev&&st.prev.dz!==undefined?st.prev.dz:0;
   /* V6.30: judge the movement over the last ~0.5 s instead of frame by frame. Landmark jitter does not add up over a window, a real punch does. */
-  const hist=st.hist||(st.hist=[]);if(validFrame)hist.push({t:now,reach,z:zRel,bend});else hist.length=0;
+  const hist=st.hist||(st.hist=[]);if(validFrame)hist.push({t:now,reach,z:zRel,bend,x:c.x,y:c.y});else hist.length=0;
   while(hist.length&&now-hist[0].t>520)hist.shift();
   let minR=9,maxZ=-9,minB=999,nOld=0;
   for(const h of hist){if(now-h.t<80)continue;nOld++;if(h.reach<minR)minR=h.reach;if(h.z>maxZ)maxZ=h.z;if(h.bend<minB)minB=h.bend}
   const flat=nOld>=3&&reach-minR>.30&&reach>.5&&velocity>.35&&wristJump*sw>.014;
   const depthPunch=nOld>=3&&maxZ-zRel>(mode==='one'?.5:.9)&&dz>.05&&reach>.35&&bend>85;
   const opening=nOld>=3&&bend-minB>40&&bend>110&&reach>.45&&velocity>.3&&(b.visibility===undefined||b.visibility>.5);
-  /* V6.32 TWO-HAND FIX: raising a fist into guard must not count as a punch.
-     A punch needs horizontal/depth extension AWAY from a settled guard, not
-     vertical wrist movement or elbow opening alone. One-hand is unchanged. */
+  /* V6.33: two-hand directional confirmation. A raised guard is NOT a punch.
+     Require a settled guard and a sustained outward/depth thrust, not an
+     elbow-angle change or upward motion. One-hand mode is untouched. */
   let twoHandGuardBlock=false;
   if(mode==='two'){
     const nearHead=visible(nose)&&Math.hypot(c.x-nose.x,c.y-nose.y)/sw<1.12;
-    const upward=st.prev&&(st.prev.y-c.y)/sw>.055;
+    const upward=st.prev&&(st.prev.y-c.y)/sw>.035;
     const approachHead=st.prev&&visible(nose)&&
       Math.hypot(st.prev.x-nose.x,st.prev.y-nose.y)>
-      Math.hypot(c.x-nose.x,c.y-nose.y)+.015;
-    const retreatFromHead=st.prev&&visible(nose)&&
-      (Math.hypot(c.x-nose.x,c.y-nose.y)-Math.hypot(st.prev.x-nose.x,st.prev.y-nose.y))/sw>.055;
-    const horizontalOut=st.prev&&Math.abs(c.x-st.prev.x)/sw>.045;
-    const depthOut=st.prev&&dz>.09;
-    const actualExtension=(flat&&(horizontalOut||depthOut))||
-      (depthPunch&&depthOut)||(opening&&(horizontalOut||depthOut)&&retreatFromHead);
-    // On guard entry, suppress false positives for a short settling period.
-    if(nearHead&&(upward||approachHead))st.guardUntil=now+260;
-    twoHandGuardBlock=(now<(st.guardUntil||0))||!actualExtension;
-    // Prevent tracking jumps and a raised fist from creating an instant hit.
-    if(!good||!validFrame)st.guardUntil=now+300;
+      Math.hypot(c.x-nose.x,c.y-nose.y)+.012;
+    // A guard-entry movement must settle before any new punch can fire.
+    if(nearHead&&(upward||approachHead))st.guardUntil=now+340;
+    if(!good||!validFrame){st.guardUntil=now+350;st.twoStable=0;}
+    else st.twoStable=Math.min(10,(st.twoStable||0)+1);
+    const old=hist.find(h=>now-h.t>=130&&now-h.t<=420);
+    const oldX=old&&old.x,oldY=old&&old.y;
+    const deltaX=old?Math.abs(c.x-oldX)/sw:0;
+    const deltaY=old?(oldY-c.y)/sw:0; // positive means hand raised
+    const deltaZ=old?old.z-zRel:0; // positive means forward toward camera
+    const outward=old&&Math.abs(c.x-a.x)>Math.abs(oldX-a.x)+.065*sw;
+    const lateralThrust=old&&outward&&deltaX>.16&&reach>.65&&bend>95&&
+      deltaX>Math.max(0,deltaY)*1.15;
+    const forwardThrust=old&&deltaZ>.24&&dz>.025&&bend>105&&reach>.48&&
+      deltaY<.15;
+    const confirmed=(lateralThrust||forwardThrust)&&
+      (flat||depthPunch||opening);
+    twoHandGuardBlock=now<(st.guardUntil||0)||
+      (st.twoStable||0)<4||!confirmed;
   }
   const extending=flat||depthPunch||opening;
   const thrust=validFrame&&st.prev&&extending&&!twoHandGuardBlock;
