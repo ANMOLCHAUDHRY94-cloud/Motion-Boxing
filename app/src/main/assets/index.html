@@ -294,9 +294,11 @@ for(let side of (mode==='one'?['right']:['left','right'])){
   const zRel=(c.z!==undefined&&a.z!==undefined)?(c.z-a.z)/sw:0;
   const dz=st.prev&&st.prev.z!==undefined?st.prev.z-zRel:0;
   const bendGain=st.prev&&st.prev.bend!==undefined?bend-st.prev.bend:0;
-  const flat=extension>.03&&extension<.90&&velocity>.25&&velocity<13&&bend>90&&reach>.45;
-  const depthPunch=dz>.11&&dz<2&&bend>85&&reach>.3;
-  const opening=bendGain>14&&bend>105&&reach>.4&&velocity>.2;
+  const dzPrev=st.prev&&st.prev.dz!==undefined?st.prev.dz:0;
+  /* V6.29: absolute floors (in camera-frame units) so landmark jitter at a distance is not mistaken for a punch. */
+  const flat=extension>.03&&extension<.90&&velocity>.25&&velocity<13&&bend>90&&reach>.45&&wristJump*sw>.014;
+  const depthPunch=dz>.11&&dzPrev>.04&&dz<2&&dz*sw>.012&&bend>85&&reach>.35;
+  const opening=bendGain>18&&bend>105&&reach>.4&&velocity>.3&&wristJump*sw>.012&&(b.visibility===undefined||b.visibility>.5);
   const extending=flat||depthPunch||opening;
   const thrust=validFrame&&st.prev&&extending;
   /* V6.28: both arms are judged together. Only the stronger arm fires in a frame, and the other arm is muted for 240 ms (body twist from one punch used to trigger the other glove). */
@@ -309,7 +311,7 @@ for(let side of (mode==='one'?['right']:['left','right'])){
     st.zMin=Math.min(st.zMin===undefined?zRel:st.zMin,zRel);
     if((st.peak-reach>.07&&(bend<150||reach<.9))||(reach<.58&&bend<125)||(zRel-st.zMin>.12&&bend<140)||(now-lastPunch[side]>650&&bend<132)){st.ready=true;st.peak=reach;st.zMin=undefined;}
   }
-  st.prev=validFrame?{x:c.x,y:c.y,reach,t:now,z:zRel,bend}:null;
+  st.prev=validFrame?{x:c.x,y:c.y,reach,t:now,z:zRel,bend,dz}:null;
   debugParts.push(side.toUpperCase()+': '+(!good?'LOW CONFIDENCE':st.ready?'READY':'RETURN TO GUARD')+' '+Math.round(reach*100)+'%');
 }
 if(fires.length){fires.sort(function(x,y){return y.score-x.score});var wn=fires[0];wn.st.ready=false;wn.st.waitReturn=wn.now;wn.st.peak=wn.reach;wn.st.zMin=wn.zRel;lastPunch[wn.side]=wn.now;punch(wn.side)}
