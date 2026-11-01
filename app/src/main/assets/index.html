@@ -278,8 +278,10 @@ for(let side of (mode==='one'?['right']:['left','right'])){
 if(performance.now()-frameTick>200){frameTick=performance.now();$('debug').textContent='CAMERA TRACKING | '+debugParts.join(' | ');}
 $('help').textContent=mode==='one'?'RIGHT PUNCH · HEAD DODGE':'BOTH HANDS · HEAD DODGE';}function punch(side){if(!run)return;if(window.RPTraining&&window.RPTraining.active){window.RPTraining.accept('punch',side);return;}roundPunches++;RPProgress.punch();let now=performance.now();if(warning&&now<warning.impact){ // attacking during windup is allowed
 }/* V6.16: no random dodge. The opponent only guards if you spam more than 4 punches within 1.5 s. */
-window.rpRecent=(window.rpRecent||[]).filter(t=>now-t<1500);window.rpRecent.push(now);let dodges=window.rpRecent.length>4;let el=$('opponent');if(dodges){let dir=Math.random()<.5?-1:1;enemySide=clamp(enemySide+dir*11,-22,22);el.style.left=(50+enemySide)+'%';el.classList.add('dodging');MBSound.play('dodge');msg('GUARDED! SLOW DOWN',700);setTimeout(()=>el.classList.remove('dodging'),300);combo=0;return}let damage=mode==='one'?9:7;if(now-lastCounter<1700)damage+=4;enemy=clamp(enemy-damage,0,100);score+=damage;combo++;hp();MBSound.play('hit');rpImpact(side,combo%3===0?'HOOK':side==='left'?'JAB':'CROSS');el.classList.add('hit');window.dispatchEvent(new CustomEvent('mb-boxer-hit',{detail:{side,damage}}));setTimeout(()=>el.classList.remove('hit'),160);msg((side==='left'?'LEFT':'RIGHT')+' HIT!'+(combo>1?' COMBO x'+combo:''),440);if(enemy<=0)finish()}function dodge(direction){if(window.RPTraining&&window.RPTraining.active){window.RPTraining.accept('dodge',direction);return;}if(!run||!warning)return;let now=performance.now();if(now>warning.impact||now<warning.impact-1100)return;if(direction===(warning.direction==='left'?'right':'left')||(direction==='duck'&&warning.kind==='hook')){warning.dodged=true;lastCounter=now;score+=5;MBSound.play('dodge');msg('PERFECT DODGE! +5',600)}else{msg('WRONG DIRECTION!',450)}}function enemyAttack(){
+window.rpRecent=(window.rpRecent||[]).filter(t=>now-t<1500);window.rpRecent.push(now);let dodges=window.rpRecent.length>4;let el=$('opponent');if(dodges){let dir=Math.random()<.5?-1:1;enemySide=clamp(enemySide+dir*11,-22,22);el.style.left=(50+enemySide)+'%';el.classList.add('dodging');MBSound.play('dodge');msg('GUARDED! SLOW DOWN',700);setTimeout(()=>el.classList.remove('dodging'),300);combo=0;return}if(window.rpGuard&&now<window.rpGuard.until){msg('BLOCKED!',600);MBSound.play('block');combo=0;return}
+let damage=mode==='one'?9:7;if(now-lastCounter<1700)damage+=4;const dealt=Math.max(1,Math.round(damage/3));enemy=clamp(enemy-dealt,0,100);score+=damage;combo++;hp();MBSound.play('hit');rpImpact(side,combo%3===0?'HOOK':side==='left'?'JAB':'CROSS');el.classList.add('hit');window.dispatchEvent(new CustomEvent('mb-boxer-hit',{detail:{side,damage}}));setTimeout(()=>el.classList.remove('hit'),160);msg((side==='left'?'LEFT':'RIGHT')+' HIT!'+(combo>1?' COMBO x'+combo:''),440);if(enemy<=0)finish()}function dodge(direction){if(window.RPTraining&&window.RPTraining.active){window.RPTraining.accept('dodge',direction);return;}if(!run||!warning)return;let now=performance.now();if(now>warning.impact||now<warning.impact-1100)return;if(direction===(warning.direction==='left'?'right':'left')||(direction==='duck'&&warning.kind==='hook')){warning.dodged=true;lastCounter=now;score+=5;MBSound.play('dodge');msg('PERFECT DODGE! +5',600)}else{msg('WRONG DIRECTION!',450)}}function enemyAttack(){
  if(!run)return;if(window.RPTraining&&window.RPTraining.active)return;
+ if(window.rpGuard&&window.rpGuard.until){window.rpGuard.until=0;window.rpGuard.next=performance.now()+2500;$('opponent').classList.remove('guarding')}
  const direction=Math.random()<.5?'left':'right';
  const kind=Math.random()<.25?'hook':'straight';
  const delay=1650; // More time to read the cue and move your head.
@@ -567,7 +569,7 @@ try {
     const _P=new THREE.Vector3(),_C=new THREE.Vector3(),_Q=new THREE.Quaternion(),_W=new THREE.Quaternion(),V=(x,y,z)=>new THREE.Vector3(x,y,z);
     const aimBone=(b,child,dir)=>{b.updateWorldMatrix(true,true);b.getWorldPosition(_P);child.getWorldPosition(_C);_Q.setFromUnitVectors(_C.sub(_P).normalize(),dir.clone().normalize());b.getWorldQuaternion(_W);_W.premultiply(_Q);b.parent.getWorldQuaternion(_Q);_Q.invert();b.quaternion.copy(_Q.multiply(_W))};
     const rest={};for(const k of[-1,1])rest[k]=[ARM[k].u.quaternion.clone(),ARM[k].f.quaternion.clone()];
-    const DIRS={guard:k=>[V(k*.32,-.9,.35),V(-k*.12,.92,.4)],straight:k=>[V(k*.18,.02,1),V(k*.06,.03,1)],hook:k=>[V(k,.05,.2),V(-k*.55,.05,.85)]};
+    const DIRS={guard:k=>[V(k*.32,-.9,.35),V(-k*.12,.92,.4)],highguard:k=>[V(k*.2,-.85,.45),V(-k*.45,.95,.35)],straight:k=>[V(k*.18,.02,1),V(k*.06,.03,1)],hook:k=>[V(k,.05,.2),V(-k*.55,.05,.85)]};
     const POSE={};
     for(const name in DIRS){POSE[name]={};for(const k of[-1,1]){const a=ARM[k];a.u.quaternion.copy(rest[k][0]);a.f.quaternion.copy(rest[k][1]);a.u.updateWorldMatrix(true,true);const[du,df]=DIRS[name](k);aimBone(a.u,a.f,du);aimBone(a.f,a.h,df);POSE[name][k]=[a.u.quaternion.clone(),a.f.quaternion.clone()]}}
     /* V6.17: fixed fighting stance for the legs (character-relative directions), then re-seat the model on the floor. */
@@ -588,8 +590,9 @@ try {
     window.__rpAnim=S=>{
      let m=S.move,w=S.w;const D=window.__rpDemo;if(D){const u=(S.now-D.start)/D.dur;if(u>=1)window.__rpDemo=null;else{m=D.name;w=Math.sin(Math.PI*u)}}
      const atk=/^(jab|cross|hookL|hookR)$/.test(m),side=(m==='jab'||m==='hookL')?-1:1,kind=m.startsWith('hook')?'hook':'straight';
-     for(const k of[-1,1]){const g=POSE.guard[k],e=(atk&&k===side)?POSE[kind][k]:g;ARM[k].u.quaternion.copy(g[0]).slerp(e[0],w);ARM[k].f.quaternion.copy(g[1]).slerp(e[1],w)}
-     rpRoot.rotation.set(0,0,0);rpRoot.position.set(0,Math.sin(S.t*3)*.025,0);
+     window.__rpGw=(window.__rpGw||0)+(((document.getElementById('opponent').classList.contains('guarding')?1:0)-(window.__rpGw||0))*.25);
+     for(const k of[-1,1]){const g0=POSE.guard[k],h0=POSE.highguard[k],gu=new THREE.Quaternion().copy(g0[0]).slerp(h0[0],window.__rpGw),gf=new THREE.Quaternion().copy(g0[1]).slerp(h0[1],window.__rpGw),e=(atk&&k===side)?POSE[kind][k]:[gu,gf];ARM[k].u.quaternion.copy(gu).slerp(e[0],w);ARM[k].f.quaternion.copy(gf).slerp(e[1],w)}
+     rpRoot.rotation.set(0,0,0);rpRoot.position.set(0,Math.sin(S.t*3)*.025,0);rpRoot.rotation.x=.1*window.__rpGw;
      if(!S.ko){
       if(m==='dodgeL')rpRoot.rotation.z=.28*w;else if(m==='dodgeR')rpRoot.rotation.z=-.28*w;else if(m==='duck'){rpRoot.position.y-=.45*w;rpRoot.rotation.x=.22*w}
       if(atk)rpRoot.position.z=.38*w;
@@ -850,6 +853,15 @@ $('exit').addEventListener('click',end);$('back').addEventListener('click',end);
 var tb=$('tutorialBtn');if(tb){var nb=tb.cloneNode(true);tb.parentNode.replaceChild(nb,tb);nb.addEventListener('click',function(){T.begin()})}
 mark();
 })();
+</script>
+  <script id="rp-guard">
+/* V6.26: the opponent periodically raises his guard for 1.5 s; punches landed then are BLOCKED. */
+(function(){var g=window.rpGuard={until:0,next:0};
+setInterval(function(){var now=performance.now(),o=document.getElementById('opponent');
+ if(!run||(window.RPTraining&&window.RPTraining.active)){if(g.until){g.until=0;o.classList.remove('guarding')}g.next=0;return}
+ if(!g.next)g.next=now+3500;
+ if(g.until&&now>g.until){g.until=0;o.classList.remove('guarding');g.next=now+3500+Math.random()*3000}
+ if(!g.until&&now>g.next&&!warning){g.until=now+1500;o.classList.add('guarding')}},250)})();
 </script>
  </body>
 </html>
