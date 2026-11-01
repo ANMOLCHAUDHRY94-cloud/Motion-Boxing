@@ -278,14 +278,14 @@ for(let side of (mode==='one'?['right']:['left','right'])){
 if(performance.now()-frameTick>200){frameTick=performance.now();$('debug').textContent='CAMERA TRACKING | '+debugParts.join(' | ');}
 $('help').textContent=mode==='one'?'RIGHT PUNCH · HEAD DODGE':'BOTH HANDS · HEAD DODGE';}function punch(side){if(!run)return;if(window.RPTraining&&window.RPTraining.active){window.RPTraining.accept('punch',side);return;}roundPunches++;RPProgress.punch();let now=performance.now();if(warning&&now<warning.impact){ // attacking during windup is allowed
 }/* V6.16: no random dodge. The opponent only guards if you spam more than 4 punches within 1.5 s. */
-window.rpRecent=(window.rpRecent||[]).filter(t=>now-t<1500);window.rpRecent.push(now);let dodges=window.rpRecent.length>4;let el=$('opponent');if(dodges){let dir=Math.random()<.5?-1:1;enemySide=clamp(enemySide+dir*11,-22,22);el.style.left=(50+enemySide)+'%';el.classList.add('dodging');MBSound.play('dodge');msg('GUARDED! SLOW DOWN',700);setTimeout(()=>el.classList.remove('dodging'),300);combo=0;return}let damage=mode==='one'?9:7;if(now-lastCounter<1700)damage+=4;enemy=clamp(enemy-damage,0,100);score+=damage;combo++;hp();MBSound.play('hit');rpImpact(side,combo%3===0?'HOOK':side==='left'?'JAB':'CROSS');el.classList.add('hit');window.dispatchEvent(new CustomEvent('mb-boxer-hit',{detail:{side,damage}}));setTimeout(()=>el.classList.remove('hit'),160);msg((side==='left'?'LEFT':'RIGHT')+' HIT!'+(combo>1?' COMBO x'+combo:''),440);if(enemy<=0)finish()}function dodge(direction){if(window.RPTraining&&window.RPTraining.active){window.RPTraining.accept('dodge',direction);return;}if(!run||!warning)return;let now=performance.now();if(now>warning.impact||now<warning.impact-1100)return;if(direction===warning.direction||(direction==='duck'&&warning.kind==='hook')){warning.dodged=true;lastCounter=now;score+=5;MBSound.play('dodge');msg('PERFECT DODGE! +5',600)}else{msg('WRONG DIRECTION!',450)}}function enemyAttack(){
+window.rpRecent=(window.rpRecent||[]).filter(t=>now-t<1500);window.rpRecent.push(now);let dodges=window.rpRecent.length>4;let el=$('opponent');if(dodges){let dir=Math.random()<.5?-1:1;enemySide=clamp(enemySide+dir*11,-22,22);el.style.left=(50+enemySide)+'%';el.classList.add('dodging');MBSound.play('dodge');msg('GUARDED! SLOW DOWN',700);setTimeout(()=>el.classList.remove('dodging'),300);combo=0;return}let damage=mode==='one'?9:7;if(now-lastCounter<1700)damage+=4;enemy=clamp(enemy-damage,0,100);score+=damage;combo++;hp();MBSound.play('hit');rpImpact(side,combo%3===0?'HOOK':side==='left'?'JAB':'CROSS');el.classList.add('hit');window.dispatchEvent(new CustomEvent('mb-boxer-hit',{detail:{side,damage}}));setTimeout(()=>el.classList.remove('hit'),160);msg((side==='left'?'LEFT':'RIGHT')+' HIT!'+(combo>1?' COMBO x'+combo:''),440);if(enemy<=0)finish()}function dodge(direction){if(window.RPTraining&&window.RPTraining.active){window.RPTraining.accept('dodge',direction);return;}if(!run||!warning)return;let now=performance.now();if(now>warning.impact||now<warning.impact-1100)return;if(direction===(warning.direction==='left'?'right':'left')||(direction==='duck'&&warning.kind==='hook')){warning.dodged=true;lastCounter=now;score+=5;MBSound.play('dodge');msg('PERFECT DODGE! +5',600)}else{msg('WRONG DIRECTION!',450)}}function enemyAttack(){
  if(!run)return;if(window.RPTraining&&window.RPTraining.active)return;
  const direction=Math.random()<.5?'left':'right';
  const kind=Math.random()<.25?'hook':'straight';
  const delay=1650; // More time to read the cue and move your head.
  const cue=$('attackCue');
  warning={direction,kind,impact:performance.now()+delay,dodged:false};
- cue.textContent=(kind==='hook'?'HOOK':direction==='left'?'JAB':'CROSS')+' INCOMING · DODGE '+direction.toUpperCase()+' ◀ ▶';
+ cue.textContent=(kind==='hook'?'HOOK':direction==='left'?'JAB':'CROSS')+' INCOMING · '+(kind==='hook'?'DUCK ▼':'DODGE '+(direction==='left'?'RIGHT ▶':'◀ LEFT'));
  cue.classList.add('active');MBSound.play('whoosh');
  // Show only the punching arm during the wind-up.
  const boxer=$('opponent');
@@ -830,8 +830,8 @@ T.pose=function(p,now){if(!T.active||done||locked)return;lastPose=now;var st=STE
  else{holdStart=0;setBar(0);state.textContent=m}};
 function spar(){ai=0;dodged=0;state.textContent='Get ready…';atkT=setTimeout(nextAtk,1800)}
 function nextAtk(){if(!T.active||locked)return;if(ai>=LIST.length)return sparEnd();
- var a=LIST[ai++];atk={need:a.k==='hook'?'duck':a.d,at:performance.now()+1900,ok:false,k:a.k};
- cue.textContent=a.k==='hook'?'HOOK! DUCK ▼':'DODGE '+(a.d==='left'?'◀ LEFT':'RIGHT ▶');cue.classList.add('active');
+ var a=LIST[ai++];atk={need:a.k==='hook'?'duck':(a.d==='left'?'right':'left'),at:performance.now()+1900,ok:false,k:a.k};
+ cue.textContent=a.k==='hook'?'HOOK! DUCK ▼':'DODGE '+(a.d==='left'?'RIGHT ▶':'◀ LEFT');cue.classList.add('active');
  opp.dataset.attackKind=a.k;opp.classList.add('attack-'+a.d);MBSound.play('whoosh');state.textContent='Attack '+ai+' / '+LIST.length;
  atkT=setTimeout(resolveAtk,1900)}
 function resolveAtk(){var a=atk;atk=null;cue.classList.remove('active');opp.classList.remove('attack-left','attack-right');
