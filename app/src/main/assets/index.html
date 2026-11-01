@@ -279,7 +279,9 @@ for(let side of (mode==='one'?['right']:['left','right'])){
   const a=p[ids[0]],b=p[ids[1]],c=p[ids[2]],st=arms[side];
   if(!visible(a)||!visible(c)){st.prev=null;debugParts.push(side.toUpperCase()+': NOT VISIBLE');continue}
   const now=performance.now();
-  const sw=Math.max(.085,Math.hypot(ls.x-rs.x,ls.y-rs.y));
+  const swNow=Math.max(.085,Math.hypot(ls.x-rs.x,ls.y-rs.y));
+  /* V6.31: use a stable body scale (slowly decaying maximum shoulder width). When the torso twists the shoulders look narrower; dividing by that made BOTH wrists look suddenly farther away = false punches. */
+  window.rpSwRef=Math.max(swNow,(window.rpSwRef||swNow)*.9988);const sw=window.rpSwRef;
   const reach=Math.hypot(c.x-a.x,c.y-a.y)/sw;
   const bend=visible(b)?angle(a,b,c):125;
   const dt=st.prev?Math.max(.03,(now-st.prev.t)/1000):.07;
@@ -301,7 +303,7 @@ for(let side of (mode==='one'?['right']:['left','right'])){
   let minR=9,maxZ=-9,minB=999,nOld=0;
   for(const h of hist){if(now-h.t<80)continue;nOld++;if(h.reach<minR)minR=h.reach;if(h.z>maxZ)maxZ=h.z;if(h.bend<minB)minB=h.bend}
   const flat=nOld>=3&&reach-minR>.30&&reach>.5&&velocity>.35&&wristJump*sw>.014;
-  const depthPunch=nOld>=3&&maxZ-zRel>.5&&dz>.05&&reach>.35&&bend>85;
+  const depthPunch=nOld>=3&&maxZ-zRel>(mode==='one'?.5:.9)&&dz>.05&&reach>.35&&bend>85;
   const opening=nOld>=3&&bend-minB>40&&bend>110&&reach>.45&&velocity>.3&&(b.visibility===undefined||b.visibility>.5);
   const extending=flat||depthPunch||opening;
   const thrust=validFrame&&st.prev&&extending;
