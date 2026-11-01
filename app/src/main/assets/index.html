@@ -103,7 +103,7 @@ body.two-hand #soundToggle{top:calc(60px + var(--top))!important}
 /* V6.27: your own blue gloves at the bottom corners in two-hand (landscape) mode. The left glove punches when your left hand punches, and the right when your right does. */
 #myGloves{display:none;position:absolute;left:0;right:0;bottom:calc(var(--bar,50px) + var(--bot,0px));height:0;z-index:3;pointer-events:none}
 body.two-hand #myGloves{display:block}
-.myGlove{position:absolute;bottom:4px;width:clamp(64px,24vh,110px);aspect-ratio:100/130;animation:mgIdle 2.4s ease-in-out infinite}
+.myGlove{position:absolute;bottom:4px;width:clamp(64px,24vh,110px);aspect-ratio:100/130}
 .myGlove svg{width:100%;height:100%;filter:drop-shadow(0 4px 6px #000a)}
 #mgL{left:5vw}#mgR{right:5vw}#mgR svg{transform:scaleX(-1)}
 #mgL.punch{animation:mgPunchL .4s ease-out}#mgR.punch{animation:mgPunchR .4s ease-out}
@@ -295,10 +295,14 @@ for(let side of (mode==='one'?['right']:['left','right'])){
   const dz=st.prev&&st.prev.z!==undefined?st.prev.z-zRel:0;
   const bendGain=st.prev&&st.prev.bend!==undefined?bend-st.prev.bend:0;
   const dzPrev=st.prev&&st.prev.dz!==undefined?st.prev.dz:0;
-  /* V6.29: absolute floors (in camera-frame units) so landmark jitter at a distance is not mistaken for a punch. */
-  const flat=extension>.03&&extension<.90&&velocity>.25&&velocity<13&&bend>90&&reach>.45&&wristJump*sw>.014;
-  const depthPunch=dz>.11&&dzPrev>.04&&dz<2&&dz*sw>.012&&bend>85&&reach>.35;
-  const opening=bendGain>18&&bend>105&&reach>.4&&velocity>.3&&wristJump*sw>.012&&(b.visibility===undefined||b.visibility>.5);
+  /* V6.30: judge the movement over the last ~0.5 s instead of frame by frame. Landmark jitter does not add up over a window, a real punch does. */
+  const hist=st.hist||(st.hist=[]);if(validFrame)hist.push({t:now,reach,z:zRel,bend});else hist.length=0;
+  while(hist.length&&now-hist[0].t>520)hist.shift();
+  let minR=9,maxZ=-9,minB=999,nOld=0;
+  for(const h of hist){if(now-h.t<80)continue;nOld++;if(h.reach<minR)minR=h.reach;if(h.z>maxZ)maxZ=h.z;if(h.bend<minB)minB=h.bend}
+  const flat=nOld>=3&&reach-minR>.30&&reach>.5&&velocity>.35&&wristJump*sw>.014;
+  const depthPunch=nOld>=3&&maxZ-zRel>.5&&dz>.05&&reach>.35&&bend>85;
+  const opening=nOld>=3&&bend-minB>40&&bend>110&&reach>.45&&velocity>.3&&(b.visibility===undefined||b.visibility>.5);
   const extending=flat||depthPunch||opening;
   const thrust=validFrame&&st.prev&&extending;
   /* V6.28: both arms are judged together. Only the stronger arm fires in a frame, and the other arm is muted for 240 ms (body twist from one punch used to trigger the other glove). */
@@ -314,8 +318,8 @@ for(let side of (mode==='one'?['right']:['left','right'])){
   st.prev=validFrame?{x:c.x,y:c.y,reach,t:now,z:zRel,bend,dz}:null;
   debugParts.push(side.toUpperCase()+': '+(!good?'LOW CONFIDENCE':st.ready?'READY':'RETURN TO GUARD')+' '+Math.round(reach*100)+'%');
 }
-if(fires.length){fires.sort(function(x,y){return y.score-x.score});var wn=fires[0];wn.st.ready=false;wn.st.waitReturn=wn.now;wn.st.peak=wn.reach;wn.st.zMin=wn.zRel;lastPunch[wn.side]=wn.now;punch(wn.side)}
-if(performance.now()-frameTick>200){frameTick=performance.now();$('debug').textContent='CAMERA TRACKING | '+debugParts.join(' | ');}
+if(fires.length){fires.sort(function(x,y){return y.score-x.score});var wn=fires[0];wn.st.ready=false;wn.st.waitReturn=wn.now;wn.st.peak=wn.reach;wn.st.zMin=wn.zRel;lastPunch[wn.side]=wn.now;(window.rpCnt=window.rpCnt||{left:0,right:0})[wn.side]++;punch(wn.side)}
+if(performance.now()-frameTick>200){frameTick=performance.now();$('debug').textContent='CAMERA TRACKING | '+debugParts.join(' | ')+' | HITS L:'+((window.rpCnt||{}).left||0)+' R:'+((window.rpCnt||{}).right||0);}
 $('help').textContent=mode==='one'?'RIGHT PUNCH · HEAD DODGE':'BOTH HANDS · HEAD DODGE';}function punch(side){if(!run)return;try{window.rpGloveFx&&window.rpGloveFx(side)}catch(e){}if(window.RPTraining&&window.RPTraining.active){window.RPTraining.accept('punch',side);return;}roundPunches++;RPProgress.punch();let now=performance.now();if(warning&&now<warning.impact){ // attacking during windup is allowed
 }/* V6.16: no random dodge. The opponent only guards if you spam more than 4 punches within 1.5 s. */
 window.rpRecent=(window.rpRecent||[]).filter(t=>now-t<1500);window.rpRecent.push(now);let dodges=window.rpRecent.length>4;let el=$('opponent');if(dodges){let dir=Math.random()<.5?-1:1;enemySide=clamp(enemySide+dir*11,-22,22);el.style.left=(50+enemySide)+'%';el.classList.add('dodging');MBSound.play('dodge');msg('GUARDED! SLOW DOWN',700);setTimeout(()=>el.classList.remove('dodging'),300);combo=0;return}if(window.rpGuard&&now<window.rpGuard.until){msg('BLOCKED!',600);MBSound.play('block');combo=0;return}
