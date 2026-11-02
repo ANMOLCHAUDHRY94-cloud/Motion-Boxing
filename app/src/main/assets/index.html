@@ -306,7 +306,9 @@ if(performance.now()-frameTick>200){frameTick=performance.now();$('debug').textC
 $('help').textContent=mode==='one'?'RIGHT PUNCH · HEAD DODGE':'BOTH HANDS · HEAD DODGE';}function punch(side){if(!run)return;if(window.RPTraining&&window.RPTraining.active){window.RPTraining.accept('punch',side);return;}roundPunches++;RPProgress.punch();let now=performance.now();if(warning&&now<warning.impact){ // attacking during windup is allowed
 }/* V6.16: no random dodge. The opponent only guards if you spam more than 4 punches within 1.5 s. */
 window.rpRecent=(window.rpRecent||[]).filter(t=>now-t<1500);window.rpRecent.push(now);let dodges=window.rpRecent.length>4;let el=$('opponent');if(dodges){let dir=Math.random()<.5?-1:1;enemySide=clamp(enemySide+dir*11,-22,22);el.style.left=(50+enemySide)+'%';el.classList.add('dodging');MBSound.play('dodge');msg('GUARDED! SLOW DOWN',700,'bad');setTimeout(()=>el.classList.remove('dodging'),300);combo=0;return}if(window.rpGuard&&now<window.rpGuard.until){msg('BLOCKED!',600,'bad');MBSound.play('block');combo=0;return}
-let damage=mode==='one'?9:7;if(now-lastCounter<1700)damage+=4;const dealt=Math.max(1,Math.round(damage/3));enemy=clamp(enemy-dealt,0,100);score+=damage;combo++;hp();MBSound.play('hit');rpImpact(side,combo%3===0?'HOOK':side==='left'?'JAB':'CROSS');el.classList.add('hit');window.dispatchEvent(new CustomEvent('mb-boxer-hit',{detail:{side,damage}}));setTimeout(()=>el.classList.remove('hit'),160);msg((side==='left'?'LEFT':'RIGHT')+' HIT!'+(combo>1?' COMBO x'+combo:''),440,'good');if(enemy<=0)finish()}function dodge(direction){if(window.RPTraining&&window.RPTraining.active){window.RPTraining.accept('dodge',direction);return;}if(!run||!warning)return;let now=performance.now();if(now>warning.impact||now<warning.impact-1100)return;if(direction===(warning.direction==='left'?'right':'left')||(direction==='duck'&&warning.kind==='hook')){warning.dodged=true;lastCounter=now;score+=5;MBSound.play('dodge');msg('PERFECT DODGE! +5',600,'good')}else{msg('WRONG DIRECTION!',450,'bad')}}function enemyAttack(){
+let damage=mode==='one'?9:7,counter=false;
+if((window.rpCounterN||0)>0&&now<(window.rpCounterUntil||0)){counter=true;window.rpCounterN--;damage=Math.round(damage*2.5)} /* V6.37: counter punch after a perfect dodge = 2.5x damage, for the next 2 punches within 3 s */
+const dealt=Math.max(1,Math.round(damage/3));enemy=clamp(enemy-dealt,0,100);score+=damage;combo++;hp();MBSound.play('hit');rpImpact(side,counter?'COUNTER':combo%3===0?'HOOK':side==='left'?'JAB':'CROSS');el.classList.add('hit');window.dispatchEvent(new CustomEvent('mb-boxer-hit',{detail:{side,damage}}));setTimeout(()=>el.classList.remove('hit'),160);msg((counter?'💥 COUNTER! -'+dealt:(side==='left'?'LEFT':'RIGHT')+' HIT!')+(combo>1?' COMBO x'+combo:''),counter?800:440,'good');if(enemy<=0)finish()}function dodge(direction){if(window.RPTraining&&window.RPTraining.active){window.RPTraining.accept('dodge',direction);return;}if(!run||!warning)return;let now=performance.now();if(now>warning.impact||now<warning.impact-1100)return;if(direction===(warning.direction==='left'?'right':'left')||(direction==='duck'&&warning.kind==='hook')){warning.dodged=true;lastCounter=now;window.rpCounterN=2;window.rpCounterUntil=now+3000;score+=5;MBSound.play('dodge');msg('PERFECT DODGE! +5 · COUNTER NOW!',900,'good')}else{msg('WRONG DIRECTION!',450,'bad')}}function enemyAttack(){
  if(!run)return;if(window.RPTraining&&window.RPTraining.active)return;
  if(window.rpGuard&&window.rpGuard.until){window.rpGuard.until=0;window.rpGuard.next=performance.now()+2500;$('opponent').classList.remove('guarding')}
  const direction=Math.random()<.5?'left':'right';
@@ -390,7 +392,7 @@ function rpDress(model){
   float cheek=smoothstep(.30,.45,fu)*(1.-smoothstep(.80,.97,fu))*smoothstep(.30,.38,fv)*(1.-smoothstep(.50,.58,fv));
   diffuseColor.rgb*=mix(vec3(1.),vec3(1.07,.93,.91),cheek*.7);
   float brow=smoothstep(.12,.18,fu)*(1.-smoothstep(.52,.60,fu))*smoothstep(.575,.595,fv)*(1.-smoothstep(.62,.64,fv));
-  diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.05,.035,.03),brow*.75);
+  diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.015,.012,.012),brow*.8);
   float lip=(1.-smoothstep(.20,.30,fu))*smoothstep(.235,.25,fv)*(1.-smoothstep(.285,.30,fv));
   diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.50,.20,.18),lip*.55);
   float stub=(1.-smoothstep(.32,.40,fv))*smoothstep(.02,.07,fv)*(1.-lip*.8);
@@ -409,7 +411,8 @@ function rpDress(model){
   }
   g.setAttribute('gface',new THREE.BufferAttribute(gface,3));
   const HAIR_BACK=.52,HAIR_FRONT=.80; /* hairline height (0 = chin, 1 = top of head) at the back and at the forehead */
-  const hairCut=i=>{if(!FACE_ON||!isHead[i])return null;const uu=Math.abs(gface[i*3]),v=gface[i*3+1];return[(HAIR_BACK+(HAIR_FRONT-HAIR_BACK)*sm(-.1,.7,fwn[i]))-.10*sm(.55,.95,uu)-v,-1]};
+  const HAIR_SIDE=.66; /* V6.35: hairline above the ears (was wrongly lowered, which covered the ears like a bowl cut) */
+  const hairCut=i=>{if(!FACE_ON||!isHead[i])return null;const uu=Math.abs(gface[i*3]),v=gface[i*3+1],wn=fwn[i],base=HAIR_BACK+(HAIR_FRONT-HAIR_BACK)*sm(-.1,.7,wn),side=sm(.55,.95,uu)*(1-sm(.5,.9,wn));return[base+(HAIR_SIDE-base)*side-v,-1]};
   const bm=src.material;if(bm&&!bm.userData.handCut){bm.userData.handCut=1;bm.onBeforeCompile=sh=>{sh.vertexShader='attribute float ghand;attribute vec3 gflat;attribute vec3 gface;varying float vHand;varying vec3 vFace;\n'+sh.vertexShader.replace('#include <begin_vertex>','vHand=ghand;vFace=gface;\n#include <begin_vertex>\ntransformed+=gflat;');sh.fragmentShader=FACE_PRE+'varying float vHand;varying vec3 vFace;\n'+sh.fragmentShader.replace('#include <clipping_planes_fragment>','if(vHand>0.25)discard;\n#include <clipping_planes_fragment>').replace('#include <color_fragment>','#include <color_fragment>\n'+FACE_MAIN)};bm.needsUpdate=true}
   const axisT=(i,a,b)=>{const dx=bp[b].x-bp[a].x,dy=bp[b].y-bp[a].y,dz=bp[b].z-bp[a].z;return((bp3[i*3]-bp[a].x)*dx+(bp3[i*3+1]-bp[a].y)*dy+(bp3[i*3+2]-bp[a].z)*dz)/(dx*dx+dy*dy+dz*dz||1)};
   /* V6.9: each vertex gets a signed cut value; the shader discards pixels past 0, so hems and waistbands are perfectly straight. */
@@ -435,7 +438,7 @@ function rpDress(model){
     sh.vertexShader='uniform float uInfl;attribute float gcut;attribute float gtrim;attribute vec3 gflat;varying float vCut;varying float vTrim;\n'+sh.vertexShader.replace('#include <begin_vertex>','vCut=gcut;vTrim=gtrim;vec3 transformed=position+gflat+normalize(normal)*uInfl;');
     sh.fragmentShader='uniform vec3 uBase;varying float vCut;varying float vTrim;\n'+sh.fragmentShader.replace('#include <clipping_planes_fragment>','if(vCut>0.0)discard;\n#include <clipping_planes_fragment>').replace('#include <color_fragment>','#include <color_fragment>\ndiffuseColor.rgb=mix(uBase,vec3(.93,.93,.95),smoothstep(-.01,.01,vTrim));')};
    const sm=new THREE.SkinnedMesh(ng,m);sm.bind(src.skeleton,src.bindMatrix);sm.frustumCulled=false;sm.position.copy(src.position);sm.quaternion.copy(src.quaternion);sm.scale.copy(src.scale);src.parent.add(sm)};
-  make(shortsCut,'.06,.07,.1',1);make(bootsCut,'.06,.07,.1');make(hairCut,'.045,.032,.028',0,.012);
+  make(shortsCut,'.06,.07,.1',1);make(bootsCut,'.06,.07,.1');make(hairCut,'.006,.006,.008',0,.012);
  }
 }
 const host=document.getElementById('boxer3d'),root=document.getElementById('opponent'); const status={set textContent(value){if(value.startsWith('Error'))console.error(value)}};
