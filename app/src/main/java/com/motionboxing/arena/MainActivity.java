@@ -103,7 +103,7 @@ public class MainActivity extends Activity {
             @JavascriptInterface public void showRewardedAd() {
                 runOnUiThread(() -> {
                     if (web != null && GAME_URL.equals(web.getUrl())) {
-                        showRewardedAd();
+                        MainActivity.this.showRewardedAd();
                     }
                 });
             }
