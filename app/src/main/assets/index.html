@@ -408,23 +408,66 @@ const rpModeKey='rp_best_'+rpFightType;
 let rpModeBest=0;try{rpModeBest=Number(localStorage.getItem(rpModeKey))||0;if(score>rpModeBest)localStorage.setItem(rpModeKey,String(score))}catch(e){}
 const rpModeRecord=score>rpModeBest;
 const progress=RPProgress.finish(score,won,roundPunches);$('result').textContent=title;$('resultDetail').textContent='Your Health: '+player+'/'+rpPlayerMaxHp+' HP · Opponent Health: '+enemy+'/'+rpFightMaxHp+' HP · Score: '+score;
-$('rpNextLevel').style.display=rpCanAdvance?'block':'none';$('watchAdContinue').disabled=won; $('watchAdContinue').textContent=won?'CONTINUE (LOSSES ONLY)':'WATCH AD TO CONTINUE';$('rpNewRecord').style.display=rpModeRecord?'block':'none';$('rpResultStats').textContent='Mode: '+rpFightType.toUpperCase()+' · Level: '+rpLevel+'/20 · Mode Best: '+Math.max(rpModeBest,score)+' · Round Punches: '+progress.roundPunches+' · Overall Best Score: '+progress.bestScore+' · Total Wins: '+progress.totalWins+' · Total Punches: '+progress.totalPunches;if(enemy<=0){setTimeout(()=>{$('overlay').style.display='flex'},2600)}else{$('overlay').style.display='flex'}}const soundToggle=document.createElement('button');soundToggle.id='soundToggle';soundToggle.textContent='🔊 SOUND ON';soundToggle.style.cssText='position:absolute;right:9px;top:68px;z-index:7;padding:7px 10px;font-size:11px;background:#244565';document.getElementById('game').appendChild(soundToggle);soundToggle.onclick=()=>{let on=MBSound.setEnabled(!MBSound.enabled);soundToggle.textContent=on?'🔊 SOUND ON':'🔇 SOUND OFF';if(on)MBSound.play('bell')};RPProgress.render();let rpControlChoice='one';const rpModes=$('rpFightModes');
+$('rpNextLevel').style.display=rpCanAdvance?'block':'none';$('watchAdContinue').disabled=won || rpContinueUsed; $('watchAdContinue').textContent=won?'CONTINUE (LOSSES ONLY)':rpContinueUsed?'CONTINUE ALREADY USED':'WATCH AD TO CONTINUE';$('rpNewRecord').style.display=rpModeRecord?'block':'none';$('rpResultStats').textContent='Mode: '+rpFightType.toUpperCase()+' · Level: '+rpLevel+'/20 · Mode Best: '+Math.max(rpModeBest,score)+' · Round Punches: '+progress.roundPunches+' · Overall Best Score: '+progress.bestScore+' · Total Wins: '+progress.totalWins+' · Total Punches: '+progress.totalPunches;if(enemy<=0){setTimeout(()=>{$('overlay').style.display='flex'},2600)}else{$('overlay').style.display='flex'}}const soundToggle=document.createElement('button');soundToggle.id='soundToggle';soundToggle.textContent='🔊 SOUND ON';soundToggle.style.cssText='position:absolute;right:9px;top:68px;z-index:7;padding:7px 10px;font-size:11px;background:#244565';document.getElementById('game').appendChild(soundToggle);soundToggle.onclick=()=>{let on=MBSound.setEnabled(!MBSound.enabled);soundToggle.textContent=on?'🔊 SOUND ON':'🔇 SOUND OFF';if(on)MBSound.play('bell')};RPProgress.render();let rpControlChoice='one';const rpModes=$('rpFightModes');
 function rpChooseControls(c){rpControlChoice=c;$('rpSelectedControls').textContent=c==='one'?'ONE-HAND · Right punches':'TWO-HAND · Both hands';$('menu').style.display='none';rpModes.style.display='flex'}
 $('one').onclick=()=>rpChooseControls('one');$('two').onclick=()=>rpChooseControls('two');
 $('rpFightBack').onclick=()=>{rpModes.style.display='none';$('menu').style.display='flex'};
 const rpLevels=$('rpLevelSelect');let rpSelectedFight='quick';
 function rpShowLevels(type){rpSelectedFight=type;rpModes.style.display='none';rpLevels.style.display='block';$('rpLevelTitle').textContent=type.toUpperCase()+' · SELECT LEVEL';$('rpLevelInfo').textContent='Unlocked: '+rpUnlocked(type)+'/20 · Punch damage unchanged';const grid=$('rpLevelGrid');grid.innerHTML='';for(let n=1;n<=20;n++){let b=document.createElement('button');const unlocked=n<=rpUnlocked(type);b.disabled=!unlocked;b.innerHTML=(unlocked?'🥊':'🔒')+' LEVEL '+n+'<small>'+rpLevelHp(type,n)+' opponent HP</small>';b.onclick=()=>{rpLevels.style.display='none';start(rpControlChoice,type,n)};grid.appendChild(b)}}
 rpModes.querySelectorAll('[data-rp-fight]').forEach(b=>b.onclick=()=>rpShowLevels(b.dataset.rpFight));
-$('rpLevelBack').onclick=()=>{rpLevels.style.display='none';rpModes.style.display='flex'};$('exit').onclick=exit;$('back').onclick=exit;$('watchAdContinue').onclick=()=>{
- // Temporary reward simulation: NO ad network or Android bridge is called.
- // Continue is available only after a loss. Keep earned score and remaining opponent HP.
- if(run || enemy<=0 || (seconds<=0 && player/rpPlayerMaxHp>=enemy/rpFightMaxHp))return;
- const savedScore=score,savedPunches=roundPunches,savedEnemy=enemy,savedNormal=rpNormalHits,savedCounters=rpCounterHits,savedDodges=rpPerfectDodges;
- start(mode,rpFightType,rpLevel);
- player=Math.min(50,rpPlayerMaxHp);enemy=Math.max(1,savedEnemy);score=savedScore;roundPunches=savedPunches;rpNormalHits=savedNormal;rpCounterHits=savedCounters;rpPerfectDodges=savedDodges;seconds=45;
- hp();$('clock').textContent='00:45';
- $('overlay').style.display='none';
- msg('CONTINUE! +50 HEALTH · 45 SECONDS',1800);
+$('rpLevelBack').onclick=()=>{rpLevels.style.display='none';rpModes.style.display='flex'};$('exit').onclick=exit;$('back').onclick=exit;let rpContinueUsed=false, rpAdPending=false, rpAdRequestFight=0, rpFightToken=0;
+const rpOriginalStart=start;
+start=async function(...args){
+  rpFightToken++;
+  rpContinueUsed=false;
+  rpAdPending=false;
+  return rpOriginalStart(...args);
+};
+function rpAdStatus(message){
+  const button=$('watchAdContinue');
+  button.disabled=rpAdPending || rpContinueUsed;
+  button.textContent=message || 'WATCH AD TO CONTINUE';
+}
+window.rpRewardedAdResult=async function(status){
+  if(!rpAdPending)return;
+  if(status!=='earned'){
+    rpAdPending=false;
+    rpAdStatus(status==='unavailable'?'AD UNAVAILABLE · TRY AGAIN':'WATCH AD TO CONTINUE');
+    return;
+  }
+  if(rpContinueUsed || run || enemy<=0 || rpAdRequestFight!==rpFightToken){
+    rpAdPending=false;return;
+  }
+  rpAdPending=false;
+  rpContinueUsed=true;
+  const saved={score,roundPunches,enemy,rpNormalHits,rpCounterHits,rpPerfectDodges};
+  await start(mode,rpFightType,rpLevel);
+  rpContinueUsed=true;
+  player=Math.max(1,Math.ceil(rpPlayerMaxHp*.5));
+  enemy=Math.max(1,saved.enemy);
+  score=saved.score;
+  roundPunches=saved.roundPunches;
+  rpNormalHits=saved.rpNormalHits;
+  rpCounterHits=saved.rpCounterHits;
+  rpPerfectDodges=saved.rpPerfectDodges;
+  seconds=45;
+  hp();$('clock').textContent='00:45';
+  $('overlay').style.display='none';
+  msg('CONTINUE! 50% HEALTH · 45 SECONDS',1800);
+};
+$('watchAdContinue').onclick=()=>{
+  if(run || rpContinueUsed || rpAdPending || enemy<=0 ||
+     (seconds<=0 && player/rpPlayerMaxHp>=enemy/rpFightMaxHp))return;
+  if(!window.RewardedAds || typeof window.RewardedAds.showRewardedAd!=='function'){
+    rpAdStatus('ADS AVAILABLE IN ANDROID APP ONLY');
+    return;
+  }
+  rpAdPending=true;
+  rpAdRequestFight=rpFightToken;
+  $('watchAdContinue').disabled=true;
+  $('watchAdContinue').textContent='LOADING AD…';
+  try{window.RewardedAds.showRewardedAd();}
+  catch(e){window.rpRewardedAdResult('unavailable');}
 };$('rpNextLevel').onclick=()=>{if(rpLevel<20){$('overlay').style.display='none';start(mode,rpFightType,rpLevel+1)}};$('again').onclick=()=>start(mode,rpFightType,rpLevel);$('dodgeL').onclick=()=>dodge('left');$('dodgeR').onclick=()=>dodge('right');$('duck').onclick=()=>dodge('duck');document.addEventListener('visibilitychange',()=>{if(document.hidden&&run)rpPause();});
 
 /* REAL PUNCH: pause & Android background safety. Isolated from 3D appearance. */
