@@ -7,11 +7,12 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Java
+      - name: Setup Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -19,15 +20,18 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          packages: ''
 
-      - name: Make Gradle executable
+      - name: Make Gradle Executable
         run: chmod +x gradlew
 
-      - name: Build AAB
-        run: ./gradlew bundleRelease
+      - name: Build Release AAB
+        run: ./gradlew bundleRelease --stacktrace
 
       - name: Upload AAB
         uses: actions/upload-artifact@v4
         with:
-          name: Real-Punch-AAB
+          name: Real-Punch-Motion-Boxing-AAB
           path: app/build/outputs/bundle/release/*.aab
+          if-no-files-found: error
