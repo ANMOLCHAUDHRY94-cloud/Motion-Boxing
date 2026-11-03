@@ -1,4 +1,5 @@
-name: Build Android AAB
+
+name: Build Signed Android AAB
 
 on:
   workflow_dispatch:
@@ -27,13 +28,37 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Build Release AAB
-        run: gradle bundleRelease --stacktrace
+      - name: Restore Upload Keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/signing"
+          printf '%s' "$KEYSTORE_BASE64" \
+            | base64 --decode \
+            > "$RUNNER_TEMP/signing/upload-key.jks"
+          test -s "$RUNNER_TEMP/signing/upload-key.jks"
 
-      - name: Upload AAB
+      - name: Build Signed Release AAB
+        env:
+          STORE_PASS: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_PASS: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          gradle bundleRelease \
+            -Pandroid.injected.signing.store.file="$RUNNER_TEMP/signing/upload-key.jks" \
+            -Pandroid.injected.signing.store.password="$STORE_PASS" \
+            -Pandroid.injected.signing.key.alias=upload \
+            -Pandroid.injected.signing.key.password="$KEY_PASS"
+
+      - name: Verify AAB Signature
+        run: |
+          AAB="app/build/outputs/bundle/release/app-release.aab"
+          test -s "$AAB"
+          jarsigner -verify -strict "$AAB"
+
+      - name: Upload Signed AAB
         uses: actions/upload-artifact@v4
         with:
-          name: Real-Punch-Motion-Boxing-AAB
+          name: Real-Punch-Signed-AAB
           path: app/build/outputs/bundle/release/*.aab
           if-no-files-found: error
-          
+          retention-days: 1
