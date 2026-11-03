@@ -128,7 +128,6 @@ body.two-hand #soundToggle{top:calc(60px + var(--top))!important}
    <button id="one">ONE-HAND BOXING
     <br>
     <small>Portrait · Hold phone in left hand · Right punches</small></button>
-   <button id="rpScoringBtn" type="button">🏆 SCORING</button>
    <button id="tutorialBtn" type="button">🥊 BOXING TUTORIAL</button>
    <button id="two">TWO-HAND BOXING
     <br>
@@ -148,28 +147,6 @@ body.two-hand #soundToggle{top:calc(60px + var(--top))!important}
    <p id="rpLevelInfo" style="color:#b9d4f2"></p>
    <div id="rpLevelGrid"></div>
    <button id="rpLevelBack">← BACK TO FIGHT MODES</button>
-  </section>
-  <section id="rpScoringPage" aria-label="Scoring rules" style="display:none;position:fixed;inset:0;z-index:40;background:radial-gradient(ellipse at 50% 15%,#233c60,#080e1e 75%);padding:20px;overflow:auto;text-align:center;color:white">
-   <h2>🏆 HOW SCORING WORKS</h2>
-   <div style="max-width:420px;margin:auto;text-align:left;line-height:2;font-size:17px">
-    <div>
-     🥊 Landed Punch <b style="float:right">+9</b>
-    </div>
-    <div>
-     💥 Counter Punch <b style="float:right">+22</b>
-    </div>
-    <div>
-     🛡️ Perfect Dodge <b style="float:right">+5</b>
-    </div>
-    <div>
-     ❤️ Remaining Health <b style="float:right">×2</b>
-    </div>
-    <div>
-     🏆 KO Bonus <b style="float:right">+100</b>
-    </div>
-   </div>
-   <p style="color:#bbcee8">Counter punches count separately from normal punches. Health bonus is awarded at the end of the fight.</p>
-   <button id="rpScoringBack" type="button">← BACK TO MENU</button>
   </section>
   <section id="game">
    <div id="hud">
@@ -434,7 +411,7 @@ const progress=RPProgress.finish(score,won,roundPunches);$('result').textContent
 let rpStarsResult=$('rpStarsResult');
 if(!rpStarsResult){rpStarsResult=document.createElement('div');rpStarsResult.id='rpStarsResult';rpStarsResult.style.cssText='margin:12px auto;padding:10px;border:1px solid #a97d2c;border-radius:12px;background:#181f37;color:#ffdf64;text-align:center;font-weight:800;max-width:350px';$('rpResultStats').parentNode.insertBefore(rpStarsResult,$('rpResultStats'));}
 rpStarsResult.innerHTML=(won?'<div style="font-size:29px">'+RPStars.glyph(rpEarnedStars)+'</div><div>BEST: '+RPStars.glyph(rpBestStars)+'</div>':'<div>☆☆☆ · LEVEL NOT COMPLETED</div>')+'<small style="display:block;color:#d5dfef;font-weight:400">Accuracy '+Math.round(rpAccuracyPct)+'% · Health '+Math.round(rpHpPct)+'% · Time '+Math.round(rpTimePct)+'%'+(rpContinueUsed?' · Ad Continue used':'')+'</small>';
-$('rpNextLevel').style.display=rpCanAdvance?'block':'none';$('watchAdContinue').disabled=won || rpContinueUsed; $('watchAdContinue').textContent=won?'CONTINUE (LOSSES ONLY)':rpContinueUsed?'CONTINUE ALREADY USED':'WATCH AD TO CONTINUE';$('rpNewRecord').style.display=rpModeRecord?'block':'none';$('rpResultStats').textContent='Mode: '+rpFightType.toUpperCase()+' · Level: '+rpLevel+'/20 · Mode Best: '+Math.max(rpModeBest,score)+' · Round Punches: '+progress.roundPunches+' · Overall Best Score: '+progress.bestScore+' · Total Wins: '+progress.totalWins+' · Total Punches: '+progress.totalPunches;if(enemy<=0){setTimeout(()=>{$('overlay').style.display='flex'},2600)}else{$('overlay').style.display='flex'}}const soundToggle=document.createElement('button');soundToggle.id='soundToggle';soundToggle.textContent='🔊 SOUND ON';soundToggle.style.cssText='position:absolute;right:9px;top:68px;z-index:7;padding:7px 10px;font-size:11px;background:#244565';document.getElementById('game').appendChild(soundToggle);soundToggle.onclick=()=>{let on=MBSound.setEnabled(!MBSound.enabled);soundToggle.textContent=on?'🔊 SOUND ON':'🔇 SOUND OFF';if(on)MBSound.play('bell')};RPProgress.render();let rpControlChoice='one';const rpModes=$('rpFightModes');
+$('rpNextLevel').style.display=rpCanAdvance?'block':'none';$('watchAdContinue').style.display=won?'none':'block'; $('watchAdContinue').disabled=won || rpContinueUsed; $('watchAdContinue').textContent=rpContinueUsed?'CONTINUE ALREADY USED':'WATCH AD TO CONTINUE';$('rpNewRecord').style.display=rpModeRecord?'block':'none';$('rpResultStats').textContent='Mode: '+rpFightType.toUpperCase()+' · Level: '+rpLevel+'/20 · Mode Best: '+Math.max(rpModeBest,score)+' · Round Punches: '+progress.roundPunches+' · Overall Best Score: '+progress.bestScore+' · Total Wins: '+progress.totalWins+' · Total Punches: '+progress.totalPunches;if(enemy<=0){setTimeout(()=>{$('overlay').style.display='flex'},2600)}else{$('overlay').style.display='flex'}}const soundToggle=document.createElement('button');soundToggle.id='soundToggle';soundToggle.textContent='🔊 SOUND ON';soundToggle.style.cssText='position:absolute;right:9px;top:68px;z-index:7;padding:7px 10px;font-size:11px;background:#244565';document.getElementById('game').appendChild(soundToggle);soundToggle.onclick=()=>{let on=MBSound.setEnabled(!MBSound.enabled);soundToggle.textContent=on?'🔊 SOUND ON':'🔇 SOUND OFF';if(on)MBSound.play('bell')};RPProgress.render();let rpControlChoice='one';const rpModes=$('rpFightModes');
 function rpChooseControls(c){rpControlChoice=c;$('rpSelectedControls').textContent=c==='one'?'ONE-HAND · Right punches':'TWO-HAND · Both hands';$('menu').style.display='none';rpModes.style.display='flex'}
 $('one').onclick=()=>rpChooseControls('one');$('two').onclick=()=>rpChooseControls('two');
 $('rpFightBack').onclick=()=>{rpModes.style.display='none';$('menu').style.display='flex'};
@@ -1094,15 +1071,6 @@ setInterval(function(){var now=performance.now(),o=document.getElementById('oppo
  if(!g.next)g.next=now+3500;
  if(g.until&&now>g.until){g.until=0;o.classList.remove('guarding');g.next=now+3500+Math.random()*3000}
  if(!g.until&&now>g.next&&!warning){g.until=now+1500;o.classList.add('guarding')}},250)})();
-</script>
-  <script>
-(function(){
-const open=document.getElementById('rpScoringBtn'),back=document.getElementById('rpScoringBack'),page=document.getElementById('rpScoringPage');
-if(open&&back&&page){
- open.addEventListener('click',()=>{page.style.display='block'});
- back.addEventListener('click',()=>{page.style.display='none'});
-}
-})();
 </script>
  </body>
 </html>
