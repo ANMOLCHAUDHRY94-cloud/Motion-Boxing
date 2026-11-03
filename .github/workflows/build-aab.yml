@@ -1,4 +1,3 @@
-
 name: Build Android AAB
 
 on:
@@ -23,10 +22,10 @@ jobs:
         with:
           packages: ''
 
-      - name: Setup Gradle
+      - name: Setup Gradle 8.9
         uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: '8.7'
+          gradle-version: '8.9'
 
       - name: Build Release AAB
         run: gradle bundleRelease --stacktrace
@@ -37,3 +36,4 @@ jobs:
           name: Real-Punch-Motion-Boxing-AAB
           path: app/build/outputs/bundle/release/*.aab
           if-no-files-found: error
+          
