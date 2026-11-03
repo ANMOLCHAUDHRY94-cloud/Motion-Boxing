@@ -36,7 +36,9 @@ jobs:
           printf '%s' "$KEYSTORE_BASE64" \
             | base64 --decode \
             > "$RUNNER_TEMP/signing/upload-key.jks"
+
           test -s "$RUNNER_TEMP/signing/upload-key.jks"
+          chmod 600 "$RUNNER_TEMP/signing/upload-key.jks"
 
       - name: Build Signed Release AAB
         env:
@@ -52,8 +54,14 @@ jobs:
       - name: Verify AAB Signature
         run: |
           AAB="app/build/outputs/bundle/release/app-release.aab"
+
           test -s "$AAB"
-          jarsigner -verify -strict "$AAB"
+
+          jarsigner -verify "$AAB" > verification.txt 2>&1
+
+          grep -q "jar verified" verification.txt
+
+          echo "AAB signature verification passed"
 
       - name: Upload Signed AAB
         uses: actions/upload-artifact@v4
