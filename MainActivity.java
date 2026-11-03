@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.WindowManager;
@@ -15,26 +16,80 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import java.io.InputStream;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.FullScreenContentCallback;
+
 import com.google.android.gms.ads.AdError;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.FullScreenContentCallback;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
+import com.google.android.ump.ConsentInformation;
+import com.google.android.ump.ConsentRequestParameters;
+import com.google.android.ump.UserMessagingPlatform;
+
+import java.io.InputStream;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainActivity extends Activity {
+
+    private static final String APP_HOST = "appassets.androidplatform.net";
+    private static final String APP_PAGE = "https://" + APP_HOST + "/assets/index.html";
+    private static final String ASSET_PATH_PREFIX = "/assets/";
+
+    // Official Google rewarded TEST unit. Replace ONLY when ready for production.
+    private static final String TEST_REWARDED_UNIT = "ca-app-pub-3940256099942544/5224354917";
+
+    private static final int CAMERA_CODE = 1001;
+
     private WebView webView;
+
+    // Ads
     private RewardedAd rewardedAd;
     private boolean adShowing = false;
     private boolean rewardEarned = false;
-    // Official Google rewarded test unit. Replace ONLY when ready for production.
-    private static final String TEST_REWARDED_UNIT = "ca-app-pub-3940256099942544/5224354917";
-    private void notifyAd(String status) {
-        if (webView != null) webView.evaluateJavascript(
-            "window.rpRewardedAdResult && window.rpRewardedAdResult('" + status + "')", null);
+    private ConsentInformation consentInfo;
+    private final AtomicBoolean adsInitialized = new AtomicBoolean(false);
+
+    // Camera / orientation
+    private PermissionRequest cameraRequest;
+    private String currentOrientation = "unspecified";
+
+    // ---------------------------------------------------------------------
+    // Ads + consent
+    // ---------------------------------------------------------------------
+
+    /** Ask for consent first (UMP). Ads are initialised only when allowed. */
+    private void setupConsentAndAds() {
+        consentInfo = UserMessagingPlatform.getConsentInformation(this);
+        ConsentRequestParameters params = new ConsentRequestParameters.Builder().build();
+
+        consentInfo.requestConsentInfoUpdate(
+            this,
+            params,
+            () -> UserMessagingPlatform.loadAndShowConsentFormIfRequired(this, formError -> {
+                if (consentInfo.canRequestAds()) initAds();
+            }),
+            requestError -> {
+                if (consentInfo.canRequestAds()) initAds();
+            });
+
+        // User may already have given consent in an earlier session.
+        if (consentInfo.canRequestAds()) initAds();
     }
+
+    private void initAds() {
+        if (!adsInitialized.compareAndSet(false, true)) return;
+        MobileAds.initialize(this, status -> loadRewarded());
+    }
+
+    private void notifyAd(String status) {
+        if (webView != null) {
+            webView.evaluateJavascript(
+                "window.rpRewardedAdResult && window.rpRewardedAdResult('" + status + "')", null);
+        }
+    }
+
     private void loadRewarded() {
         RewardedAd.load(this, TEST_REWARDED_UNIT, new AdRequest.Builder().build(),
             new RewardedAdLoadCallback() {
@@ -42,9 +97,14 @@ public class MainActivity extends Activity {
                 @Override public void onAdFailedToLoad(LoadAdError error) { rewardedAd = null; }
             });
     }
+
     private void showRewarded() {
         if (adShowing) { notifyAd("unavailable"); return; }
-        if (rewardedAd == null) { loadRewarded(); notifyAd("unavailable"); return; }
+        if (rewardedAd == null) {
+            if (adsInitialized.get()) loadRewarded();
+            notifyAd("unavailable");
+            return;
+        }
         RewardedAd ad = rewardedAd;
         rewardedAd = null;
         adShowing = true;
@@ -63,21 +123,29 @@ public class MainActivity extends Activity {
         });
         ad.show(this, reward -> rewardEarned = true);
     }
-    private PermissionRequest cameraRequest;
-    private String currentOrientation = "unspecified";
-    private static final int CAMERA_CODE = 1001;
+
+    // ---------------------------------------------------------------------
+    // Lifecycle
+    // ---------------------------------------------------------------------
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        getWindow().getDecorView().setSystemUiVisibility(5894 | 1024 | 512);
+        applyImmersiveMode();
+
         webView = new WebView(this);
         setContentView(webView);
-        MobileAds.initialize(this, initializationStatus -> loadRewarded());
+
+        setupConsentAndAds();
+
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
         settings.setMediaPlaybackRequiresUserGesture(false);
+        settings.setAllowFileAccess(false);
+        settings.setAllowContentAccess(false);
+
+        // Orientation bridge (only used by the bundled game page).
         webView.addJavascriptInterface(new Object() {
             @JavascriptInterface public void setOrientation(String orientation) {
                 runOnUiThread(() -> {
@@ -86,45 +154,142 @@ public class MainActivity extends Activity {
                 });
             }
         }, "Android");
-        // Bridge is restricted to the app's bundled trusted page, not arbitrary web content.
+
+        // Rewarded-ad bridge is restricted to the app's bundled trusted page.
         webView.addJavascriptInterface(new Object() {
             @JavascriptInterface public void showRewardedAd() {
                 runOnUiThread(() -> {
                     String current = webView == null ? "" : webView.getUrl();
-                    if (!"https://appassets.androidplatform.net/assets/index.html".equals(current)) return;
+                    if (!APP_PAGE.equals(current)) return;
                     showRewarded();
                 });
             }
         }, "RewardedAds");
+
         webView.setWebViewClient(new WebViewClient() {
+
+            // Never let the game WebView navigate to outside sites.
+            @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                return !APP_HOST.equals(request.getUrl().getHost());
+            }
+
+            // Serve bundled files from /assets/ as https://appassets.androidplatform.net/assets/...
             @Override public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-                String url = request.getUrl().toString();
-                String prefix = "https://appassets.androidplatform.net/assets/";
-                if (!url.startsWith(prefix)) return super.shouldInterceptRequest(view, request);
-                String path = url.substring(prefix.length());
-                if (path.contains("..")) return null;
+                Uri uri = request.getUrl();
+                String urlPath = uri.getPath(); // already URL-decoded ("Dancing%20Basemesh.fbx" -> "Dancing Basemesh.fbx")
+                if (!APP_HOST.equals(uri.getHost()) || urlPath == null || !urlPath.startsWith(ASSET_PATH_PREFIX)) {
+                    return super.shouldInterceptRequest(view, request);
+                }
+                String path = urlPath.substring(ASSET_PATH_PREFIX.length());
+                if (path.isEmpty() || path.contains("..")) return null;
                 try {
                     InputStream data = getAssets().open(path);
-                    String type = path.endsWith(".html") ? "text/html" : path.endsWith(".js") ? "application/javascript" : "text/plain";
-                    return new WebResourceResponse(type, "UTF-8", data);
-                } catch (Exception e) { return null; }
+                    String type = mimeTypeFor(path);
+                    String encoding = type.startsWith("text/") || type.contains("javascript") || type.contains("json")
+                        ? "UTF-8" : null;
+                    return new WebResourceResponse(type, encoding, data);
+                } catch (Exception e) {
+                    return null;
+                }
             }
         });
+
         webView.setWebChromeClient(new WebChromeClient() {
             @Override public void onPermissionRequest(PermissionRequest request) {
                 runOnUiThread(() -> {
+                    // Only our own bundled page may use the camera.
+                    Uri origin = request.getOrigin();
+                    boolean trusted = origin != null
+                        && "https".equals(origin.getScheme())
+                        && APP_HOST.equals(origin.getHost());
+                    if (!trusted) { request.deny(); return; }
+
                     boolean asksVideo = false;
-                    for (String r : request.getResources()) if (PermissionRequest.RESOURCE_VIDEO_CAPTURE.equals(r)) asksVideo = true;
+                    for (String r : request.getResources()) {
+                        if (PermissionRequest.RESOURCE_VIDEO_CAPTURE.equals(r)) asksVideo = true;
+                    }
                     if (!asksVideo) { request.deny(); return; }
-                    if (Build.VERSION.SDK_INT >= 23 && checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+
+                    if (Build.VERSION.SDK_INT >= 23
+                            && checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                         cameraRequest = request;
                         requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_CODE);
-                    } else request.grant(new String[]{PermissionRequest.RESOURCE_VIDEO_CAPTURE});
+                    } else {
+                        request.grant(new String[]{PermissionRequest.RESOURCE_VIDEO_CAPTURE});
+                    }
                 });
             }
         });
-        webView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
+
+        webView.loadUrl(APP_PAGE);
     }
+
+    @Override protected void onResume() {
+        super.onResume();
+        applyOrientation();
+        if (webView != null) webView.onResume();
+    }
+
+    /** Called for phone calls, notification shade, app switching, etc. -> pause the fight. */
+    @Override protected void onPause() {
+        if (webView != null) {
+            webView.evaluateJavascript(
+                "typeof rpPause==='function'&&rpPause()", null);
+            webView.onPause();
+        }
+        super.onPause();
+    }
+
+    @Override public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) applyImmersiveMode();
+    }
+
+    @Override public void onRequestPermissionsResult(int code, String[] permissions, int[] results) {
+        super.onRequestPermissionsResult(code, permissions, results);
+        if (code == CAMERA_CODE && cameraRequest != null) {
+            if (results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED) {
+                cameraRequest.grant(new String[]{PermissionRequest.RESOURCE_VIDEO_CAPTURE});
+            } else {
+                cameraRequest.deny();
+            }
+            cameraRequest = null;
+        }
+    }
+
+    /**
+     * Back button: step back inside the game screens; leave the app only from the main menu.
+     */
+    @Override public void onBackPressed() {
+        if (webView == null) { super.onBackPressed(); return; }
+        String js = "(function(){"
+            + "function v(id){var e=document.getElementById(id);return !!e&&getComputedStyle(e).display!=='none';}"
+            + "if(v('game')){exit();return 'handled';}"
+            + "if(v('rpScoringPage')){document.getElementById('rpScoringBack').click();return 'handled';}"
+            + "if(v('rpLevelSelect')){document.getElementById('rpLevelBack').click();return 'handled';}"
+            + "if(v('rpFightModes')){document.getElementById('rpFightBack').click();return 'handled';}"
+            + "return 'menu';})()";
+        webView.evaluateJavascript(js, value -> {
+            if (value == null || !value.contains("handled")) finish();
+        });
+    }
+
+    @Override protected void onDestroy() {
+        if (webView != null) {
+            webView.destroy();
+            webView = null;
+        }
+        super.onDestroy();
+    }
+
+    // ---------------------------------------------------------------------
+    // Helpers
+    // ---------------------------------------------------------------------
+
+    private void applyImmersiveMode() {
+        getWindow().getDecorView().setSystemUiVisibility(5894 | 1024 | 512);
+    }
+
     private void applyOrientation() {
         if ("portrait".equals(currentOrientation)) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -134,24 +299,21 @@ public class MainActivity extends Activity {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
         }
     }
-    @Override protected void onResume() {
-        super.onResume();
-        applyOrientation();
-    }
-    @Override public void onRequestPermissionsResult(int code, String[] permissions, int[] results) {
-        super.onRequestPermissionsResult(code, permissions, results);
-        if (code == CAMERA_CODE && cameraRequest != null) {
-            if (results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED)
-                cameraRequest.grant(new String[]{PermissionRequest.RESOURCE_VIDEO_CAPTURE});
-            else cameraRequest.deny();
-            cameraRequest = null;
-        }
-    }
-    @Override public void onBackPressed() {
-        if (webView != null) webView.evaluateJavascript("exit()", null); else super.onBackPressed();
-    }
-    @Override protected void onDestroy() {
-        if (webView != null) { webView.destroy(); webView = null; }
-        super.onDestroy();
+
+    private static String mimeTypeFor(String path) {
+        String p = path.toLowerCase();
+        if (p.endsWith(".html") || p.endsWith(".htm")) return "text/html";
+        if (p.endsWith(".js") || p.endsWith(".mjs")) return "application/javascript";
+        if (p.endsWith(".css")) return "text/css";
+        if (p.endsWith(".json")) return "application/json";
+        if (p.endsWith(".wasm")) return "application/wasm";
+        if (p.endsWith(".png")) return "image/png";
+        if (p.endsWith(".jpg") || p.endsWith(".jpeg")) return "image/jpeg";
+        if (p.endsWith(".svg")) return "image/svg+xml";
+        if (p.endsWith(".mp3")) return "audio/mpeg";
+        if (p.endsWith(".ogg")) return "audio/ogg";
+        if (p.endsWith(".wav")) return "audio/wav";
+        if (p.endsWith(".fbx") || p.endsWith(".glb") || p.endsWith(".bin")) return "application/octet-stream";
+        return "text/plain";
     }
 }
