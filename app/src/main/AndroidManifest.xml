@@ -12,6 +12,7 @@
 
     <application
         android:label="REAL PUNCH"
+        android:icon="@drawable/real_punch_icon"
         android:theme="@android:style/Theme.Material.Light.NoActionBar"
         android:usesCleartextTraffic="false">
 
