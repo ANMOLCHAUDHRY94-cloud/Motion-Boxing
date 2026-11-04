@@ -19,8 +19,8 @@
 
         <!-- Google AdMob production App ID -->
         <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-1884949236258434~8569133343" />
+    android:name="com.google.android.gms.ads.APPLICATION_ID"
+    android:value="ca-app-pub-8123574365675777~5833471017" />
 
         <!-- Main Game Activity -->
         <activity
