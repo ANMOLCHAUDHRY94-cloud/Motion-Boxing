@@ -16,6 +16,8 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.window.OnBackInvokedCallback;
+import android.window.OnBackInvokedDispatcher;
 
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
@@ -43,6 +45,7 @@ public class MainActivity extends Activity {
     private static final int CAMERA_CODE = 1001;
 
     private WebView webView;
+    private OnBackInvokedCallback modernBackCallback;
 
     // Ads
     private RewardedAd rewardedAd;
@@ -135,6 +138,13 @@ public class MainActivity extends Activity {
 
         webView = new WebView(this);
         setContentView(webView);
+
+        // Android 13+ back gestures, including Android 16 target SDK 36.
+        if (Build.VERSION.SDK_INT >= 33) {
+            modernBackCallback = this::handleGameBack;
+            getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
+                OnBackInvokedDispatcher.PRIORITY_DEFAULT, modernBackCallback);
+        }
 
         setupConsentAndAds();
 
@@ -260,8 +270,13 @@ public class MainActivity extends Activity {
     /**
      * Back button: step back inside the game screens; leave the app only from the main menu.
      */
-    @Override public void onBackPressed() {
-        if (webView == null) { super.onBackPressed(); return; }
+    @Override @SuppressWarnings("deprecation") public void onBackPressed() {
+        // Legacy button/back handling on Android 12 and earlier.
+        if (Build.VERSION.SDK_INT < 33) handleGameBack();
+    }
+
+    private void handleGameBack() {
+        if (webView == null) { finish(); return; }
         String js = "(function(){"
             + "function v(id){var e=document.getElementById(id);return !!e&&getComputedStyle(e).display!=='none';}"
             + "if(v('game')){exit();return 'handled';}"
@@ -275,6 +290,10 @@ public class MainActivity extends Activity {
     }
 
     @Override protected void onDestroy() {
+        if (Build.VERSION.SDK_INT >= 33 && modernBackCallback != null) {
+            getOnBackInvokedDispatcher().unregisterOnBackInvokedCallback(modernBackCallback);
+            modernBackCallback = null;
+        }
         if (webView != null) {
             webView.destroy();
             webView = null;
@@ -317,3 +336,10 @@ public class MainActivity extends Activity {
         return "text/plain";
     }
 }
+
+
+
+
+
+
+
