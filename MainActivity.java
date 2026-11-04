@@ -317,10 +317,3 @@ public class MainActivity extends Activity {
         return "text/plain";
     }
 }
-
-
-
-
-
-
-
