@@ -12,11 +12,12 @@
 
     <application
         android:label="REAL PUNCH"
+        android:appCategory="game"
         android:icon="@drawable/real_punch_icon"
         android:theme="@android:style/Theme.Material.Light.NoActionBar"
         android:usesCleartextTraffic="false">
 
-        <!-- Google AdMob TEST App ID -->
+        <!-- Google AdMob production App ID -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-1884949236258434~8569133343" />
