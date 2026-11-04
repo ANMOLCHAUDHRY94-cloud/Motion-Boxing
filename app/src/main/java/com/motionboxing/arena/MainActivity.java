@@ -1,4 +1,3 @@
-
 package com.motionboxing.game;
 
 import android.Manifest;
@@ -318,10 +317,3 @@ public class MainActivity extends Activity {
         return "text/plain";
     }
 }
-
-
-
-
-
-
-
