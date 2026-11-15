@@ -1133,5 +1133,56 @@ window.RPHaptics=(function(){
  btn.onclick=function(){RPHaptics.setEnabled(!RPHaptics.enabled);update()};update();game.appendChild(btn);
 })();
 </script>
- </body>
+   <style id="rp-largefont-fix">
+/* Large-font fix: --fz = 1/(system font scale). Set by script below; 1 on normal phones. */
+:root{--fz:1}
+html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+button{font-size:calc(15px*var(--fz))}
+.hp{font-size:calc(12px*var(--fz))}
+#clock{font-size:calc(23px*var(--fz))}
+#message{font-size:clamp(calc(17px*var(--fz)),5vw*var(--fz),calc(34px*var(--fz)))}
+#status{font-size:calc(11px*var(--fz))}
+#status button{font-size:calc(12px*var(--fz))!important;padding:calc(10px*var(--fz)) calc(12px*var(--fz))!important}
+#help{font-size:calc(10px*var(--fz))!important}
+#debug{font-size:calc(10px*var(--fz))!important}
+#soundToggle,#rpMusicToggle,#rpVibrationToggle{font-size:calc(11px*var(--fz))!important}
+#rpPauseBtn{font-size:calc(20px*var(--fz))!important}
+#menu h1{font-size:clamp(calc(26px*var(--fz)),7vw*var(--fz),calc(48px*var(--fz)))}
+#rpLevelGrid button{font-size:calc(13px*var(--fz))}
+#rpLevelGrid small,#rpFightModes small{font-size:calc(11px*var(--fz))!important}
+/* training coach panel */
+#rpTraining{max-height:calc(100dvh - 150px);overflow-y:auto}
+#rpTrainStep{font-size:calc(11px*var(--fz))}
+#rpTrainTitle{font-size:calc(20px*var(--fz))}
+#rpTraining p{font-size:calc(13px*var(--fz))}
+#rpTrainState{font-size:calc(13px*var(--fz))}
+#rpTraining button{font-size:calc(12px*var(--fz))}
+/* tutorial */
+#tutorialPanel{overflow-y:auto;justify-content:flex-start}
+#tutorialPanel>:first-child{margin-top:auto}
+#tutorialPanel>:last-child{margin-bottom:auto}
+#tutorialPanel h2{font-size:clamp(calc(22px*var(--fz)),6vw*var(--fz),calc(36px*var(--fz)))}
+#tutorialPanel p{font-size:calc(16px*var(--fz))}
+#tutorialStep{font-size:calc(13px*var(--fz))}
+/* result / knockout overlay: scrollable so nothing overlaps */
+#overlay{overflow-y:auto;justify-content:flex-start;gap:calc(12px*var(--fz));padding:calc(20px*var(--fz)) 16px;-webkit-overflow-scrolling:touch}
+#overlay>:first-child{margin-top:auto}
+#overlay>:last-child{margin-bottom:auto}
+#overlay h2{font-size:clamp(calc(24px*var(--fz)),8vw*var(--fz),calc(35px*var(--fz)));margin:0}
+#overlay p{font-size:calc(16px*var(--fz))}
+#overlay button{flex:0 0 auto}
+#rpProgressStats{font-size:calc(13px*var(--fz))}
+#rpResultStats{font-size:calc(14px*var(--fz))}
+#rpScoreBreakdown{font-size:calc(13px*var(--fz))!important}
+#rpPauseMenu{overflow-y:auto}
+#rpPauseMenu h2{font-size:calc(34px*var(--fz))}
+#rpPauseMenu button{font-size:calc(15px*var(--fz))}
+#rpFirstUseOffline{overflow-y:auto}
+#rpFirstUseOffline p{font-size:calc(17px*var(--fz))}
+</style>
+  <script id="rp-largefont-fix-js">
+(function(){function fix(){try{var t=document.createElement('div');t.style.cssText='position:absolute;visibility:hidden;left:-9999px;top:0;font-size:100px;line-height:1;padding:0;margin:0';t.textContent='M';document.body.appendChild(t);var h=t.offsetHeight||100;document.body.removeChild(t);var r=h/100;if(r<1)r=1;if(r>2.5)r=2.5;document.documentElement.style.setProperty('--fz',(1/r).toFixed(3))}catch(e){}}
+window.addEventListener('load',fix);window.addEventListener('resize',fix);if(document.readyState!=='loading')fix();else document.addEventListener('DOMContentLoaded',fix)})();
+</script>
+</body>
 </html>
