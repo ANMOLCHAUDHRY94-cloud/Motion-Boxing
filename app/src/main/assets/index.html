@@ -119,7 +119,154 @@ body.two-hand #soundToggle{top:calc(60px + var(--top))!important}
 #rpFightModes small{display:block;font-size:12px;font-weight:500;opacity:.8;margin-top:4px}
 </style>
   <style id="rp-first-use-offline-style">#rpFirstUseOffline{display:none;position:fixed;inset:0;z-index:9999;background:radial-gradient(ellipse at 50% 25%,#20375b,#080e1e 75%);color:#fff;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:28px;gap:18px;font-family:system-ui,Arial}#rpFirstUseOffline h2{font-size:clamp(24px,6vw,34px);margin:0}#rpFirstUseOffline p{font-size:17px;color:#c8d6ee;max-width:360px;line-height:1.5}#rpFirstUseOffline button{min-width:190px}</style>
- </head>
+ <style id="rp-visual-v7">
+:root{--rp-red:#e5232f;--rp-red2:#8f0f1c;--rp-gold:#9fd0ff;--rp-gold2:#2668e7;--rp-ink:#070a14;--rp-cond:"sans-serif-condensed","Roboto Condensed","Arial Narrow",Impact,system-ui,sans-serif}
+body{font-family:var(--rp-cond)}
+/* ---------- MENU ---------- */
+#menu,#rpFightModes,#rpLevelSelect{background:
+ radial-gradient(ellipse 60% 38% at 50% 0%,#ffffff38,transparent 70%),
+ conic-gradient(from 200deg at 50% -10%,transparent 0 6%,#5a8bff44 8% 11%,transparent 13% 87%,#ff4d5a22 89% 92%,transparent 94%),
+ linear-gradient(180deg,#14284d 0%,#0b1426 55%,#060a14 100%)!important}
+#menu:after{content:"";position:absolute;left:0;right:0;bottom:0;height:22%;pointer-events:none;
+ background:linear-gradient(#0000,#000a),repeating-linear-gradient(180deg,transparent 0 22px,#2668e7 22px 27px,transparent 27px 52px);opacity:.55;mask:linear-gradient(#0000,#000 70%)}
+#menu h1{font:900 italic clamp(46px,16vw,84px)/0.92 var(--rp-cond)!important;letter-spacing:1px;margin:0;text-transform:uppercase;
+ background:linear-gradient(180deg,#ffffff 0%,#bfdcff 45%,#4d8dff 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+ filter:drop-shadow(0 3px 0 var(--rp-red2)) drop-shadow(0 8px 18px #e5232f88);transform:skewX(-6deg)}
+#menu .rpBrandSub{font:800 15px var(--rp-cond)!important;letter-spacing:.55em!important;color:#fff!important;background:var(--rp-red);padding:5px 4px 5px 14px;transform:skewX(-12deg);box-shadow:0 0 18px #e5232f88}
+#menu .rpTagline{font:600 13px var(--rp-cond)!important;color:#b9d0f5!important;letter-spacing:.08em;text-transform:uppercase}
+#rpProgressStats{font:800 12px var(--rp-cond)!important;letter-spacing:.12em;color:var(--rp-gold)!important;background:#00000066!important;border:1px solid #6aa0ff77!important;border-radius:4px!important}
+button{font-family:var(--rp-cond)!important}
+#menu button,#rpFightModes button,#rpLevelSelect button,#overlay button{position:relative;border:0!important;border-radius:6px!important;color:#fff;text-transform:uppercase;letter-spacing:.06em;font:900 19px var(--rp-cond)!important;
+ background:linear-gradient(180deg,#5b98ff 0%,#2668e7 48%,#123f9e 100%)!important;
+ box-shadow:inset 0 2px 0 #ffffff66,inset 0 -3px 0 #0006,0 0 0 2px #cfe2ff,0 8px 18px #000a;text-shadow:0 2px 0 #0007;transform:skewX(-8deg);padding:13px 10px!important}
+#menu button small,#rpFightModes button small{display:block;font:600 11px var(--rp-cond);letter-spacing:.04em;text-transform:none;opacity:.88;margin-top:3px}
+#menu button:active,#rpFightModes button:active,#rpLevelSelect button:active,#overlay button:active{transform:skewX(-8deg) translateY(2px);filter:brightness(1.15)}
+#menu #tutorialBtn{background:linear-gradient(180deg,#ff4a4f 0%,#e5232f 48%,#8f0f1c 100%)!important;box-shadow:inset 0 2px 0 #ffffff66,inset 0 -3px 0 #0006,0 0 0 2px #ffc2c6,0 6px 14px #000a!important;font-size:16px!important}
+#rpFightModes #rpFightBack,#rpLevelSelect #rpLevelBack{background:linear-gradient(180deg,#2b3550,#141a2c)!important;box-shadow:inset 0 2px 0 #ffffff33,0 0 0 2px #5d6a8a,0 6px 14px #000a!important;font-size:16px!important}
+#menu p{font:500 12px/1.4 var(--rp-cond)!important;color:#8e9ab5!important}
+#rpFightModes h2,#rpLevelSelect h2{font:900 italic 28px var(--rp-cond);color:var(--rp-gold);letter-spacing:.06em;text-shadow:0 3px 0 var(--rp-red2)}
+/* ---------- HUD ---------- */
+#hud{background:linear-gradient(180deg,#000e,#000a 70%,#0000)!important;align-items:flex-start!important}
+.hp{width:36%!important;font:900 13px var(--rp-cond)!important;letter-spacing:.14em;text-transform:uppercase;text-shadow:0 2px 3px #000}
+.hp:first-child{color:#6fb3ff}.hp:nth-child(3){color:#ff7a82}
+.track{height:16px!important;border-radius:2px!important;transform:skewX(-20deg);background:#150b10!important;border:2px solid #fff!important;box-shadow:0 0 0 1px #000,0 4px 10px #000a;position:relative}
+.track:after{content:"";position:absolute;inset:0;background:linear-gradient(#fff5,#fff0 55%,#0003);pointer-events:none}
+.hp:nth-child(3) .track{border-color:#ffd0d3!important}
+.fill{border-radius:0!important;background:linear-gradient(90deg,#2668e7,#8ec5ff)!important;box-shadow:0 0 10px #4d8dff99}
+#enemyHp{background:linear-gradient(270deg,#ff3b47,#ff9a3d)!important;box-shadow:0 0 10px #ff3b4788;float:right}
+#clock{font:900 26px var(--rp-cond)!important;color:var(--rp-gold);background:#05070e;border:2px solid var(--rp-gold);padding:0 12px;border-radius:4px;letter-spacing:.06em;text-shadow:0 0 10px #4d8dffcc;min-width:76px;text-align:center;box-shadow:0 0 14px #4d8dff66,inset 0 0 8px #000}
+#status{background:linear-gradient(0deg,#000f,#000a)!important;border-top:2px solid #4d8dff66}
+#help{font:700 11px var(--rp-cond);color:#aab6d0;letter-spacing:.05em;text-transform:uppercase}
+#status button{background:linear-gradient(180deg,#3a74e8,#1a3f8f)!important;border:1px solid #8ab4ff!important;border-radius:6px!important;font:900 14px var(--rp-cond)!important;letter-spacing:.08em;box-shadow:0 3px 0 #0008}
+#status #exit{background:linear-gradient(180deg,#b3202b,#6c0f18)!important;border-color:#ff7a82!important}
+/* ---------- ARENA ---------- */
+#rpVig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 45%,transparent 45%,#000b 100%),linear-gradient(#0000 70%,#0008)}
+#rpSpot{position:absolute;left:50%;top:-6%;width:70%;height:90%;transform:translateX(-50%);pointer-events:none;background:radial-gradient(ellipse 50% 55% at 50% 100%,#cfe2ff44,transparent 70%);mix-blend-mode:screen;animation:rpBreath 3.5s ease-in-out infinite alternate}
+@keyframes rpBreath{to{opacity:.55}}
+#arena.shake{animation:rpShake2 .32s linear!important}
+@keyframes rpShake2{0%,100%{translate:0 0}15%{translate:-11px 5px}30%{translate:9px -5px}45%{translate:-7px 3px}60%{translate:5px -2px}80%{translate:-2px 1px}}
+#impactFlash{background:radial-gradient(circle at 50% 45%,#fffc 0%,#5a8bff77 20%,#ff2b3a55 45%,transparent 72%)!important}
+#hitLabel{font:900 italic clamp(44px,13vw,88px) var(--rp-cond)!important;text-transform:uppercase;letter-spacing:.02em;
+ background:linear-gradient(180deg,#fff,#ff8a92 55%,#e5232f);-webkit-background-clip:text;background-clip:text;color:transparent!important;
+ filter:drop-shadow(0 4px 0 #0a1e5a) drop-shadow(0 8px 14px #000);-webkit-text-stroke:1px #5a0a12}
+#attackCue{font-family:var(--rp-cond)!important;border-radius:4px!important;border-color:#ff4d5a!important;background:#2a0a10f2!important;color:#fff!important;letter-spacing:.1em;text-transform:uppercase}
+/* ---------- ROUND BANNER ---------- */
+#rpBanner{position:fixed;inset:0;z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;background:radial-gradient(ellipse at center,#000a,#0000 70%)}
+#rpBanner.show{display:flex;animation:rpBannerBg 2.1s forwards}
+#rpBanner .a{font:800 italic clamp(22px,7vw,34px) var(--rp-cond);color:#fff;letter-spacing:.35em;background:var(--rp-red);padding:4px 16px 4px 22px;transform:skewX(-12deg);animation:rpIn .45s cubic-bezier(.2,1.4,.4,1) both}
+#rpBanner .n{font:900 italic clamp(18px,5.5vw,28px) var(--rp-cond);color:var(--rp-gold);letter-spacing:.1em;white-space:nowrap;margin:8px 0 2px;text-shadow:0 3px 0 #000;animation:rpIn .45s .1s cubic-bezier(.2,1.4,.4,1) both}
+#rpBanner .f{font:900 italic clamp(70px,24vw,130px)/1 var(--rp-cond);color:transparent;background:linear-gradient(180deg,#fff,#8ec5ff 50%,#2668e7);-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 5px 0 #8f0f1c) drop-shadow(0 0 24px #e5232f);opacity:0;animation:rpFight .7s 1.0s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes rpIn{from{opacity:0;transform:translateX(-80px) skewX(-12deg)}to{opacity:1;transform:skewX(-12deg)}}
+@keyframes rpFight{0%{opacity:0;transform:scale(2.6)}100%{opacity:1;transform:scale(1)}}
+@keyframes rpBannerBg{0%,80%{opacity:1}100%{opacity:0}}
+/* ---------- RESULT ---------- */
+#overlay{background:radial-gradient(ellipse at 50% 30%,#10224aee,#05070ef5)!important}
+#overlay h2,#result{font:900 italic clamp(44px,14vw,76px)/1 var(--rp-cond)!important;text-transform:uppercase;color:transparent;background:linear-gradient(180deg,#ffffff,#bfdcff,#4d8dff);-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 4px 0 var(--rp-red2))}
+#rpScoreBreakdown{background:#0a0f1dcc!important;border:1px solid #4d8dff77!important;border-radius:6px!important;font-family:var(--rp-cond)!important;letter-spacing:.03em}
+#rpNewRecord{font-family:var(--rp-cond)!important;letter-spacing:.14em}
+</style>
+
+<style id="rp-hero-v8">
+#menu{justify-content:flex-start!important;padding-top:6px!important;gap:12px!important}
+#menu>*{position:relative;z-index:1}
+#rpHero{flex:1 1 0;min-height:150px;width:100%;margin:0 0 -6px;perspective:900px;perspective-origin:50% 42%;pointer-events:none;z-index:0!important}
+#rpGlow{position:absolute;left:50%;top:32%;width:130%;height:60%;transform:translate(-50%,-50%);pointer-events:none;
+ background:radial-gradient(ellipse at 28% 50%,#e5232f66,transparent 55%),radial-gradient(ellipse at 72% 50%,#2668e777,transparent 55%)}
+.rpPersp{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateY(var(--ry,0deg)) rotateX(var(--rx,0deg));transition:transform .25s ease-out}
+.rpScene{position:absolute;left:50%;top:29%;width:0;height:0;transform-style:preserve-3d;transform:scale(var(--s,1))}
+.rpRing{position:absolute;left:0;top:0;width:0;height:0;transform-style:preserve-3d;transform:translateY(46px) rotateX(66deg) rotateZ(0deg);animation:rpSpin 26s linear infinite}
+@keyframes rpSpin{to{transform:translateY(46px) rotateX(66deg) rotateZ(360deg)}}
+.rpRing>*{position:absolute}
+.rpFloor{left:-95px;top:-95px;width:190px;height:190px;box-sizing:border-box;border:7px solid #e5232f;
+ background:radial-gradient(circle,transparent 0 30%,#ff5360 31% 34%,transparent 35%),radial-gradient(circle,#2f7bff 0%,#1a4fc0 45%,#0d2c78 100%);
+ box-shadow:inset 0 0 0 3px #fff,inset 0 0 30px #000a}
+.rpSlice{left:-95px;top:-95px;width:190px;height:190px;box-sizing:border-box}
+.rpShadow{left:-150px;top:-150px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,#000c,#0000 68%);transform:translateZ(-24px)}
+.rpPost{border-radius:50%}
+.rpRope{height:6px;left:-95px;top:-3px;width:190px;border-radius:3px;box-shadow:0 0 6px #0008}
+.rpGloves{position:absolute;left:0;top:0;width:0;height:0;transform-style:preserve-3d;transform:translateY(-38px) translateZ(30px);animation:rpBob 3s ease-in-out infinite alternate}
+@keyframes rpBob{to{transform:translateY(-30px) translateZ(30px)}}
+.rpGl{position:absolute;left:-60px;top:-50px;width:120px;height:100px;transform-style:preserve-3d}
+.rpGl.l{animation:rpPL 2.8s ease-in-out infinite}
+.rpGl.r{animation:rpPR 2.8s ease-in-out infinite}
+.rpGl .gv{position:absolute;inset:0;transform-style:preserve-3d}
+.rpGl.r .gv{transform:scaleX(-1)}
+.rpGl svg{position:absolute;left:0;top:0;width:120px;height:100px;overflow:visible}
+@keyframes rpPL{0%,100%{transform:translate3d(-74px,0,0) rotateY(30deg) rotateZ(-6deg)}16%{transform:translate3d(-86px,5px,0) rotateY(34deg) rotateZ(-12deg)}30%{transform:translate3d(-22px,-6px,24px) rotateY(12deg) rotateZ(2deg) scale(1.1)}38%{transform:translate3d(-30px,-4px,12px) rotateY(16deg) rotateZ(0deg) scale(1.05)}62%{transform:translate3d(-74px,0,0) rotateY(30deg) rotateZ(-6deg)}}
+@keyframes rpPR{0%,100%{transform:translate3d(74px,0,0) rotateY(-30deg) rotateZ(6deg)}56%{transform:translate3d(74px,0,0) rotateY(-30deg) rotateZ(6deg)}66%{transform:translate3d(86px,5px,0) rotateY(-34deg) rotateZ(12deg)}80%{transform:translate3d(22px,-6px,24px) rotateY(-12deg) rotateZ(-2deg) scale(1.1)}88%{transform:translate3d(30px,-4px,12px) rotateY(-16deg) rotateZ(0deg) scale(1.05)}}
+.rpBoom{position:absolute;left:-50px;top:-50px;width:100px;height:100px;opacity:0;transform:translateZ(46px);
+ background:radial-gradient(circle,#fff 0 22%,#ffd0d4 38%,#e5232f 62%,#2668e7 100%);
+ clip-path:polygon(50% 0,60% 30%,92% 14%,72% 42%,100% 50%,72% 58%,92% 86%,60% 70%,50% 100%,40% 70%,8% 86%,28% 58%,0 50%,28% 42%,8% 14%,40% 30%);animation:rpBoom 2.8s linear infinite}
+@keyframes rpBoom{0%,28%{opacity:0;transform:translateZ(46px) scale(.2) rotate(0)}31%{opacity:1;transform:translateZ(46px) scale(1.15) rotate(8deg)}42%{opacity:0;transform:translateZ(46px) scale(1.6) rotate(14deg)}43%,78%{opacity:0}81%{opacity:1;transform:translateZ(46px) scale(1.15) rotate(-8deg)}92%{opacity:0;transform:translateZ(46px) scale(1.6) rotate(-14deg)}100%{opacity:0}}
+@media (max-height:720px){#menu p{display:none}#menu{gap:9px!important}#menu button{padding:9px 8px!important}#menu h1{font-size:clamp(38px,12vw,60px)!important}}
+@media (max-height:520px){#rpHero{display:none}}
+</style>
+
+<style id="rp-lite-v9">
+#menu .rpTagline,#menu>p{display:none!important}
+#menu button small{font-size:12px!important;opacity:.85}
+#menu{gap:14px!important}
+</style>
+
+<style id="rp-menu-v10">
+#menu{justify-content:flex-end!important;align-items:stretch!important;text-align:left!important;padding:14px 16px 18px!important;gap:10px!important;overflow:hidden}
+#menu:after{display:none!important}
+#menu:before{content:"";position:absolute;left:0;right:0;bottom:0;height:62%;background:linear-gradient(#0000,#050813f0 52%);z-index:1;pointer-events:none}
+#menu>#rpHero{position:absolute!important;inset:0;flex:none;min-height:0;margin:0;z-index:0!important}
+#menu .rpBrandSub,#menu .rpTagline,#menu>p,#one,#two,#tutorialBtn,#rpProgressStats{display:none!important}
+#rpStreaks{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.rpStreak{position:absolute;left:-120px;height:2px;width:110px;border-radius:2px;opacity:0;transform:rotate(16deg);animation:rpStreak 3.6s linear infinite}
+@keyframes rpStreak{0%{opacity:0;translate:0 0}12%{opacity:.7}85%{opacity:.5}100%{opacity:0;translate:calc(100vw + 260px) 12vh}}
+#rpTop{display:flex;align-items:center;gap:10px;font:800 12px var(--rp-cond);letter-spacing:.42em;color:#cfe0ff;text-transform:uppercase}
+#rpTop i{display:block;width:34px;height:3px;border-radius:2px;background:linear-gradient(90deg,#ff3b5c,#4d8dff)}
+#menu h1{font-size:min(15vw,8.6vh,78px)!important;line-height:.9!important;text-align:left!important;margin:0!important;background:none!important;-webkit-background-clip:initial!important;background-clip:initial!important;color:#fff!important;filter:none!important;transform:none!important;text-shadow:0 4px 0 #0a1e5a,0 0 30px #4d8dff66}
+#menu h1 span{display:block}
+#menu h1 .g{background:linear-gradient(90deg,#ff4d5a,#b05cff 55%,#4d8dff);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;filter:drop-shadow(0 3px 0 #1a0a30)}
+#rpCards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+#menu button.rpCard{display:flex!important;align-items:center;gap:10px;text-align:left;padding:10px 12px!important;border-radius:18px!important;transform:none!important;text-transform:none!important;letter-spacing:0!important;
+ background:#0c142dc2!important;border:1.5px solid #ffffff26!important;box-shadow:none!important;text-shadow:none!important;backdrop-filter:blur(6px);color:#fff}
+#menu button.rpCard .ic{flex:none;width:40px;height:40px;border-radius:12px;background:#ffffff16;display:grid;place-items:center;font-size:23px;text-shadow:none}
+#menu button.rpCard b{display:block;font:900 15px var(--rp-cond);letter-spacing:.1em;text-transform:uppercase}
+#menu button.rpCard small{display:block;font:600 11.5px var(--rp-cond)!important;opacity:.75;margin:2px 0 0;letter-spacing:.02em}
+#menu button.rpCard.on{border-color:#5ea3ff!important;background:linear-gradient(135deg,#17409bcc,#0d1d4ae6)!important;box-shadow:0 0 0 1px #5ea3ff55,0 0 22px #2668e788!important}
+#menu button.rpCard.on .ic{background:#2f7bff}
+#menu button.rpStart{height:56px;border-radius:18px!important;transform:none!important;font:900 italic 21px var(--rp-cond)!important;letter-spacing:.3em!important;padding:0 0 0 .3em!important;color:#fff;
+ background:linear-gradient(90deg,#2f7bff,#8a5cff 55%,#ff3b5c)!important;box-shadow:0 0 28px #5d6dff77,inset 0 1px 0 #ffffff77,inset 0 -3px 0 #0004!important;text-shadow:0 2px 0 #0006!important}
+#menu button.rpStart:active,#menu button.rpCard:active,#menu button.rpChip:active{transform:scale(.98)!important}
+#rpChips{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#menu button.rpChip,#rpBest{height:44px;border-radius:22px!important;transform:none!important;display:flex!important;align-items:center;justify-content:center;gap:8px;font:800 13px var(--rp-cond)!important;letter-spacing:.14em!important;text-transform:uppercase;padding:0 10px!important;text-shadow:none!important;background:#0b122aa6!important;box-shadow:none!important}
+#menu button.rpChip{border:1.5px solid #ff5a6699!important;color:#ffd3d6}
+#rpBest{border:1.5px solid #5ea3ff77;color:#c3dcff}
+@media (max-height:700px){#menu{gap:8px!important;padding-bottom:14px!important}#menu button.rpStart{height:50px}#menu button.rpChip,#rpBest{height:40px}#menu button.rpCard{padding:8px 10px!important}}
+#menu button.rpCard,#menu button.rpChip,#menu button.rpStart,#rpBest{width:100%!important;min-width:0;box-sizing:border-box}
+#rpCards,#rpChips{width:100%}
+#menu button.rpCard span:last-child{min-width:0}
+#menu button.rpCard b{white-space:nowrap;font-size:14px;letter-spacing:.07em}
+#menu button.rpCard .ic{white-space:nowrap;line-height:1}
+#menu button.rpCard[data-m=two] .ic{font-size:14px;letter-spacing:-2px}
+</style>
+
+</head>
  <body>
   <section id="menu">
    <h1>🥊 REAL PUNCH</h1>
@@ -1184,5 +1331,134 @@ button{font-size:calc(15px*var(--fz))}
 (function(){function fix(){try{var t=document.createElement('div');t.style.cssText='position:absolute;visibility:hidden;left:-9999px;top:0;font-size:100px;line-height:1;padding:0;margin:0';t.textContent='M';document.body.appendChild(t);var h=t.offsetHeight||100;document.body.removeChild(t);var r=h/100;if(r<1)r=1;if(r>2.5)r=2.5;document.documentElement.style.setProperty('--fz',(1/r).toFixed(3))}catch(e){}}
 window.addEventListener('load',fix);window.addEventListener('resize',fix);if(document.readyState!=='loading')fix();else document.addEventListener('DOMContentLoaded',fix)})();
 </script>
+<script id="rp-visual-v7-js">
+(function(){
+ var NAMES=['ROOKIE ROY','IRON MIKE','THE TWISTER','BIG BEAR','SPEEDY SAM','CRUSHER KANE','COBRA','THUNDER JACK','DYNAMO DAN','SHADOW','HAMMER HANK','VIPER','TITAN','BLAZE','GHOST','RAZOR','KING KONG','PHOENIX','DEMOLISHER','THE CHAMPION'];
+ /* shorts RGB (0-1) , glove hex */
+ var KITS=[[[.80,.10,.14],0xd91635],[[.10,.25,.75],0x2a63e0],[[.05,.45,.22],0x1fa85a],[[.55,.10,.70],0x9b3fd6],[[.90,.45,.05],0xf58a1f],[[.06,.07,.10],0xe8e8ec],[[.75,.62,.08],0xffc83d],[[.05,.50,.55],0x16b5c4]];
+ function $(i){return document.getElementById(i)}
+ var arena=$('arena');
+ var h1=document.querySelector('#menu h1');if(h1)h1.textContent='REAL PUNCH';
+ if(arena&&!$('rpVig')){var v=document.createElement('div');v.id='rpVig';var s=document.createElement('div');s.id='rpSpot';arena.appendChild(s);arena.appendChild(v)}
+ var b=document.createElement('div');b.id='rpBanner';b.innerHTML='<div class="a">ROUND 1</div><div class="n"></div><div class="f">FIGHT!</div>';document.body.appendChild(b);
+ function lvl(){try{return typeof rpLevel!=='undefined'?rpLevel:1}catch(e){return 1}}
+ function dress(){
+  var L=Math.max(1,Math.min(20,lvl())),i=L-1,kit=KITS[i%KITS.length],name=NAMES[i%NAMES.length];
+  try{window.__rpWant=[kit[0],kit[1]];if(window.__rpSetColors)window.__rpSetColors(kit[0],kit[1])}catch(e){}
+  var hp=document.querySelectorAll('#hud .hp');
+  if(hp[1]&&hp[1].firstChild&&hp[1].firstChild.nodeType===3)hp[1].firstChild.nodeValue='\n '+name+'\n ';
+  b.querySelector('.n').textContent='LEVEL '+L+' · '+name;
+  b.classList.remove('show');void b.offsetWidth;b.classList.add('show');
+  clearTimeout(dress.t);dress.t=setTimeout(function(){b.classList.remove('show')},2200);
+ }
+ var g=$('game');
+ if(g){var was=getComputedStyle(g).display!=='none';
+  new MutationObserver(function(){var on=getComputedStyle(g).display!=='none';if(on&&!was)dress();was=on}).observe(g,{attributes:true,attributeFilter:['style','class']})}
+ /* stronger shake + hit-stop feel: re-trigger the existing shake class on every impact label pop */
+ var hl=$('hitLabel');
+ if(hl&&arena)new MutationObserver(function(){if(hl.classList.contains('pop')){arena.classList.remove('shake');void arena.offsetWidth;arena.classList.add('shake');if(navigator.vibrate)try{navigator.vibrate(18)}catch(e){}}}).observe(hl,{attributes:true,attributeFilter:['class']});
+})();
+</script>
+
+<script id="rp-hero-v8-js">
+(function(){
+ var menu=document.getElementById('menu');if(!menu||document.getElementById('rpHero'))return;
+ var hero=document.createElement('div');hero.id='rpHero';
+ hero.innerHTML='<div id="rpGlow"></div><div class="rpPersp" id="rpPersp"><div class="rpScene" id="rpScene"><div class="rpRing" id="rpRing"></div><div class="rpGloves" id="rpGloves"></div></div></div>';
+ menu.insertBefore(hero,menu.firstChild);
+ var ring=document.getElementById('rpRing'),gl=document.getElementById('rpGloves');
+ function el(cls,css,html){var d=document.createElement('div');d.className=cls;d.style.cssText=css||'';if(html)d.innerHTML=html;return d}
+ /* ring: shadow, extruded apron slices, floor */
+ ring.appendChild(el('rpShadow'));
+ for(var i=9;i>=1;i--){var t=i/9,c='rgb('+Math.round(18-12*t)+','+Math.round(46-34*t)+','+Math.round(112-84*t)+')';ring.appendChild(el('rpSlice','background:'+c+';transform:translateZ('+(-i*1.8)+'px)'))}
+ ring.appendChild(el('rpFloor'));
+ /* corner posts as stacked discs */
+ var posts=[[-95,-95,'#e5232f'],[95,95,'#2668e7'],[95,-95,'#cfd6e6'],[-95,95,'#cfd6e6']];
+ posts.forEach(function(p){
+  for(var z=0;z<=76;z+=4){var w=z===76?15:11,sh=Math.min(1,.55+z/110);
+   var d=el('rpPost','width:'+w+'px;height:'+w+'px;left:'+(p[0]-w/2)+'px;top:'+(p[1]-w/2)+'px;background:'+p[2]+';filter:brightness('+sh+');transform:translateZ('+z+'px)');ring.appendChild(d)}
+ });
+ /* ropes: 3 heights x 4 sides */
+ [[60,'#e5232f'],[44,'#ffffff'],[28,'#2668e7']].forEach(function(r){
+  var bg='background:linear-gradient(#ffffff77,'+r[1]+' 40%,#0006)';
+  ring.appendChild(el('rpRope',bg+';background-color:'+r[1]+';transform:translateY(95px) translateZ('+r[0]+'px) rotateX(90deg)'));
+  ring.appendChild(el('rpRope',bg+';background-color:'+r[1]+';transform:translateY(-95px) translateZ('+r[0]+'px) rotateX(90deg)'));
+  ring.appendChild(el('rpRope',bg+';background-color:'+r[1]+';transform:translateX(95px) translateZ('+r[0]+'px) rotateZ(90deg) rotateX(90deg)'));
+  ring.appendChild(el('rpRope',bg+';background-color:'+r[1]+';transform:translateX(-95px) translateZ('+r[0]+'px) rotateZ(90deg) rotateX(90deg)'));
+ });
+ /* gloves: extruded SVG slices (ellipsoid profile) + detailed front face */
+ var BODY='M26 30C26 12 52 6 78 12C104 18 116 36 112 56C108 78 86 90 60 90C40 90 26 82 26 68Z',CUFF='<rect x="0" y="34" width="30" height="34" rx="5"/>';
+ function mix(a,b,t){return a.map(function(v,i){return Math.round(v+(b[i]-v)*t)})}
+ function glove(cls,base,dark,light,id){
+  var wrap=el('rpGl '+cls),gv=el('gv');wrap.appendChild(gv);
+  var D=22,N=11;
+  for(var k=0;k<N;k++){
+   var z=-D+2*D*k/(N-1),s=Math.sqrt(Math.max(0,1-Math.pow(z/(D+4),2))),e=Math.abs(z)/D,col=mix(base,dark,e*e*.9);
+   var svg='<svg viewBox="0 0 120 100" style="transform:translateZ('+z.toFixed(1)+'px) scale('+s.toFixed(3)+');transform-origin:60px 50px"><g fill="rgb('+col+')"><path d="'+BODY+'"/>'+CUFF+'</g></svg>';
+   gv.insertAdjacentHTML('beforeend',svg);
+  }
+  var zt=D+1.5,L='rgb('+light+')',B='rgb('+base+')',Dk='rgb('+dark+')';
+  var front='<svg viewBox="0 0 120 100" style="transform:translateZ('+zt+'px)"><defs><radialGradient id="'+id+'" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="'+L+'"/><stop offset=".5" stop-color="'+B+'"/><stop offset="1" stop-color="'+Dk+'"/></radialGradient></defs>'
+   +'<path d="'+BODY+'" fill="url(#'+id+')"/><rect x="0" y="34" width="30" height="34" rx="5" fill="#1a1d29"/><rect x="20" y="30" width="9" height="42" rx="3" fill="#f2f4f8"/><rect x="4" y="40" width="12" height="3" rx="1.5" fill="#f2f4f8"/><rect x="4" y="50" width="12" height="3" rx="1.5" fill="#f2f4f8"/><rect x="4" y="60" width="12" height="3" rx="1.5" fill="#f2f4f8"/>'
+   +'<path d="M44 62C58 57 82 61 88 72C92 83 76 93 56 91C42 89 36 71 44 62Z" fill="'+B+'" stroke="'+Dk+'" stroke-width="2"/><path d="M60 64C70 63 80 66 83 72" stroke="'+L+'" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/>'
+   +'<path d="M70 14C90 16 106 30 108 46" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" opacity=".5"/><path d="M96 26C100 40 100 52 96 60M80 20C84 34 84 46 80 54" stroke="'+Dk+'" stroke-width="1.6" fill="none" opacity=".55"/></svg>';
+  gv.insertAdjacentHTML('beforeend',front);
+  var back='<svg viewBox="0 0 120 100" style="transform:translateZ('+(-zt)+'px)"><g fill="rgb('+dark+')"><path d="'+BODY+'"/>'+CUFF+'</g></svg>';
+  gv.insertAdjacentHTML('beforeend',back);
+  return wrap;
+ }
+ gl.appendChild(glove('l',[229,35,47],[96,10,20],[255,140,148],'rpgL'));
+ gl.appendChild(glove('r',[38,104,231],[10,36,110],[150,195,255],'rpgR'));
+ gl.appendChild(el('rpBoom'));
+ /* fit scene to hero box (design size 360x280) */
+ var sc=document.getElementById('rpScene');
+ function fit(){var w=hero.clientWidth,h=hero.clientHeight;if(!w||!h)return;sc.style.setProperty('--s',Math.max(.5,Math.min(w/290,h/520,1.7)).toFixed(3))}
+ if(window.ResizeObserver)new ResizeObserver(fit).observe(hero);window.addEventListener('resize',fit);fit();setTimeout(fit,300);
+ /* touch / mouse parallax */
+ var pr=document.getElementById('rpPersp');
+ function tilt(x,y){pr.style.setProperty('--ry',((x/innerWidth-.5)*34).toFixed(1)+'deg');pr.style.setProperty('--rx',((.5-y/innerHeight)*14).toFixed(1)+'deg')}
+ window.addEventListener('pointermove',function(e){tilt(e.clientX,e.clientY)},{passive:true});
+ window.addEventListener('touchmove',function(e){var t=e.touches[0];if(t)tilt(t.clientX,t.clientY)},{passive:true});
+})();
+</script>
+
+<script id="rp-lite-v9-js">
+(function(){var m={one:'Phone in hand · Right punch',two:'Phone on stand · Both hands'};
+for(var k in m){var b=document.getElementById(k),s=b&&b.querySelector('small');if(s)s.textContent=m[k]}})();
+</script>
+
+<script id="rp-menu-v10-js">
+(function(){
+ var menu=document.getElementById('menu');if(!menu||document.getElementById('rpCards'))return;
+ var $=function(i){return document.getElementById(i)};
+ var h1=menu.querySelector('h1');if(h1)h1.innerHTML='<span>REAL</span><span class="g">PUNCH</span>';
+ var hero=$('rpHero');
+ if(hero){var st=document.createElement('div');st.id='rpStreaks';
+  for(var i=0;i<9;i++){var s=document.createElement('div');s.className='rpStreak';var c=['#ff4d5a','#5ea3ff','#ffffff'][i%3];
+   s.style.cssText='top:'+(4+i*5.2)+'%;background:linear-gradient(90deg,transparent,'+c+');animation-delay:'+(-i*0.9).toFixed(1)+'s;animation-duration:'+(2.8+(i%4)*.6)+'s';st.appendChild(s)}
+  hero.insertBefore(st,hero.firstChild)}
+ var top=document.createElement('div');top.id='rpTop';top.innerHTML='<i></i><span>Motion Boxing</span>';
+ var cards=document.createElement('div');cards.id='rpCards';
+ var sel='one';
+ function card(id,ic,t,sub){var b=document.createElement('button');b.type='button';b.className='rpCard'+(id===sel?' on':'');b.dataset.m=id;b.innerHTML='<span class="ic">'+ic+'</span><span><b>'+t+'</b><small>'+sub+'</small></span>';
+  b.onclick=function(){sel=id;[].forEach.call(cards.children,function(x){x.classList.toggle('on',x.dataset.m===sel)})};return b}
+ cards.appendChild(card('one','🥊','One hand','Phone in hand'));
+ cards.appendChild(card('two','🥊🥊','Two hand','Phone on stand'));
+ var start=document.createElement('button');start.type='button';start.className='rpStart';start.textContent='START FIGHT';
+ start.onclick=function(){var t=$(sel);if(t)t.click()};
+ var chips=document.createElement('div');chips.id='rpChips';
+ var tut=document.createElement('button');tut.type='button';tut.className='rpChip';tut.id='rpTutChip';tut.textContent='🥊 Tutorial';
+ tut.onclick=function(){var t=$('tutorialBtn');if(t)t.click()};
+ var best=document.createElement('div');best.id='rpBest';best.textContent='🏆 Best 0';
+ chips.appendChild(tut);chips.appendChild(best);
+ menu.insertBefore(top,h1);
+ menu.appendChild(cards);menu.appendChild(start);menu.appendChild(chips);
+ function sync(){var p=$('rpProgressStats'),m=p&&/BEST[^:]*:\s*([\d,]+)/i.exec(p.textContent);if(m)best.textContent='🏆 Best '+m[1];
+  var tb=$('tutorialBtn');if(tb)tut.textContent=(/^\s*✓/.test(tb.textContent)?'✓ ':'🥊 ')+'Tutorial'}
+ sync();
+ ['rpProgressStats','tutorialBtn'].forEach(function(id){var e=$(id);if(e)new MutationObserver(sync).observe(e,{childList:true,characterData:true,subtree:true})});
+})();
+</script>
+
 </body>
 </html>
