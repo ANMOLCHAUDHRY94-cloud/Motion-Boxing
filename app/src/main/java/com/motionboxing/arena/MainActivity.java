@@ -40,7 +40,7 @@ public class MainActivity extends Activity {
     private static final String ASSET_PATH_PREFIX = "/assets/";
 
     // Production Rewarded Ad Unit ID for Real Punch: Motion Boxing.
-    private static final String TEST_REWARDED_UNIT = "ca-app-pub-812357436565777/7142296215";
+    private static final String TEST_REWARDED_UNIT = "ca-app-pub-8123574365675777/7142296215";
 
     private static final int CAMERA_CODE = 1001;
 
