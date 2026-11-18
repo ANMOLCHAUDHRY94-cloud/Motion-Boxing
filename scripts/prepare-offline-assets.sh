@@ -10,7 +10,15 @@ mkdir -p "$ASSETS/vendor/mediapipe" "$ASSETS/vendor/three"
 cp -R "$TMP/node_modules/@mediapipe/pose/." "$ASSETS/vendor/mediapipe/"
 mkdir -p "$ASSETS/vendor/three/build" "$ASSETS/vendor/three/examples"
 cp "$TMP/node_modules/three/build/three.module.js" "$ASSETS/vendor/three/build/"
-cp -R "$TMP/node_modules/three/examples/jsm" "$ASSETS/vendor/three/examples/"
+# Only the files FBXLoader needs (saves ~21 MB)
+JSM="$TMP/node_modules/three/examples/jsm"
+DEST="$ASSETS/vendor/three/examples/jsm"
+mkdir -p "$DEST/loaders" "$DEST/libs" "$DEST/curves"
+cp "$JSM/loaders/FBXLoader.js" "$DEST/loaders/"
+cp "$JSM/libs/fflate.module.js" "$DEST/libs/"
+cp "$JSM/curves/NURBSCurve.js" "$JSM/curves/NURBSUtils.js" "$DEST/curves/"
+# Game uses modelComplexity:0 (lite) only; remove unused heavy/full models (~34 MB)
+rm -f "$ASSETS/vendor/mediapipe/pose_landmark_heavy.tflite" "$ASSETS/vendor/mediapipe/pose_landmark_full.tflite"
 for f in pose.js pose_solution_packed_assets.data pose_solution_simd_wasm_bin.wasm pose_solution_wasm_bin.wasm; do
   test -s "$ASSETS/vendor/mediapipe/$f" || { echo "Missing MediaPipe dependency: $f" >&2; exit 1; }
 done
