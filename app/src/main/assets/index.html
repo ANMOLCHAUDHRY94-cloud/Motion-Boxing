@@ -566,7 +566,7 @@ $('help').textContent=mode==='one'?'RIGHT PUNCH · HEAD DODGE':'BOTH HANDS · HE
 }/* V6.16: no random dodge. The opponent only guards if you spam more than 4 punches within 1.5 s. */
 window.rpRecent=(window.rpRecent||[]).filter(t=>now-t<1500);window.rpRecent.push(now);let el=$('opponent'),dodges=false;
 /* V6.38: no lock-out any more. More than 4 punches within 1.5 s makes the opponent raise his guard for 1.2 s (then 3.5 s before he can do it again). */
-if(window.rpRecent.length>4&&now>(window.rpForceNext||0)&&window.rpGuard){window.rpGuard.until=now+1200;window.rpForceNext=now+3500;el.classList.add('guarding');window.rpForcedNow=true}
+if(window.rpRecent.length>4&&!warning&&now>(window.rpForceNext||0)&&window.rpGuard){window.rpGuard.until=now+1200;window.rpForceNext=now+3500;el.classList.add('guarding');window.rpForcedNow=true}
 if(dodges){let dir=Math.random()<.5?-1:1;enemySide=clamp(enemySide+dir*11,-22,22);el.style.left=(50+enemySide)+'%';el.classList.add('dodging');MBSound.play('dodge');msg('GUARDED! SLOW DOWN',700,'bad');setTimeout(()=>el.classList.remove('dodging'),300);combo=0;return}if(window.rpGuard&&now<window.rpGuard.until){msg(window.rpForcedNow?'GUARD UP! TOO MANY PUNCHES':'BLOCKED!',600,'bad');window.rpForcedNow=false;MBSound.play('block');combo=0;return}
 let damage=mode==='one'?9:7,counter=false;
 if((window.rpCounterN||0)>0&&now<(window.rpCounterUntil||0)){counter=true;window.rpCounterN--;damage=Math.round(damage*2.5)} /* V6.37: counter punch after a perfect dodge = 2.5x damage, for the next 2 punches within 3 s */
